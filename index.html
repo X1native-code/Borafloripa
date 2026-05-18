@@ -221,7 +221,12 @@ section { position: relative; }
   max-width: 720px;
 }
 @media (max-width: 720px) {
-  .hero-search { border-radius: 18px; flex-direction: column; padding: 8px; }
+  .hero-search {
+    border-radius: 20px;
+    flex-direction: column;
+    padding: 6px;
+    gap: 2px;
+  }
 }
 .hero-search .field {
   flex: 1; min-width: 0;
@@ -231,13 +236,37 @@ section { position: relative; }
   border-radius: 999px;
   transition: background .15s;
 }
-@media (max-width: 720px) { .hero-search .field { border-radius: 12px; padding: 10px 14px; } }
+@media (max-width: 720px) {
+  .hero-search .field {
+    border-radius: 14px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line-soft);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .hero-search .field:last-of-type { border-bottom: none; }
+}
 .hero-search .field:hover { background: var(--cream-soft); }
 .hero-search .field-label { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
 .hero-search .field-value { font-size: 15px; font-weight: 500; color: var(--ink); }
 .hero-search .field-value.placeholder { color: var(--muted); font-weight: 400; }
+@media (max-width: 720px) {
+  .hero-search .field-label { font-size: 10px; }
+  .hero-search .field-value { font-size: 14px; }
+}
 .hero-search .divider { width: 1px; background: var(--line-soft); margin: 8px 0; }
 @media (max-width: 720px) { .hero-search .divider { display: none; } }
+@media (max-width: 720px) {
+  .hero-search .btn {
+    border-radius: 14px !important;
+    margin: 4px 0 0 !important;
+    padding: 14px !important;
+    font-size: 16px !important;
+    align-self: stretch !important;
+  }
+}
 
 /* whatsapp fab */
 .fab-wpp {
@@ -383,12 +412,7 @@ section { position: relative; }
   .pillar-grid { grid-template-columns: 1fr !important; }
 }
 
-/* Hero search: always stack on mobile */
-@media (max-width: 720px) {
-  .hero-search { border-radius: 18px !important; flex-direction: column !important; padding: 8px !important; }
-  .hero-search .divider { display: none !important; }
-  .hero-search .field { border-radius: 12px !important; padding: 10px 14px !important; }
-}
+/* hero-search mobile handled above */
 
 /* Share row: wrap tightly */
 @media (max-width: 400px) {
@@ -1099,18 +1123,33 @@ const Hero = () => {
             </div>
             <div className="hero-search">
               <button className="field">
-                <div className="field-label">Qué buscas</div>
-                <div className="field-value placeholder">Praia, surf, atardecer…</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <Icon name="search" size={16} style={{ color: "var(--coral)", flexShrink: 0 }}/>
+                  <div>
+                    <div className="field-label">Qué buscas</div>
+                    <div className="field-value placeholder">Praia, surf, atardecer…</div>
+                  </div>
+                </div>
               </button>
               <div className="divider"/>
               <button className="field">
-                <div className="field-label">Cuándo</div>
-                <div className="field-value placeholder">Esta semana</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <Icon name="calendar" size={16} style={{ color: "var(--coral)", flexShrink: 0 }}/>
+                  <div>
+                    <div className="field-label">Cuándo</div>
+                    <div className="field-value placeholder">Esta semana</div>
+                  </div>
+                </div>
               </button>
               <div className="divider"/>
               <button className="field">
-                <div className="field-label">Quiénes</div>
-                <div className="field-value placeholder">2 adultos</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <Icon name="users" size={16} style={{ color: "var(--coral)", flexShrink: 0 }}/>
+                  <div>
+                    <div className="field-label">Quiénes</div>
+                    <div className="field-value placeholder">2 adultos</div>
+                  </div>
+                </div>
               </button>
               <button className="btn btn-coral btn-lg" style={{ alignSelf: "stretch", margin: 0 }} onClick={()=>navTo("search")}>
                 <Icon name="search" size={18}/> Bora!
