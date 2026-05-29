@@ -1061,4 +1061,149 @@ export async function addBookingLog(log: { bookingId: string; comment: string; a
     return { data: null, error: err };
   }
 }
+export async function getProviders() {
+  if (isMockEnabled || !supabase) {
+    if (typeof window !== 'undefined') {
+      try {
+        let list = JSON.parse(localStorage.getItem('mock_providers') || '[]');
+        if (list.length === 0) {
+          list = [
+            { id: 'prov-agustina', name: 'Agustina', whatsapp: '+55 48 99999-1111', pix_key: 'agustina@pix.br', email: 'agustina@boraflo.com', observations: 'Guía preferencial para paseos en barco', created_at: new Date().toISOString() },
+            { id: 'prov-claudia', name: 'Claudia', whatsapp: '+55 48 99999-2222', pix_key: 'claudia@pix.br', email: 'claudia@boraflo.com', observations: 'Especialista en traslados y senderos históricos', created_at: new Date().toISOString() }
+          ];
+          localStorage.setItem('mock_providers', JSON.stringify(list));
+        }
+        return list;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return [];
+  }
+  try {
+    const { data, error } = await supabase.from('providers').select('*').order('name', { ascending: true });
+    if (error) throw error;
+    return data.map(item => ({
+      id: item.id,
+      name: item.name,
+      whatsapp: item.whatsapp,
+      pix_key: item.pix_key,
+      email: item.email,
+      observations: item.observations,
+      created_at: item.created_at
+    }));
+  } catch (err) {
+    console.error('Error al fetchear proveedores de Supabase:', err);
+    return [
+      { id: 'prov-agustina', name: 'Agustina', whatsapp: '+55 48 99999-1111', pix_key: 'agustina@pix.br', email: 'agustina@boraflo.com', observations: 'Guía preferencial para paseos en barco', created_at: new Date().toISOString() },
+      { id: 'prov-claudia', name: 'Claudia', whatsapp: '+55 48 99999-2222', pix_key: 'claudia@pix.br', email: 'claudia@boraflo.com', observations: 'Especialista en traslados y senderos históricos', created_at: new Date().toISOString() }
+    ];
+  }
+}
 
+export async function createProvider(provider: { name: string; whatsapp: string; pix_key: string; email: string; observations: string }) {
+  const newProvider = {
+    id: `prov-${Date.now()}`,
+    ...provider,
+    created_at: new Date().toISOString()
+  };
+
+  if (isMockEnabled || !supabase) {
+    if (typeof window !== 'undefined') {
+      try {
+        const list = JSON.parse(localStorage.getItem('mock_providers') || '[]');
+        list.push(newProvider);
+        localStorage.setItem('mock_providers', JSON.stringify(list));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return { data: newProvider, error: null };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('providers')
+      .insert({
+        id: newProvider.id,
+        name: newProvider.name,
+        whatsapp: newProvider.whatsapp,
+        pix_key: newProvider.pix_key,
+        email: newProvider.email,
+        observations: newProvider.observations,
+        created_at: newProvider.created_at
+      })
+      .select()
+      .single();
+    return { data, error };
+  } catch (err: any) {
+    console.error('Error al crear proveedor en Supabase:', err);
+    return { data: null, error: err };
+  }
+}
+
+export async function getProviderPayments() {
+  if (isMockEnabled || !supabase) {
+    if (typeof window !== 'undefined') {
+      try {
+        return JSON.parse(localStorage.getItem('mock_provider_payments') || '[]');
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return [];
+  }
+  try {
+    const { data, error } = await supabase.from('provider_payments').select('*').order('payment_date', { ascending: false });
+    if (error) throw error;
+    return data.map(item => ({
+      id: item.id,
+      provider_id: item.provider_id,
+      amount_paid: Number(item.amount_paid),
+      payment_date: item.payment_date,
+      notes: item.notes
+    }));
+  } catch (err) {
+    console.error('Error al fetchear abonos de proveedores:', err);
+    return [];
+  }
+}
+
+export async function addProviderPayment(payment: { provider_id: string; amount_paid: number; payment_date: string; notes: string }) {
+  const newPayment = {
+    id: `pay-${Date.now()}`,
+    ...payment,
+    amount_paid: Number(payment.amount_paid)
+  };
+
+  if (isMockEnabled || !supabase) {
+    if (typeof window !== 'undefined') {
+      try {
+        const list = JSON.parse(localStorage.getItem('mock_provider_payments') || '[]');
+        list.push(newPayment);
+        localStorage.setItem('mock_provider_payments', JSON.stringify(list));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return { data: newPayment, error: null };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('provider_payments')
+      .insert({
+        id: newPayment.id,
+        provider_id: newPayment.provider_id,
+        amount_paid: Number(newPayment.amount_paid),
+        payment_date: newPayment.payment_date,
+        notes: newPayment.notes
+      })
+      .select()
+      .single();
+    return { data, error };
+  } catch (err: any) {
+    console.error('Error al registrar abono a proveedor:', err);
+    return { data: null, error: err };
+  }
+}

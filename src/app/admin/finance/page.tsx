@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getBookings, getBookingPayments } from '@/lib/supabase';
+import { getBookings, getBookingPayments, getProviders, getProviderPayments } from '@/lib/supabase';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Icon } from '@/components/Icon';
@@ -14,17 +14,24 @@ export default function FinanceDashboard() {
   const [period, setPeriod] = useState<PeriodType>('7days');
   const [bookings, setBookings] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
+  const [providers, setProviders] = useState<any[]>([]);
+  const [providerPayments, setProviderPayments] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<'customers' | 'providers'>('customers');
   const [loading, setLoading] = useState(true);
 
   async function loadFinanceData() {
     setLoading(true);
     try {
-      const [bookingsData, paymentsData] = await Promise.all([
+      const [bookingsData, paymentsData, providersData, providerPaymentsData] = await Promise.all([
         getBookings(),
-        getBookingPayments()
+        getBookingPayments(),
+        getProviders(),
+        getProviderPayments()
       ]);
       setBookings(bookingsData);
       setPayments(paymentsData);
+      setProviders(providersData);
+      setProviderPayments(providerPaymentsData);
     } catch (e) {
       console.error("Error al cargar datos financieros:", e);
     } finally {
@@ -68,6 +75,7 @@ export default function FinanceDashboard() {
   // Filtrar abonos y reservas según el período seleccionado
   const filteredPayments = payments.filter(p => isDateInPeriod(p.createdAt, period));
   const filteredBookings = bookings.filter(b => isDateInPeriod(b.createdAt || b.date, period));
+  const filteredProviderPayments = providerPayments.filter(p => isDateInPeriod(p.payment_date, period));
 
   // --- CÁLCULO DE KPIs OPERATIVOS ---
 
@@ -102,11 +110,15 @@ export default function FinanceDashboard() {
 
   const totalPaidMethods = Object.values(methodRevenue).reduce((a: any, b: any) => a + b, 0) as number;
 
-  // 6. Costo Total de Proveedores (Guías)
+  // 6. Costo Total de Proveedores (Guías) - Desglosado
+  const paidGuideCosts = filteredProviderPayments.reduce((sum, p) => sum + Number(p.amount_paid || 0), 0);
+  const pendingGuideCosts = filteredBookings
+    .filter(b => b.providerPaymentStatus !== 'PAID')
+    .reduce((sum, b) => sum + Number(b.guideNetCost || 0), 0);
   const totalGuideCosts = filteredBookings.reduce((sum, b) => sum + Number(b.guideNetCost || 0), 0);
 
-  // 7. Margen de Ganancia Neto
-  const netProfitMargin = totalRevenueBrl - totalGuideCosts;
+  // 7. Margen de Ganancia Neto / Utilidad Neta Real
+  const netProfitMargin = totalRevenueBrl - paidGuideCosts - pendingGuideCosts;
 
   return (
     <div className="page" style={{ background: 'var(--cream)', minHeight: '100vh' }}>
@@ -264,27 +276,34 @@ export default function FinanceDashboard() {
               {/* Tarjeta 5: Costo de Proveedores */}
               <div style={{ background: 'var(--paper)', padding: 24, borderRadius: 20, boxShadow: 'var(--shadow-sm)', position: 'relative', overflow: 'hidden' }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ fontSize: 14 }}>👤</span> Costo de Proveedores (Guías BRL)
+                  <span style={{ fontSize: 14 }}>👤</span> Costo de Proveedores (Guías)
                 </div>
-                <div className="display" style={{ fontSize: 36, fontWeight: 700, margin: '14px 0 6px', color: 'var(--coral)' }}>
-                  R$ {totalGuideCosts.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                <div className="display" style={{ fontSize: 32, fontWeight: 700, margin: '12px 0 6px', color: 'var(--ink)' }}>
+                  R$ {(paidGuideCosts + pendingGuideCosts).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
-                <div style={{ fontSize: 12, color: 'var(--ink-soft)' }}>
-                  Costo neto total asignado a los guías en este período.
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 8, borderTop: '1px dashed var(--line-soft)', paddingTop: 8 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                    <span style={{ color: 'var(--muted)' }}>🟢 Pagado (Abonos):</span>
+                    <strong style={{ fontFamily: 'var(--font-mono)', color: 'var(--moss)' }}>R$ {paidGuideCosts.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                    <span style={{ color: 'var(--muted)' }}>⏳ Pendiente:</span>
+                    <strong style={{ fontFamily: 'var(--font-mono)', color: 'var(--coral)' }}>R$ {pendingGuideCosts.toLocaleString('es-ES', { minimumFractionDigits: 2 })}</strong>
+                  </div>
                 </div>
                 <div style={{ position: 'absolute', right: -10, bottom: -10, fontSize: 80, opacity: 0.04, pointerEvents: 'none' }}>🛡️</div>
               </div>
 
-              {/* Tarjeta 6: Margen de Ganancia Neto */}
+              {/* Tarjeta 6: Utilidad Neta Real */}
               <div style={{ background: 'var(--paper)', padding: 24, borderRadius: 20, boxShadow: 'var(--shadow-sm)', position: 'relative', overflow: 'hidden' }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ fontSize: 14 }}>💎</span> Margen de Ganancia Neto
+                  <span style={{ fontSize: 14 }}>💎</span> Utilidad Neta Real
                 </div>
                 <div className="display" style={{ fontSize: 36, fontWeight: 700, margin: '14px 0 6px', color: netProfitMargin >= 0 ? 'var(--moss)' : 'var(--coral)' }}>
                   R$ {netProfitMargin.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
                 <div style={{ fontSize: 12, color: 'var(--ink-soft)' }}>
-                  Liquidez real de caja restando el costo de guías a los ingresos.
+                  Ingresos de Caja Reales menos costos de guías pagados y pendientes.
                 </div>
                 <div style={{ position: 'absolute', right: -10, bottom: -10, fontSize: 80, opacity: 0.04, pointerEvents: 'none' }}>📊</div>
               </div>
@@ -373,84 +392,190 @@ export default function FinanceDashboard() {
                       </div>
                     );
                   })()}
+                  </div>
+                </div>
+
+              </div>
+
+            {/* SECCIÓN FINAL: LISTA DE TRANSACCIONES DEL PERÍODO CON TABS */}
+            <div style={{ background: 'var(--paper)', borderRadius: 20, padding: 24, boxShadow: 'var(--shadow-sm)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--line-soft)', paddingBottom: 12, marginBottom: 20, flexWrap: 'wrap', gap: 16 }}>
+                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, margin: 0 }}>
+                  Auditoría de Abonos y Movimientos
+                </h3>
+                
+                <div style={{ display: 'flex', gap: 6, background: 'var(--cream)', padding: 4, borderRadius: 10 }}>
+                  <button
+                    onClick={() => setActiveTab('customers')}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: 8,
+                      border: 'none',
+                      background: activeTab === 'customers' ? 'var(--paper)' : 'transparent',
+                      color: 'var(--ink)',
+                      fontWeight: 700,
+                      fontSize: 12,
+                      cursor: 'pointer',
+                      boxShadow: activeTab === 'customers' ? 'var(--shadow-sm)' : 'none',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    Abonos de Clientes ({filteredPayments.length})
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('providers')}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: 8,
+                      border: 'none',
+                      background: activeTab === 'providers' ? 'var(--paper)' : 'transparent',
+                      color: 'var(--ink)',
+                      fontWeight: 700,
+                      fontSize: 12,
+                      cursor: 'pointer',
+                      boxShadow: activeTab === 'providers' ? 'var(--shadow-sm)' : 'none',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    Abonos a Proveedores ({filteredProviderPayments.length})
+                  </button>
                 </div>
               </div>
 
-            </div>
-
-            {/* SECCIÓN FINAL: LISTA DE TRANSACCIONES DEL PERÍODO */}
-            <div style={{ background: 'var(--paper)', borderRadius: 20, padding: 24, boxShadow: 'var(--shadow-sm)' }}>
-              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, margin: '0 0 16px' }}>
-                Historial de Abonos en el Período
-              </h3>
-
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: 800 }}>
-                  <thead>
-                    <tr style={{ borderBottom: '2px solid var(--line)', fontSize: 12, color: 'var(--muted)' }}>
-                      <th style={{ padding: '10px 8px', fontWeight: 600 }}>Fecha / Hora</th>
-                      <th style={{ padding: '10px 8px', fontWeight: 600 }}>Reserva Asociada</th>
-                      <th style={{ padding: '10px 8px', fontWeight: 600 }}>Monto Original</th>
-                      <th style={{ padding: '10px 8px', fontWeight: 600 }}>Tasa de Cambio</th>
-                      <th style={{ padding: '10px 8px', fontWeight: 600 }}>Monto Equivalente BRL</th>
-                      <th style={{ padding: '10px 8px', fontWeight: 600 }}>Método</th>
-                      <th style={{ padding: '10px 8px', fontWeight: 600 }}>Observaciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredPayments.map((p, idx) => {
-                      const assocBooking = bookings.find(b => b.id === p.bookingId);
-                      
-                      return (
-                        <tr key={p.id || idx} style={{ borderBottom: '1px solid var(--line-soft)', fontSize: 13 }}>
-                          <td style={{ padding: '12px 8px' }}>
-                            {new Date(p.createdAt).toLocaleDateString('es-ES', {
-                              day: 'numeric',
-                              month: 'short',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </td>
-                          <td style={{ padding: '12px 8px' }}>
-                            {assocBooking ? (
-                              <div>
-                                <strong style={{ color: 'var(--ink)' }}>{assocBooking.name} {assocBooking.lastname}</strong>
-                                <span style={{ display: 'block', fontSize: 11, color: 'var(--muted)' }}>{assocBooking.tourTitle.split(':')[0]} ({assocBooking.date})</span>
-                              </div>
-                            ) : (
-                              <span style={{ color: 'var(--muted)' }}>Reserva #{p.bookingId.substring(0, 8)}...</span>
-                            )}
-                          </td>
-                          <td style={{ padding: '12px 8px', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
-                            {p.currency} {p.amount.toLocaleString('es')}
-                          </td>
-                          <td style={{ padding: '12px 8px', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
-                            {p.currency === 'BRL' ? '1.00' : p.exchangeRate.toFixed(4)}
-                          </td>
-                          <td style={{ padding: '12px 8px', fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--moss)' }}>
-                            R$ {p.amountBrl.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                          </td>
-                          <td style={{ padding: '12px 8px' }}>
-                            <Badge tone={p.paymentMethod === 'pix' ? 'moss' : p.paymentMethod === 'card' ? 'coral' : 'sun'}>
-                              {p.paymentMethod.toUpperCase()}
-                            </Badge>
-                          </td>
-                          <td style={{ padding: '12px 8px', color: 'var(--muted)', fontSize: 12 }}>
-                            {p.notes || 'Abono recibido'}
+              {activeTab === 'customers' ? (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: 800 }}>
+                    <thead>
+                      <tr style={{ borderBottom: '2px solid var(--line)', fontSize: 12, color: 'var(--muted)' }}>
+                        <th style={{ padding: '10px 8px', fontWeight: 600 }}>Fecha / Hora</th>
+                        <th style={{ padding: '10px 8px', fontWeight: 600 }}>Reserva Asociada</th>
+                        <th style={{ padding: '10px 8px', fontWeight: 600 }}>Monto Original</th>
+                        <th style={{ padding: '10px 8px', fontWeight: 600 }}>Tasa de Cambio</th>
+                        <th style={{ padding: '10px 8px', fontWeight: 600 }}>Monto Equivalente BRL</th>
+                        <th style={{ padding: '10px 8px', fontWeight: 600 }}>Método</th>
+                        <th style={{ padding: '10px 8px', fontWeight: 600 }}>Observaciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredPayments.map((p, idx) => {
+                        const assocBooking = bookings.find(b => b.id === p.bookingId);
+                        
+                        return (
+                          <tr key={p.id || idx} style={{ borderBottom: '1px solid var(--line-soft)', fontSize: 13 }}>
+                            <td style={{ padding: '12px 8px' }}>
+                              {new Date(p.createdAt).toLocaleDateString('es-ES', {
+                                day: 'numeric',
+                                month: 'short',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </td>
+                            <td style={{ padding: '12px 8px' }}>
+                              {assocBooking ? (
+                                <div>
+                                  <strong style={{ color: 'var(--ink)' }}>{assocBooking.name} {assocBooking.lastname}</strong>
+                                  <span style={{ display: 'block', fontSize: 11, color: 'var(--muted)' }}>{assocBooking.tourTitle.split(':')[0]} ({assocBooking.date})</span>
+                                </div>
+                              ) : (
+                                <span style={{ color: 'var(--muted)' }}>Reserva #{p.bookingId.substring(0, 8)}...</span>
+                              )}
+                            </td>
+                            <td style={{ padding: '12px 8px', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
+                              {p.currency} {p.amount.toLocaleString('es')}
+                            </td>
+                            <td style={{ padding: '12px 8px', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+                              {p.currency === 'BRL' ? '1.00' : p.exchangeRate.toFixed(4)}
+                            </td>
+                            <td style={{ padding: '12px 8px', fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--moss)' }}>
+                              R$ {p.amountBrl.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </td>
+                            <td style={{ padding: '12px 8px' }}>
+                              <Badge tone={p.paymentMethod === 'pix' ? 'moss' : p.paymentMethod === 'card' ? 'coral' : 'sun'}>
+                                {p.paymentMethod.toUpperCase()}
+                              </Badge>
+                            </td>
+                            <td style={{ padding: '12px 8px', color: 'var(--muted)', fontSize: 12 }}>
+                              {p.notes || 'Abono recibido'}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      {filteredPayments.length === 0 && (
+                        <tr>
+                          <td colSpan={7} style={{ padding: '32px 0', textAlign: 'center', color: 'var(--muted)' }}>
+                            No hay transacciones registradas para este período.
                           </td>
                         </tr>
-                      );
-                    })}
-                    {filteredPayments.length === 0 && (
-                      <tr>
-                        <td colSpan={7} style={{ padding: '32px 0', textAlign: 'center', color: 'var(--muted)' }}>
-                          No hay transacciones registradas para este período.
-                        </td>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: 800 }}>
+                    <thead>
+                      <tr style={{ borderBottom: '2px solid var(--line)', fontSize: 12, color: 'var(--muted)' }}>
+                        <th style={{ padding: '10px 8px', fontWeight: 600 }}>Fecha de Pago</th>
+                        <th style={{ padding: '10px 8px', fontWeight: 600 }}>Proveedor / Guía</th>
+                        <th style={{ padding: '10px 8px', fontWeight: 600 }}>Monto Depósito (BRL)</th>
+                        <th style={{ padding: '10px 8px', fontWeight: 600 }}>Llave Pix / Cuenta</th>
+                        <th style={{ padding: '10px 8px', fontWeight: 600 }}>Concepto / Notas</th>
+                        <th style={{ padding: '10px 8px', fontWeight: 600 }}>ID Transferencia</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {filteredProviderPayments.map((p, idx) => {
+                        const assocProvider = providers.find(prov => prov.id === p.provider_id);
+                        
+                        return (
+                          <tr key={p.id || idx} style={{ borderBottom: '1px solid var(--line-soft)', fontSize: 13 }}>
+                            <td style={{ padding: '12px 8px', fontWeight: 600 }}>
+                              {(() => {
+                                if (!p.payment_date) return '';
+                                const parts = p.payment_date.split('-');
+                                if (parts.length === 3) {
+                                  const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+                                  return `${parseInt(parts[2], 10)} ${months[parseInt(parts[1], 10) - 1]} ${parts[0]}`;
+                                }
+                                return p.payment_date;
+                              })()}
+                            </td>
+                            <td style={{ padding: '12px 8px' }}>
+                              {assocProvider ? (
+                                <div>
+                                  <strong style={{ color: 'var(--ink)' }}>👤 {assocProvider.name}</strong>
+                                  <span style={{ display: 'block', fontSize: 11, color: 'var(--muted)' }}>{assocProvider.email || 'Sin email'}</span>
+                                </div>
+                              ) : (
+                                <strong style={{ color: 'var(--muted)' }}>Proveedor Desconocido</strong>
+                              )}
+                            </td>
+                            <td style={{ padding: '12px 8px', fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--moss)' }}>
+                              R$ {p.amount_paid.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </td>
+                            <td style={{ padding: '12px 8px', fontSize: 12, color: 'var(--ink-soft)' }}>
+                              🔑 {assocProvider?.pix_key || 'Sin Pix'}
+                            </td>
+                            <td style={{ padding: '12px 8px', color: 'var(--muted)', fontSize: 12 }}>
+                              {p.notes || 'Abono manual registrado'}
+                            </td>
+                            <td style={{ padding: '12px 8px', fontFamily: 'var(--font-mono)', color: 'var(--muted)', fontSize: 11 }}>
+                              #{p.id.split('-')[1] || p.id}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      {filteredProviderPayments.length === 0 && (
+                        <tr>
+                          <td colSpan={6} style={{ padding: '32px 0', textAlign: 'center', color: 'var(--muted)' }}>
+                            No hay abonos registrados para proveedores en este período.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
 
           </div>
