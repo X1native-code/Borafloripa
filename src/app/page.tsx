@@ -91,6 +91,17 @@ const LogoIcon = ({ size = 24 }) => (
 
 const Hero: React.FC<{ router: any }> = ({ router }) => {
   const [tab, setTab] = useState("experiencias");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchDate, setSearchDate] = useState("");
+  const [searchPax, setSearchPax] = useState("2");
+
+  const handleSearchSubmit = () => {
+    const params = new URLSearchParams();
+    if (searchQuery.trim()) params.set("q", searchQuery.trim());
+    if (searchDate) params.set("date", searchDate);
+    if (searchPax) params.set("pax", searchPax);
+    router.push(`/search?${params.toString()}`);
+  };
   return (
     <section style={{ position: "relative", overflow: "hidden", paddingBottom: 40 }}>
       {/* background photo placeholder */}
@@ -151,21 +162,84 @@ const Hero: React.FC<{ router: any }> = ({ router }) => {
               ))}
             </div>
             <div className="hero-search">
-              <button className="field" onClick={() => router.push('/search')}>
+              <div className="field" style={{ cursor: "text" }}>
                 <div className="field-label">Qué buscas</div>
-                <div className="field-value placeholder">Praia, surf, atardecer…</div>
-              </button>
+                <input
+                  type="text"
+                  placeholder="Praia, surf, atardecer…"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleSearchSubmit(); }}
+                  style={{
+                    border: "none",
+                    background: "transparent",
+                    outline: "none",
+                    width: "100%",
+                    padding: 0,
+                    margin: 0,
+                    fontFamily: "var(--font-ui)",
+                    fontSize: 15,
+                    fontWeight: 500,
+                    color: "var(--ink)",
+                  }}
+                />
+              </div>
               <div className="divider"/>
-              <button className="field" onClick={() => router.push('/search')}>
+              <div className="field" style={{ cursor: "pointer" }}>
                 <div className="field-label">Cuándo</div>
-                <div className="field-value placeholder">Esta semana</div>
-              </button>
+                <input
+                  type="date"
+                  value={searchDate}
+                  onChange={(e) => setSearchDate(e.target.value)}
+                  style={{
+                    border: "none",
+                    background: "transparent",
+                    outline: "none",
+                    width: "100%",
+                    padding: 0,
+                    margin: 0,
+                    fontFamily: "var(--font-ui)",
+                    fontSize: 15,
+                    fontWeight: 500,
+                    color: searchDate ? "var(--ink)" : "var(--muted)",
+                    cursor: "pointer",
+                  }}
+                />
+              </div>
               <div className="divider"/>
-              <button className="field" onClick={() => router.push('/search')}>
+              <div className="field" style={{ cursor: "pointer" }}>
                 <div className="field-label">Quiénes</div>
-                <div className="field-value placeholder">2 adultos</div>
-              </button>
-              <button className="btn btn-coral btn-lg" style={{ alignSelf: "stretch", margin: 0 }} onClick={() => router.push('/search')}>
+                <select
+                  value={searchPax}
+                  onChange={(e) => setSearchPax(e.target.value)}
+                  style={{
+                    border: "none",
+                    background: "transparent",
+                    outline: "none",
+                    width: "100%",
+                    padding: 0,
+                    margin: 0,
+                    fontFamily: "var(--font-ui)",
+                    fontSize: 15,
+                    fontWeight: 500,
+                    color: "var(--ink)",
+                    cursor: "pointer",
+                    appearance: "none",
+                    WebkitAppearance: "none",
+                  }}
+                >
+                  <option value="1">1 adulto</option>
+                  <option value="2">2 adultos</option>
+                  <option value="3">3 personas</option>
+                  <option value="4">4 personas</option>
+                  <option value="5+">5+ personas</option>
+                </select>
+              </div>
+              <button 
+                className="btn btn-coral btn-lg" 
+                style={{ alignSelf: "stretch", margin: 0 }} 
+                onClick={handleSearchSubmit}
+              >
                 <Icon name="search" size={18}/> Bora!
               </button>
             </div>

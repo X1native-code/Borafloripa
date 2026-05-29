@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useTheme } from '@/context/ThemeContext';
 import { getTours, getCategories } from '@/lib/supabase';
 import { Header } from '@/components/Header';
@@ -16,7 +16,11 @@ import { WhatsAppFab } from '@/components/WhatsAppFab';
 function SearchPageContent() {
   const { tweaks } = useTheme();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const initialCat = searchParams.get('cat') || '';
+  const initialQuery = searchParams.get('q') || '';
+  const initialDate = searchParams.get('date') || '';
+  const initialPax = searchParams.get('pax') || '2';
 
   const [tours, setTours] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
@@ -27,6 +31,27 @@ function SearchPageContent() {
   const [category, setCategory] = useState<string[]>(initialCat ? [initialCat] : []);
   const [sort, setSort] = useState("Recomendados");
   const [mobileFilters, setMobileFilters] = useState(false);
+
+  // Search input states
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const [searchDate, setSearchDate] = useState(initialDate);
+  const [searchPax, setSearchPax] = useState(initialPax);
+
+  // Update local search states if URL parameters change
+  useEffect(() => {
+    setSearchQuery(searchParams.get('q') || '');
+    setSearchDate(searchParams.get('date') || '');
+    setSearchPax(searchParams.get('pax') || '2');
+  }, [searchParams]);
+
+  const handleSearchSubmit = () => {
+    const params = new URLSearchParams();
+    if (searchQuery.trim()) params.set("q", searchQuery.trim());
+    if (searchDate) params.set("date", searchDate);
+    if (searchPax) params.set("pax", searchPax);
+    if (category.length === 1) params.set("cat", category[0]);
+    router.push(`/search?${params.toString()}`);
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -64,6 +89,19 @@ function SearchPageContent() {
       const nameMatch = catObj ? catObj.name.toLowerCase() === t.cat.toLowerCase() : false;
       return catMatch || nameMatch;
     })) return false;
+
+    // Filter by searchQuery
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      const titleMatch = t.title.toLowerCase().includes(q);
+      const subtitleMatch = t.subtitle.toLowerCase().includes(q);
+      const locationMatch = t.location.toLowerCase().includes(q);
+      const catMatch = t.cat.toLowerCase().includes(q);
+      const tagMatch = t.tags.some((tag: string) => tag.toLowerCase().includes(q));
+      if (!titleMatch && !subtitleMatch && !locationMatch && !catMatch && !tagMatch) {
+        return false;
+      }
+    }
     return true;
   });
 
@@ -118,21 +156,80 @@ function SearchPageContent() {
 
           {/* Inline search bar */}
           <div className="hero-search" style={{ marginTop: 20, maxWidth: 920, boxShadow: "var(--shadow-md)" }}>
-            <button className="field">
+            <div className="field" style={{ cursor: "text" }}>
               <div className="field-label">Qué buscas</div>
-              <div className="field-value placeholder">Todas las experiencias</div>
-            </button>
+              <input
+                type="text"
+                placeholder="Todas las experiencias…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleSearchSubmit(); }}
+                style={{
+                  border: "none",
+                  background: "transparent",
+                  outline: "none",
+                  width: "100%",
+                  padding: 0,
+                  margin: 0,
+                  fontFamily: "var(--font-ui)",
+                  fontSize: 15,
+                  fontWeight: 500,
+                  color: "var(--ink)",
+                }}
+              />
+            </div>
             <div className="divider"/>
-            <button className="field">
+            <div className="field" style={{ cursor: "pointer" }}>
               <div className="field-label">Cuándo</div>
-              <div className="field-value">Cualquier fecha</div>
-            </button>
+              <input
+                type="date"
+                value={searchDate}
+                onChange={(e) => setSearchDate(e.target.value)}
+                style={{
+                  border: "none",
+                  background: "transparent",
+                  outline: "none",
+                  width: "100%",
+                  padding: 0,
+                  margin: 0,
+                  fontFamily: "var(--font-ui)",
+                  fontSize: 15,
+                  fontWeight: 500,
+                  color: searchDate ? "var(--ink)" : "var(--muted)",
+                  cursor: "pointer",
+                }}
+              />
+            </div>
             <div className="divider"/>
-            <button className="field">
+            <div className="field" style={{ cursor: "pointer" }}>
               <div className="field-label">Quiénes</div>
-              <div className="field-value">2 adultos</div>
-            </button>
-            <button className="btn btn-coral btn-lg">
+              <select
+                value={searchPax}
+                onChange={(e) => setSearchPax(e.target.value)}
+                style={{
+                  border: "none",
+                  background: "transparent",
+                  outline: "none",
+                  width: "100%",
+                  padding: 0,
+                  margin: 0,
+                  fontFamily: "var(--font-ui)",
+                  fontSize: 15,
+                  fontWeight: 500,
+                  color: "var(--ink)",
+                  cursor: "pointer",
+                  appearance: "none",
+                  WebkitAppearance: "none",
+                }}
+              >
+                <option value="1">1 adulto</option>
+                <option value="2">2 adultos</option>
+                <option value="3">3 personas</option>
+                <option value="4">4 personas</option>
+                <option value="5+">5+ personas</option>
+              </select>
+            </div>
+            <button className="btn btn-coral btn-lg" onClick={handleSearchSubmit}>
               <Icon name="search" size={18}/> Buscar
             </button>
           </div>

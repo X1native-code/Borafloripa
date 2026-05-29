@@ -52,10 +52,10 @@ export const ShareRow: React.FC<ShareRowProps> = ({
         <a className="share-btn wpp" href="#" onClick={handleWhatsApp}>
           <Icon name="whatsapp" size={isSmall ? 14 : 16}/> WhatsApp
         </a>
-        <a className="share-btn ig" href="#" onClick={(e) => e.preventDefault()}>
+        <a className="share-btn ig" href="https://www.instagram.com/borafloripa" target="_blank" rel="noopener noreferrer">
           <Icon name="instagram" size={isSmall ? 14 : 16}/> Instagram
         </a>
-        <a className="share-btn tt" href="#" onClick={(e) => e.preventDefault()}>
+        <a className="share-btn tt" href="https://www.tiktok.com/@borafloripa" target="_blank" rel="noopener noreferrer">
           <Icon name="tiktok" size={isSmall ? 12 : 14}/> TikTok
         </a>
         <a className="share-btn copy" href="#" onClick={handleCopy}>

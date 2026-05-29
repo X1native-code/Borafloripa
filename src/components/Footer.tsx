@@ -21,10 +21,10 @@ export const Footer: React.FC = () => (
             Las mejores experiencias de Florianópolis, hechas por floripenses, contadas en español.
           </p>
           <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
-            <a className="share-btn ig" href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><Icon name="instagram" size={16}/> Instagram</a>
+            <a className="share-btn ig" href="https://www.instagram.com/borafloripa" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><Icon name="instagram" size={16}/> Instagram</a>
           </div>
           <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-            <a className="share-btn tt" href="https://tiktok.com" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><Icon name="tiktok" size={14}/> TikTok</a>
+            <a className="share-btn tt" href="https://www.tiktok.com/@borafloripa" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><Icon name="tiktok" size={14}/> TikTok</a>
           </div>
         </div>
         <FooterCol title="Explora" links={["Todos los tours", "Día completo", "Medio día", "Atardeceres", "Bora con niños", "Traslados privados"]} />

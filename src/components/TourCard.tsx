@@ -122,16 +122,20 @@ export const TourCard: React.FC<TourCardProps> = ({ tour, dense, shareEmphasis =
             <a
               className="share-btn ig"
               style={{ padding: "6px 10px", fontSize: 12 }}
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-              href="#"
+              onClick={(e) => { e.stopPropagation(); }}
+              href="https://www.instagram.com/borafloripa"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <Icon name="instagram" size={12}/>
             </a>
             <a
               className="share-btn tt"
               style={{ padding: "6px 10px", fontSize: 12 }}
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-              href="#"
+              onClick={(e) => { e.stopPropagation(); }}
+              href="https://www.tiktok.com/@borafloripa"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <Icon name="tiktok" size={10}/>
             </a>
