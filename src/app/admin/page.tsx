@@ -958,14 +958,17 @@ export default function AdminDashboard() {
                     <Icon name="plus" size={14} /> + Crear Cliente Manual
                   </button>
                   {/* Selector de Rango de Fechas (Botones Premium) */}
-                  <div style={{
+                  <div className="no-scrollbar" style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: 6,
                     background: 'var(--cream-soft)',
                     padding: 4,
                     borderRadius: 10,
-                    border: '1px solid var(--line-soft)'
+                    border: '1px solid var(--line-soft)',
+                    overflowX: 'auto',
+                    maxWidth: '100%',
+                    WebkitOverflowScrolling: 'touch'
                   }}>
                     <span style={{ fontSize: 12, fontWeight: 700, padding: '0 8px', color: 'var(--ink-soft)' }}>Rango:</span>
                     {[
@@ -1249,7 +1252,7 @@ export default function AdminDashboard() {
                                 }}
                                 >
                                   {/* Cabecera de Ficha Única CRM */}
-                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 20 }}>
+                                  <div className="crm-header-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 20 }}>
                                     <div>
                                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                         <h3 style={{ fontSize: 20, fontWeight: 800, margin: 0, color: 'var(--ink)' }}>
@@ -1265,7 +1268,7 @@ export default function AdminDashboard() {
                                     </div>
 
                                     {/* Balance Global de Ficha Única */}
-                                    <div style={{ 
+                                    <div className="crm-balance-grid" style={{ 
                                       background: 'var(--cream-soft)', 
                                       padding: '12px 20px', 
                                       borderRadius: 14, 
@@ -1716,542 +1719,974 @@ export default function AdminDashboard() {
                           })()}
                         </div>
                       ) : viewMode === 'list' ? (
-                        <div style={{ overflowX: 'auto' }}>
-                          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: 900 }}>
-                            <thead>
-                              <tr style={{ borderBottom: '2px solid var(--line)', fontSize: 13, color: 'var(--muted)' }}>
-                                <th style={{ padding: '12px 8px', fontWeight: 600 }}>Cliente</th>
-                                <th style={{ padding: '12px 8px', fontWeight: 600 }}>Tour / Fecha</th>
-                                <th style={{ padding: '12px 8px', fontWeight: 600 }}>Tarifa / Abono / Saldo</th>
-                                <th style={{ padding: '12px 8px', fontWeight: 600 }}>Control Operativo / Hotel / Observaciones</th>
-                                <th style={{ padding: '12px 8px', fontWeight: 600, textAlign: 'right' }}>Acción Operativa</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {filteredBookings.length === 0 ? (
-                                <tr>
-                                  <td colSpan={5} style={{ padding: '32px 0', textAlign: 'center', color: 'var(--muted)' }}>
-                                    No se encontraron reservas con los filtros aplicados.
-                                  </td>
+                        <>
+                          {/* VISTA DE ESCRITORIO (TABLA TRADICIONAL) */}
+                          <div className="desktop-only" style={{ overflowX: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: 900 }}>
+                              <thead>
+                                <tr style={{ borderBottom: '2px solid var(--line)', fontSize: 13, color: 'var(--muted)' }}>
+                                  <th style={{ padding: '12px 8px', fontWeight: 600 }}>Cliente</th>
+                                  <th style={{ padding: '12px 8px', fontWeight: 600 }}>Tour / Fecha</th>
+                                  <th style={{ padding: '12px 8px', fontWeight: 600 }}>Tarifa / Abono / Saldo</th>
+                                  <th style={{ padding: '12px 8px', fontWeight: 600 }}>Control Operativo / Hotel / Observaciones</th>
+                                  <th style={{ padding: '12px 8px', fontWeight: 600, textAlign: 'right' }}>Acción Operativa</th>
                                 </tr>
-                              ) : (
-                                filteredBookings.map((booking, idx) => {
-                                  // Calcular saldo matemático en Reales
-                                  const paidBrl = allPayments
-                                    .filter(p => p.bookingId === booking.id)
-                                    .reduce((sum, p) => sum + p.amountBrl, 0);
-                                  const balanceRemaining = Math.max(0, booking.total - paidBrl);
+                              </thead>
+                              <tbody>
+                                {filteredBookings.length === 0 ? (
+                                  <tr>
+                                    <td colSpan={5} style={{ padding: '32px 0', textAlign: 'center', color: 'var(--muted)' }}>
+                                      No se encontraron reservas con los filtros aplicados.
+                                    </td>
+                                  </tr>
+                                ) : (
+                                  filteredBookings.map((booking, idx) => {
+                                    // Calcular saldo matemático en Reales
+                                    const paidBrl = allPayments
+                                      .filter(p => p.bookingId === booking.id)
+                                      .reduce((sum, p) => sum + p.amountBrl, 0);
+                                    const balanceRemaining = Math.max(0, booking.total - paidBrl);
 
-                                  return (
-                                    <React.Fragment key={booking.id || idx}>
-                                      <tr style={{ 
-                                        borderBottom: expandedBookingId === booking.id ? 'none' : '1px solid var(--line-soft)', 
-                                        fontSize: 14,
-                                        background: expandedBookingId === booking.id ? 'var(--cream-soft)' : 'transparent',
-                                        transition: 'background 0.2s ease'
-                                      }}>
-                                        <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
-                                          <div style={{ fontWeight: 700, color: 'var(--ink)' }}>
-                                            {booking.name} {booking.lastname}
-                                          </div>
-                                          <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 4 }}>
-                                            <Icon name="phone" size={11} /> {booking.whatsapp}
-                                          </div>
-                                          <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 2 }}>
-                                            <Icon name="star" size={11} /> {booking.country}
-                                          </div>
-                                        </td>
-                                        <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
-                                          <div style={{ fontWeight: 600 }}>{booking.tourTitle}</div>
-                                          <div style={{ fontSize: 12, color: 'var(--coral)', fontWeight: 600, marginTop: 4 }}>
-                                            <Icon name="calendar" size={11} /> {booking.date} · {booking.slot}
-                                          </div>
-                                          <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
-                                            Pax: {booking.adults} adulto{booking.adults > 1 ? 's' : ''}
-                                            {booking.kids > 0 ? ` · ${booking.kids} niño${booking.kids > 1 ? 's' : ''}` : ''}
-                                          </div>
-                                        </td>
-                                        <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
-                                          <div style={{ fontWeight: 700, fontFamily: 'var(--font-mono)' }}>R$ {booking.total}</div>
-                                          <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
-                                            Abonado: R$ {paidBrl.toLocaleString('es')}
-                                          </div>
-                                          <div style={{ 
-                                            fontSize: 11, 
-                                            fontWeight: 700, 
-                                            color: balanceRemaining === 0 ? 'var(--moss)' : 'var(--coral)', 
-                                            marginTop: 2 
-                                          }}>
-                                            Saldo: R$ {balanceRemaining.toLocaleString('es')}
-                                          </div>
-                                        </td>
-                                        <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
-                                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6, flexWrap: 'wrap' }}>
-                                            <Badge tone={booking.paymentStatus === 'PAID' ? 'moss' : booking.paymentStatus === 'CANCELLED' ? 'ink' : 'sun'}>
-                                              {booking.paymentStatus === 'PAID' ? 'Paid' : booking.paymentStatus === 'CANCELLED' ? 'Cancelled' : 'Pending'} ({booking.paymentMethod?.toUpperCase()})
-                                            </Badge>
-                                            
-                                            {booking.voucherSent ? (
-                                              <Badge tone="moss">Voucher Enviado ✉️</Badge>
-                                            ) : (
-                                              <Badge tone="sun">Voucher Pendiente</Badge>
-                                            )}
-                                          </div>
-                                          
-                                          {/* Dirección de Hotel / Recogida */}
-                                          {booking.hotelAddress && (
-                                            <div style={{ fontSize: 12, background: 'var(--cream-soft)', padding: '6px 10px', borderRadius: 8, marginBottom: 6, display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--ink-soft)' }}>
-                                              <span style={{ fontSize: 12 }}>🟢</span> 
-                                              <span><strong>Pickup:</strong> {booking.hotelAddress} {booking.hotelRoom ? `(Hab. ${booking.hotelRoom})` : ''}</span>
+                                    return (
+                                      <React.Fragment key={booking.id || idx}>
+                                        <tr style={{ 
+                                          borderBottom: expandedBookingId === booking.id ? 'none' : '1px solid var(--line-soft)', 
+                                          fontSize: 14,
+                                          background: expandedBookingId === booking.id ? 'var(--cream-soft)' : 'transparent',
+                                          transition: 'background 0.2s ease'
+                                        }}>
+                                          <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
+                                            <div style={{ fontWeight: 700, color: 'var(--ink)' }}>
+                                              {booking.name} {booking.lastname}
                                             </div>
-                                          )}
-
-                                          {/* Guía asignado y hora específica */}
-                                          {(booking.assignedGuide || booking.pickupTime) && (
-                                            <div style={{ fontSize: 11, color: 'var(--ink-soft)', display: 'flex', gap: 10, marginTop: 4, flexWrap: 'wrap' }}>
-                                              {booking.assignedGuide && (
-                                                <span>👤 <strong>Guía:</strong> {booking.assignedGuide}</span>
-                                              )}
-                                              {booking.pickupTime && (
-                                                <span>⏱️ <strong>Pickup:</strong> {booking.pickupTime}</span>
-                                              )}
+                                            <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 4 }}>
+                                              <Icon name="phone" size={11} /> {booking.whatsapp}
                                             </div>
-                                          )}
-
-                                          {/* Observaciones */}
-                                          {booking.notes && (
-                                            <div style={{ fontSize: 12, color: 'var(--muted)', display: 'flex', gap: 4, marginTop: 4 }}>
-                                              <span>📝</span>
-                                              <span style={{ fontStyle: 'italic' }}>Obs: "{booking.notes}"</span>
+                                            <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 2 }}>
+                                              <Icon name="star" size={11} /> {booking.country}
                                             </div>
-                                          )}
-                                        </td>
-                                        <td style={{ padding: '16px 8px', verticalAlign: 'middle', textAlign: 'right' }}>
-                                          <div style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}>
-                                            {/* Botón de expandir para control logístico/abonos */}
-                                            <button
-                                              onClick={() => handleExpandBooking(booking)}
-                                              className="btn btn-ghost btn-sm"
-                                              style={{
-                                                display: 'inline-flex',
-                                                alignItems: 'center',
-                                                gap: 6,
-                                                fontSize: 13,
-                                                padding: '8px 14px',
-                                                borderRadius: 10,
-                                                background: expandedBookingId === booking.id ? 'var(--cream)' : 'var(--cream-soft)'
-                                              }}
-                                            >
-                                              <Icon name={expandedBookingId === booking.id ? "chevron-up" : "chevron-down"} size={13} />
-                                              Operar
-                                            </button>
-
-                                            {/* Botón Mágico de WhatsApp */}
-                                            <button
-                                              onClick={() => handleWhatsAppAction(booking)}
-                                              className="btn btn-moss btn-sm"
-                                              style={{
-                                                display: 'inline-flex',
-                                                alignItems: 'center',
-                                                gap: 6,
-                                                padding: '8px 14px',
-                                                fontSize: 13,
-                                                background: '#25D366',
-                                                color: '#fff',
-                                                border: 'none',
-                                                fontWeight: 700,
-                                                borderRadius: 10,
-                                                boxShadow: '0 2px 8px rgba(37,211,102,0.1)'
-                                              }}
-                                            >
-                                              <Icon name="whatsapp" size={14} /> WhatsApp
-                                            </button>
-
-                                            {/* Botón de Edición Completa */}
-                                            <button
-                                              onClick={() => handleOpenEditBooking(booking)}
-                                              className="btn btn-ghost btn-sm"
-                                              style={{
-                                                display: 'inline-flex',
-                                                alignItems: 'center',
-                                                gap: 6,
-                                                fontSize: 13,
-                                                padding: '8px 14px',
-                                                borderRadius: 10,
-                                                background: 'var(--cream-soft)',
-                                                border: 'none',
-                                                cursor: 'pointer'
-                                              }}
-                                            >
-                                              <Icon name="sparkle" size={13} /> Editar
-                                            </button>
-                                          </div>
-                                        </td>
-                                      </tr>
-
-                                      {/* Sección Expandible Operativa en 3 Columnas */}
-                                      {expandedBookingId === booking.id && (
-                                        <tr style={{ background: 'var(--cream-soft)' }}>
-                                          <td colSpan={5} style={{ padding: '20px 16px 28px', borderBottom: '1px solid var(--line-soft)' }}>
-                                            <div style={{
-                                              display: 'grid',
-                                              gridTemplateColumns: 'repeat(auto-fit, minmax(285px, 1fr))',
-                                              gap: 20,
-                                              animation: 'fadeIn 0.2s ease',
-                                              textAlign: 'left'
+                                          </td>
+                                          <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
+                                            <div style={{ fontWeight: 600 }}>{booking.tourTitle}</div>
+                                            <div style={{ fontSize: 12, color: 'var(--coral)', fontWeight: 600, marginTop: 4 }}>
+                                              <Icon name="calendar" size={11} /> {booking.date} · {booking.slot}
+                                            </div>
+                                            <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
+                                              Pax: {booking.adults} adulto{booking.adults > 1 ? 's' : ''}
+                                              {booking.kids > 0 ? ` · ${booking.kids} niño${booking.kids > 1 ? 's' : ''}` : ''}
+                                            </div>
+                                          </td>
+                                          <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
+                                            <div style={{ fontWeight: 700, fontFamily: 'var(--font-mono)' }}>R$ {booking.total}</div>
+                                            <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
+                                              Abonado: R$ {paidBrl.toLocaleString('es')}
+                                            </div>
+                                            <div style={{ 
+                                              fontSize: 11, 
+                                              fontWeight: 700, 
+                                              color: balanceRemaining === 0 ? 'var(--moss)' : 'var(--coral)', 
+                                              marginTop: 2 
                                             }}>
+                                              Saldo: R$ {balanceRemaining.toLocaleString('es')}
+                                            </div>
+                                          </td>
+                                          <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6, flexWrap: 'wrap' }}>
+                                              <Badge tone={booking.paymentStatus === 'PAID' ? 'moss' : booking.paymentStatus === 'CANCELLED' ? 'ink' : 'sun'}>
+                                                {booking.paymentStatus === 'PAID' ? 'Paid' : booking.paymentStatus === 'CANCELLED' ? 'Cancelled' : 'Pending'} ({booking.paymentMethod?.toUpperCase()})
+                                              </Badge>
                                               
-                                              {/* COLUMNA 1: LOGÍSTICA OPERATIVA */}
-                                              <div style={{ 
-                                                background: 'var(--paper)', 
-                                                padding: 18, 
-                                                borderRadius: 14, 
-                                                boxShadow: 'var(--shadow-sm)', 
-                                                display: 'flex', 
-                                                flexDirection: 'column', 
-                                                gap: 12 
+                                              {booking.voucherSent ? (
+                                                <Badge tone="moss">Voucher Enviado ✉️</Badge>
+                                              ) : (
+                                                <Badge tone="sun">Voucher Pendiente</Badge>
+                                              )}
+                                            </div>
+                                            
+                                            {/* Dirección de Hotel / Recogida */}
+                                            {booking.hotelAddress && (
+                                              <div style={{ fontSize: 12, background: 'var(--cream-soft)', padding: '6px 10px', borderRadius: 8, marginBottom: 6, display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--ink-soft)' }}>
+                                                <span style={{ fontSize: 12 }}>🟢</span> 
+                                                <span><strong>Pickup:</strong> {booking.hotelAddress} {booking.hotelRoom ? `(Hab. ${booking.hotelRoom})` : ''}</span>
+                                              </div>
+                                            )}
+
+                                            {/* Guía asignado y hora específica */}
+                                            {(booking.assignedGuide || booking.pickupTime) && (
+                                              <div style={{ fontSize: 11, color: 'var(--ink-soft)', display: 'flex', gap: 10, marginTop: 4, flexWrap: 'wrap' }}>
+                                                {booking.assignedGuide && (
+                                                  <span>👤 <strong>Guía:</strong> {booking.assignedGuide}</span>
+                                                )}
+                                                {booking.pickupTime && (
+                                                  <span>⏱️ <strong>Pickup:</strong> {booking.pickupTime}</span>
+                                                )}
+                                              </div>
+                                            )}
+
+                                            {/* Observaciones */}
+                                            {booking.notes && (
+                                              <div style={{ fontSize: 12, color: 'var(--muted)', display: 'flex', gap: 4, marginTop: 4 }}>
+                                                <span>📝</span>
+                                                <span style={{ fontStyle: 'italic' }}>Obs: "{booking.notes}"</span>
+                                              </div>
+                                            )}
+                                          </td>
+                                          <td style={{ padding: '16px 8px', verticalAlign: 'middle', textAlign: 'right' }}>
+                                            <div style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}>
+                                              {/* Botón de expandir para control logístico/abonos */}
+                                              <button
+                                                onClick={() => handleExpandBooking(booking)}
+                                                className="btn btn-ghost btn-sm"
+                                                style={{
+                                                  display: 'inline-flex',
+                                                  alignItems: 'center',
+                                                  gap: 6,
+                                                  fontSize: 13,
+                                                  padding: '8px 14px',
+                                                  borderRadius: 10,
+                                                  background: expandedBookingId === booking.id ? 'var(--cream)' : 'var(--cream-soft)'
+                                                }}
+                                              >
+                                                <Icon name={expandedBookingId === booking.id ? "chevron-up" : "chevron-down"} size={13} />
+                                                Operar
+                                              </button>
+
+                                              {/* Botón Mágico de WhatsApp */}
+                                              <button
+                                                onClick={() => handleWhatsAppAction(booking)}
+                                                className="btn btn-moss btn-sm"
+                                                style={{
+                                                  display: 'inline-flex',
+                                                  alignItems: 'center',
+                                                  gap: 6,
+                                                  padding: '8px 14px',
+                                                  fontSize: 13,
+                                                  background: '#25D366',
+                                                  color: '#fff',
+                                                  border: 'none',
+                                                  fontWeight: 700,
+                                                  borderRadius: 10,
+                                                  boxShadow: '0 2px 8px rgba(37,211,102,0.1)'
+                                                }}
+                                              >
+                                                <Icon name="whatsapp" size={14} /> WhatsApp
+                                              </button>
+
+                                              {/* Botón de Edición Completa */}
+                                              <button
+                                                onClick={() => handleOpenEditBooking(booking)}
+                                                className="btn btn-ghost btn-sm"
+                                                style={{
+                                                  display: 'inline-flex',
+                                                  alignItems: 'center',
+                                                  gap: 6,
+                                                  fontSize: 13,
+                                                  padding: '8px 14px',
+                                                  borderRadius: 10,
+                                                  background: 'var(--cream-soft)',
+                                                  border: 'none',
+                                                  cursor: 'pointer'
+                                                }}
+                                              >
+                                                <Icon name="sparkle" size={13} /> Editar
+                                              </button>
+                                            </div>
+                                          </td>
+                                        </tr>
+
+                                        {/* Sección Expandible Operativa en 3 Columnas */}
+                                        {expandedBookingId === booking.id && (
+                                          <tr style={{ background: 'var(--cream-soft)' }}>
+                                            <td colSpan={5} style={{ padding: '20px 16px 28px', borderBottom: '1px solid var(--line-soft)' }}>
+                                              <div style={{
+                                                display: 'grid',
+                                                gridTemplateColumns: 'repeat(auto-fit, minmax(285px, 1fr))',
+                                                gap: 20,
+                                                animation: 'fadeIn 0.2s ease',
+                                                textAlign: 'left'
                                               }}>
-                                                <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, borderBottom: '1px solid var(--line)', paddingBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
-                                                  <span>⚙️</span> Logística Operativa
-                                                </h4>
                                                 
-                                                <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                                                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink)' }}>Guía Asignado</span>
-                                                  <input 
-                                                    type="text" 
-                                                    value={opAssignedGuide} 
-                                                    onChange={e => setOpAssignedGuide(e.target.value)}
-                                                    placeholder="Ej: Tiago Silva"
-                                                    style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 13, background: 'var(--cream-soft)', fontFamily: 'inherit' }}
-                                                  />
-                                                </label>
-
-                                                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 10 }}>
+                                                {/* COLUMNA 1: LOGÍSTICA OPERATIVA */}
+                                                <div style={{ 
+                                                  background: 'var(--paper)', 
+                                                  padding: 18, 
+                                                  borderRadius: 14, 
+                                                  boxShadow: 'var(--shadow-sm)', 
+                                                  display: 'flex', 
+                                                  flexDirection: 'column', 
+                                                  gap: 12 
+                                                }}>
+                                                  <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, borderBottom: '1px solid var(--line)', paddingBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                                                    <span>⚙️</span> Logística Operativa
+                                                  </h4>
+                                                  
                                                   <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                                                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--coral)' }}>Costo Neto Guía (R$)</span>
-                                                    <input 
-                                                      type="number" 
-                                                      value={opGuideNetCost} 
-                                                      onChange={e => setOpGuideNetCost(Number(e.target.value))}
-                                                      placeholder="Ej: 150"
-                                                      style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 13, background: 'var(--cream-soft)', fontFamily: 'var(--font-mono)' }}
-                                                    />
-                                                  </label>
-                                                  <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                                                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--coral)' }}>Pago Proveedor</span>
-                                                    <select 
-                                                      value={opProviderPaymentStatus} 
-                                                      onChange={e => setOpProviderPaymentStatus(e.target.value)}
-                                                      style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 13, background: 'var(--cream-soft)', cursor: 'pointer', fontFamily: 'inherit' }}
-                                                    >
-                                                      <option value="PENDING">Pendiente</option>
-                                                      <option value="PAID">Pagado</option>
-                                                    </select>
-                                                  </label>
-                                                </div>
-
-                                                <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                                                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--coral)' }}>Fecha Depósito Proveedor</span>
-                                                  <input 
-                                                    type="text" 
-                                                    value={opProviderPaymentDate} 
-                                                    onChange={e => setOpProviderPaymentDate(e.target.value)}
-                                                    placeholder="Ej: 28 Mayo"
-                                                    style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 13, background: 'var(--cream-soft)', fontFamily: 'inherit' }}
-                                                  />
-                                                </label>
-                                                
-                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                                                  <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                                                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink)' }}>Hora de Recogida</span>
+                                                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink)' }}>Guía Asignado</span>
                                                     <input 
                                                       type="text" 
-                                                      value={opPickupTime} 
-                                                      onChange={e => setOpPickupTime(e.target.value)}
-                                                      placeholder="Ej: 08:30"
+                                                      value={opAssignedGuide} 
+                                                      onChange={e => setOpAssignedGuide(e.target.value)}
+                                                      placeholder="Ej: Tiago Silva"
+                                                      style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 13, background: 'var(--cream-soft)', fontFamily: 'inherit' }}
+                                                    />
+                                                  </label>
+
+                                                  <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 10 }}>
+                                                    <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                                      <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--coral)' }}>Costo Neto Guía (R$)</span>
+                                                      <input 
+                                                        type="number" 
+                                                        value={opGuideNetCost} 
+                                                        onChange={e => setOpGuideNetCost(Number(e.target.value))}
+                                                        placeholder="Ej: 150"
+                                                        style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 13, background: 'var(--cream-soft)', fontFamily: 'var(--font-mono)' }}
+                                                      />
+                                                    </label>
+                                                    <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                                      <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--coral)' }}>Pago Proveedor</span>
+                                                      <select 
+                                                        value={opProviderPaymentStatus} 
+                                                        onChange={e => setOpProviderPaymentStatus(e.target.value)}
+                                                        style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 13, background: 'var(--cream-soft)', cursor: 'pointer', fontFamily: 'inherit' }}
+                                                      >
+                                                        <option value="PENDING">Pendiente</option>
+                                                        <option value="PAID">Pagado</option>
+                                                      </select>
+                                                    </label>
+                                                  </div>
+
+                                                  <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--coral)' }}>Fecha Depósito Proveedor</span>
+                                                    <input 
+                                                      type="text" 
+                                                      value={opProviderPaymentDate} 
+                                                      onChange={e => setOpProviderPaymentDate(e.target.value)}
+                                                      placeholder="Ej: 28 Mayo"
                                                       style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 13, background: 'var(--cream-soft)', fontFamily: 'inherit' }}
                                                     />
                                                   </label>
                                                   
-                                                  <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                                                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink)' }}>Estado de Pago</span>
-                                                    <select 
-                                                      value={opPaymentStatus} 
-                                                      onChange={e => setOpPaymentStatus(e.target.value)}
-                                                      style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 13, background: 'var(--cream-soft)', cursor: 'pointer', fontFamily: 'inherit' }}
-                                                    >
-                                                      <option value="PENDING">PENDING</option>
-                                                      <option value="PAID">PAID</option>
-                                                      <option value="CANCELLED">CANCELLED</option>
-                                                    </select>
-                                                  </label>
-                                                </div>
-
-                                                <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                                                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink)' }}>Notas Operativas Internas</span>
-                                                  <textarea 
-                                                    rows={2}
-                                                    value={opOperatorNotes} 
-                                                    onChange={e => setOpOperatorNotes(e.target.value)}
-                                                    placeholder="Detalles logísticos o incidencias internas..."
-                                                    style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 13, background: 'var(--cream-soft)', resize: 'vertical', fontFamily: 'inherit' }}
-                                                  />
-                                                </label>
-
-                                                <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', userSelect: 'none', margin: '4px 0' }}>
-                                                  <input 
-                                                    type="checkbox" 
-                                                    checked={opVoucherSent} 
-                                                    onChange={e => setOpVoucherSent(e.target.checked)}
-                                                    style={{ width: 16, height: 16, cursor: 'pointer' }}
-                                                  />
-                                                  <span style={{ fontSize: 12, fontWeight: 700 }}>¿Voucher Enviado al Cliente?</span>
-                                                </label>
-
-                                                <button 
-                                                  type="button" 
-                                                  onClick={() => handleSaveOperationalFields(booking.id)}
-                                                  className="btn btn-coral" 
-                                                  style={{ width: '100%', padding: '10px', fontSize: 13, fontWeight: 700, borderRadius: 10, marginTop: 'auto', border: 'none', cursor: 'pointer' }}
-                                                >
-                                                  Guardar Logística
-                                                </button>
-                                              </div>
-
-                                              {/* COLUMNA 2: REGISTRO FINANCIERO (ABONOS MULTIMONEDA) */}
-                                              <div style={{ 
-                                                background: 'var(--paper)', 
-                                                padding: 18, 
-                                                borderRadius: 14, 
-                                                boxShadow: 'var(--shadow-sm)', 
-                                                display: 'flex', 
-                                                flexDirection: 'column', 
-                                                gap: 12 
-                                              }}>
-                                                <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, borderBottom: '1px solid var(--line)', paddingBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
-                                                  <span>💰</span> Finanzas & Abonos
-                                                </h4>
-
-                                                {/* Caja de balance numérico en reales */}
-                                                <div style={{ 
-                                                  background: 'var(--cream-soft)', 
-                                                  padding: '10px 14px', 
-                                                  borderRadius: 10, 
-                                                  border: '1px solid var(--line-soft)', 
-                                                  display: 'flex', 
-                                                  flexDirection: 'column', 
-                                                  gap: 4 
-                                                }}>
-                                                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                                                    <span style={{ color: 'var(--ink-soft)' }}>Total Cotizado:</span>
-                                                    <strong style={{ fontFamily: 'var(--font-mono)' }}>R$ {booking.total}</strong>
-                                                  </div>
-                                                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                                                    <span style={{ color: 'var(--ink-soft)' }}>Abonado (Reales):</span>
-                                                    <strong style={{ fontFamily: 'var(--font-mono)', color: 'var(--moss)' }}>R$ {paidBrl.toLocaleString('es')}</strong>
-                                                  </div>
-                                                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, borderTop: '1px dashed var(--line)', paddingTop: 6, marginTop: 4 }}>
-                                                    <span style={{ fontWeight: 700 }}>Saldo Pendiente:</span>
-                                                    <strong style={{ fontFamily: 'var(--font-mono)', color: balanceRemaining === 0 ? 'var(--moss)' : 'var(--coral)', fontSize: 15 }}>
-                                                      R$ {balanceRemaining.toLocaleString('es')}
-                                                    </strong>
-                                                  </div>
-                                                </div>
-
-                                                {/* Historial de transacciones de este booking */}
-                                                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 110, overflowY: 'auto', paddingRight: 4 }}>
-                                                  <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.02em' }}>Transacciones</span>
-                                                  {activePayments.map((p: any) => (
-                                                    <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--cream-soft)', padding: '5px 8px', borderRadius: 6, fontSize: 11 }}>
-                                                      <div>
-                                                        <strong style={{ color: 'var(--ink)' }}>{p.currency} {p.amount}</strong>
-                                                        {p.currency !== 'BRL' && <span style={{ fontSize: 9, color: 'var(--muted)' }}> (x{p.exchangeRate})</span>}
-                                                        <span style={{ display: 'block', fontSize: 9, color: 'var(--muted)' }}>{p.paymentMethod.toUpperCase()} · {p.notes || 'Abono'}</span>
-                                                      </div>
-                                                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                                        <strong style={{ fontFamily: 'var(--font-mono)' }}>R$ {p.amountBrl}</strong>
-                                                        <button 
-                                                          type="button" 
-                                                          onClick={() => handleDeletePayment(p.id, booking.id, `${p.currency} ${p.amount}`)}
-                                                          style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--coral)', padding: 2, display: 'flex' }}
-                                                          title="Eliminar abono"
-                                                        >
-                                                          <Icon name="close" size={12} />
-                                                        </button>
-                                                      </div>
-                                                    </div>
-                                                  ))}
-                                                  {activePayments.length === 0 && (
-                                                    <div style={{ textAlign: 'center', fontSize: 11, padding: '8px 0', color: 'var(--muted)', fontStyle: 'italic' }}>
-                                                      No hay abonos registrados.
-                                                    </div>
-                                                  )}
-                                                </div>
-
-                                                {/* Formulario de abono multimoneda en vivo */}
-                                                <div style={{ borderTop: '1px dashed var(--line)', paddingTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                                                  <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 6 }}>
-                                                    <label style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                                      <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Monto</span>
-                                                      <input 
-                                                        type="number" 
-                                                        value={newPayAmount} 
-                                                        onChange={e => setNewPayAmount(Number(e.target.value))}
-                                                        style={{ padding: '5px 8px', borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, fontFamily: 'var(--font-mono)', background: 'var(--cream-soft)' }}
-                                                      />
-                                                    </label>
-                                                    <label style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                                      <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Moneda</span>
-                                                      <select 
-                                                        value={newPayCurrency} 
-                                                        onChange={e => setNewPayCurrency(e.target.value)}
-                                                        style={{ padding: '5px 8px', borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)', fontFamily: 'inherit' }}
-                                                      >
-                                                        <option value="BRL">BRL (R$)</option>
-                                                        <option value="USD">USD ($)</option>
-                                                        <option value="ARS">ARS ($)</option>
-                                                        <option value="EUR">EUR (€)</option>
-                                                      </select>
-                                                    </label>
-                                                  </div>
-
-                                                  <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 6 }}>
-                                                    <label style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                                      <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Tasa de Cambio</span>
-                                                      <input 
-                                                        type="number" 
-                                                        step="any"
-                                                        value={newPayRate} 
-                                                        onChange={e => setNewPayRate(Number(e.target.value))}
-                                                        style={{ padding: '5px 8px', borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, fontFamily: 'var(--font-mono)', background: 'var(--cream-soft)' }}
-                                                      />
-                                                    </label>
-                                                    <label style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                                      <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Método</span>
-                                                      <select 
-                                                        value={newPayMethod} 
-                                                        onChange={e => setNewPayMethod(e.target.value)}
-                                                        style={{ padding: '5px 8px', borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)', fontFamily: 'inherit' }}
-                                                      >
-                                                        <option value="pix">PIX</option>
-                                                        <option value="cash">Efectivo</option>
-                                                        <option value="card">Tarjeta</option>
-                                                        <option value="transfer">Transferencia</option>
-                                                      </select>
-                                                    </label>
-                                                  </div>
-
-                                                  <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end', marginTop: 2 }}>
-                                                    <label style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                                      <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Glosa / Notas del pago</span>
+                                                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                                                    <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                                      <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink)' }}>Hora de Recogida</span>
                                                       <input 
                                                         type="text" 
-                                                        placeholder="Ej: Pago seña"
-                                                        value={newPayNotes}
-                                                        onChange={e => setNewPayNotes(e.target.value)}
-                                                        style={{ padding: '5px 8px', borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)', fontFamily: 'inherit' }}
+                                                        value={opPickupTime} 
+                                                        onChange={e => setOpPickupTime(e.target.value)}
+                                                        placeholder="Ej: 08:30"
+                                                        style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 13, background: 'var(--cream-soft)', fontFamily: 'inherit' }}
                                                       />
                                                     </label>
-                                                    <button 
-                                                      type="button" 
-                                                      onClick={() => handleAddPayment(booking.id)}
-                                                      className="btn btn-moss"
-                                                      style={{ padding: '7px 12px', fontSize: 11, fontWeight: 700, borderRadius: 6, whiteSpace: 'nowrap', border: 'none', cursor: 'pointer' }}
-                                                    >
-                                                      Abonar
-                                                    </button>
-                                                  </div>
-                                                </div>
-                                              </div>
-
-                                              {/* COLUMNA 3: BITÁCORA DE COMENTARIOS (LOGS) */}
-                                              <div style={{ 
-                                                background: 'var(--paper)', 
-                                                padding: 18, 
-                                                borderRadius: 14, 
-                                                boxShadow: 'var(--shadow-sm)', 
-                                                display: 'flex', 
-                                                flexDirection: 'column', 
-                                                gap: 12 
-                                              }}>
-                                                <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, borderBottom: '1px solid var(--line)', paddingBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
-                                                  <span>📝</span> Bitácora Operativa
-                                                </h4>
-
-                                                {/* Historial cronológico de comentarios */}
-                                                <div style={{ 
-                                                  display: 'flex', 
-                                                  flexDirection: 'column', 
-                                                  gap: 8, 
-                                                  maxHeight: 140, 
-                                                  overflowY: 'auto', 
-                                                  paddingRight: 4, 
-                                                  flex: 1 
-                                                }}>
-                                                  {activeLogs.map((l: any) => (
-                                                    <div key={l.id} style={{ fontSize: 11, paddingBottom: 6, borderBottom: '1px dashed var(--line-soft)' }}>
-                                                      <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--muted)', fontSize: 9, marginBottom: 2 }}>
-                                                        <strong style={{ color: l.author === 'Sistema' ? 'var(--coral)' : 'var(--ink)' }}>{l.author}</strong>
-                                                        <span>{new Date(l.createdAt).toLocaleDateString('es-ES', {hour: '2-digit', minute:'2-digit'})}</span>
-                                                      </div>
-                                                      <div style={{ color: 'var(--ink-soft)', lineHeight: 1.35 }}>{l.comment}</div>
-                                                    </div>
-                                                  ))}
-                                                  {activeLogs.length === 0 && (
-                                                    <div style={{ textAlign: 'center', fontSize: 11, padding: '20px 0', color: 'var(--muted)', fontStyle: 'italic', margin: 'auto' }}>
-                                                      No hay comentarios ni registros en la bitácora.
-                                                    </div>
-                                                  )}
-                                                </div>
-
-                                                {/* Caja de registro de comentarios rápidos */}
-                                                <div style={{ borderTop: '1px dashed var(--line)', paddingTop: 8, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                                                  <label style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                                    <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Agregar Comentario</span>
-                                                    <textarea 
-                                                      rows={1}
-                                                      placeholder="Escribe comentarios, novedades o bitácora..."
-                                                      value={newLogComment}
-                                                      onChange={e => setNewLogComment(e.target.value)}
-                                                      style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, resize: 'vertical', background: 'var(--cream-soft)', fontFamily: 'inherit' }}
-                                                    />
-                                                  </label>
-                                                  <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                                                    <label style={{ flex: 1, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                                                      <span style={{ fontSize: 9, color: 'var(--muted)', whiteSpace: 'nowrap' }}>Por:</span>
+                                                    
+                                                    <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                                      <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink)' }}>Estado de Pago</span>
                                                       <select 
-                                                        value={newLogAuthor}
-                                                        onChange={e => setNewLogAuthor(e.target.value)}
-                                                        style={{ padding: '4px 6px', borderRadius: 4, border: '1px solid var(--line)', fontSize: 11, width: '100%', background: 'var(--cream-soft)', fontFamily: 'inherit', cursor: 'pointer' }}
+                                                        value={opPaymentStatus} 
+                                                        onChange={e => setOpPaymentStatus(e.target.value)}
+                                                        style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 13, background: 'var(--cream-soft)', cursor: 'pointer', fontFamily: 'inherit' }}
                                                       >
-                                                        <option value="Admin">Admin</option>
-                                                        <option value="Agustina">Agustina</option>
-                                                        <option value="Claudia">Claudia</option>
+                                                        <option value="PENDING">PENDING</option>
+                                                        <option value="PAID">PAID</option>
+                                                        <option value="CANCELLED">CANCELLED</option>
                                                       </select>
                                                     </label>
-                                                    <button 
-                                                      type="button" 
-                                                      onClick={() => handleAddComment(booking.id)}
-                                                      className="btn btn-ghost btn-sm"
-                                                      style={{ padding: '5px 10px', fontSize: 10, fontWeight: 700, borderRadius: 6, background: 'var(--cream-soft)', border: 'none', cursor: 'pointer' }}
-                                                    >
-                                                      Registrar
-                                                    </button>
+                                                  </div>
+
+                                                  <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink)' }}>Notas Operativas Internas</span>
+                                                    <textarea 
+                                                      rows={2}
+                                                      value={opOperatorNotes} 
+                                                      onChange={e => setOpOperatorNotes(e.target.value)}
+                                                      placeholder="Detalles logísticos o incidencias internas..."
+                                                      style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid var(--line)', fontSize: 13, background: 'var(--cream-soft)', resize: 'vertical', fontFamily: 'inherit' }}
+                                                    />
+                                                  </label>
+
+                                                  <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', userSelect: 'none', margin: '4px 0' }}>
+                                                    <input 
+                                                      type="checkbox" 
+                                                      checked={opVoucherSent} 
+                                                      onChange={e => setOpVoucherSent(e.target.checked)}
+                                                      style={{ width: 16, height: 16, cursor: 'pointer' }}
+                                                    />
+                                                    <span style={{ fontSize: 12, fontWeight: 700 }}>¿Voucher Enviado al Cliente?</span>
+                                                  </label>
+
+                                                  <button 
+                                                    type="button" 
+                                                    onClick={() => handleSaveOperationalFields(booking.id)}
+                                                    className="btn btn-coral" 
+                                                    style={{ width: '100%', padding: '10px', fontSize: 13, fontWeight: 700, borderRadius: 10, marginTop: 'auto', border: 'none', cursor: 'pointer' }}
+                                                  >
+                                                    Guardar Logística
+                                                  </button>
+                                                </div>
+
+                                                {/* COLUMNA 2: REGISTRO FINANCIERO (ABONOS MULTIMONEDA) */}
+                                                <div style={{ 
+                                                  background: 'var(--paper)', 
+                                                  padding: 18, 
+                                                  borderRadius: 14, 
+                                                  boxShadow: 'var(--shadow-sm)', 
+                                                  display: 'flex', 
+                                                  flexDirection: 'column', 
+                                                  gap: 12 
+                                                }}>
+                                                  <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, borderBottom: '1px solid var(--line)', paddingBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                                                    <span>💰</span> Finanzas & Abonos
+                                                  </h4>
+
+                                                  {/* Caja de balance numérico en reales */}
+                                                  <div style={{ 
+                                                    background: 'var(--cream-soft)', 
+                                                    padding: '10px 14px', 
+                                                    borderRadius: 10, 
+                                                    border: '1px solid var(--line-soft)', 
+                                                    display: 'flex', 
+                                                    flexDirection: 'column', 
+                                                    gap: 4 
+                                                  }}>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                                                      <span style={{ color: 'var(--ink-soft)' }}>Total Cotizado:</span>
+                                                      <strong style={{ fontFamily: 'var(--font-mono)' }}>R$ {booking.total}</strong>
+                                                    </div>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                                                      <span style={{ color: 'var(--ink-soft)' }}>Abonado (Reales):</span>
+                                                      <strong style={{ fontFamily: 'var(--font-mono)', color: 'var(--moss)' }}>R$ {paidBrl.toLocaleString('es')}</strong>
+                                                    </div>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, borderTop: '1px dashed var(--line)', paddingTop: 6, marginTop: 4 }}>
+                                                      <span style={{ fontWeight: 700 }}>Saldo Pendiente:</span>
+                                                      <strong style={{ fontFamily: 'var(--font-mono)', color: balanceRemaining === 0 ? 'var(--moss)' : 'var(--coral)', fontSize: 15 }}>
+                                                        R$ {balanceRemaining.toLocaleString('es')}
+                                                      </strong>
+                                                    </div>
+                                                  </div>
+
+                                                  {/* Historial de transacciones de este booking */}
+                                                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 110, overflowY: 'auto', paddingRight: 4 }}>
+                                                    <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.02em' }}>Transacciones</span>
+                                                    {activePayments.map((p: any) => (
+                                                      <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--cream-soft)', padding: '5px 8px', borderRadius: 6, fontSize: 11 }}>
+                                                        <div>
+                                                          <strong style={{ color: 'var(--ink)' }}>{p.currency} {p.amount}</strong>
+                                                          {p.currency !== 'BRL' && <span style={{ fontSize: 9, color: 'var(--muted)' }}> (x{p.exchangeRate})</span>}
+                                                          <span style={{ display: 'block', fontSize: 9, color: 'var(--muted)' }}>{p.paymentMethod.toUpperCase()} · {p.notes || 'Abono'}</span>
+                                                        </div>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                                          <strong style={{ fontFamily: 'var(--font-mono)' }}>R$ {p.amountBrl}</strong>
+                                                          <button 
+                                                            type="button" 
+                                                            onClick={() => handleDeletePayment(p.id, booking.id, `${p.currency} ${p.amount}`)}
+                                                            style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--coral)', padding: 2, display: 'flex' }}
+                                                            title="Eliminar abono"
+                                                          >
+                                                            <Icon name="close" size={12} />
+                                                          </button>
+                                                        </div>
+                                                      </div>
+                                                    ))}
+                                                    {activePayments.length === 0 && (
+                                                      <div style={{ textAlign: 'center', fontSize: 11, padding: '8px 0', color: 'var(--muted)', fontStyle: 'italic' }}>
+                                                        No hay abonos registrados.
+                                                      </div>
+                                                    )}
+                                                  </div>
+
+                                                  {/* Formulario de abono multimoneda en vivo */}
+                                                  <div style={{ borderTop: '1px dashed var(--line)', paddingTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                                    <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 6 }}>
+                                                      <label style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                                        <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Monto</span>
+                                                        <input 
+                                                          type="number" 
+                                                          value={newPayAmount} 
+                                                          onChange={e => setNewPayAmount(Number(e.target.value))}
+                                                          style={{ padding: '5px 8px', borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, fontFamily: 'var(--font-mono)', background: 'var(--cream-soft)' }}
+                                                        />
+                                                      </label>
+                                                      <label style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                                        <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Moneda</span>
+                                                        <select 
+                                                          value={newPayCurrency} 
+                                                          onChange={e => setNewPayCurrency(e.target.value)}
+                                                          style={{ padding: '5px 8px', borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)', fontFamily: 'inherit' }}
+                                                        >
+                                                          <option value="BRL">BRL (R$)</option>
+                                                          <option value="USD">USD ($)</option>
+                                                          <option value="ARS">ARS ($)</option>
+                                                          <option value="EUR">EUR (€)</option>
+                                                        </select>
+                                                      </label>
+                                                    </div>
+
+                                                    <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 6 }}>
+                                                      <label style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                                        <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Tasa de Cambio</span>
+                                                        <input 
+                                                          type="number" 
+                                                          step="any"
+                                                          value={newPayRate} 
+                                                          onChange={e => setNewPayRate(Number(e.target.value))}
+                                                          style={{ padding: '5px 8px', borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, fontFamily: 'var(--font-mono)', background: 'var(--cream-soft)' }}
+                                                        />
+                                                      </label>
+                                                      <label style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                                        <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Método</span>
+                                                        <select 
+                                                          value={newPayMethod} 
+                                                          onChange={e => setNewPayMethod(e.target.value)}
+                                                          style={{ padding: '5px 8px', borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)', fontFamily: 'inherit' }}
+                                                        >
+                                                          <option value="pix">PIX</option>
+                                                          <option value="cash">Efectivo</option>
+                                                          <option value="card">Tarjeta</option>
+                                                          <option value="transfer">Transferencia</option>
+                                                        </select>
+                                                      </label>
+                                                    </div>
+
+                                                    <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end', marginTop: 2 }}>
+                                                      <label style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                                        <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Glosa / Notas del pago</span>
+                                                        <input 
+                                                          type="text" 
+                                                          placeholder="Ej: Pago seña"
+                                                          value={newPayNotes}
+                                                          onChange={e => setNewPayNotes(e.target.value)}
+                                                          style={{ padding: '5px 8px', borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)', fontFamily: 'inherit' }}
+                                                        />
+                                                      </label>
+                                                      <button 
+                                                        type="button" 
+                                                        onClick={() => handleAddPayment(booking.id)}
+                                                        className="btn btn-moss"
+                                                        style={{ padding: '7px 12px', fontSize: 11, fontWeight: 700, borderRadius: 6, whiteSpace: 'nowrap', border: 'none', cursor: 'pointer' }}
+                                                      >
+                                                        Abonar
+                                                      </button>
+                                                    </div>
                                                   </div>
                                                 </div>
-                                              </div>
 
-                                            </div>
-                                          </td>
-                                        </tr>
+                                                {/* COLUMNA 3: BITÁCORA DE COMENTARIOS (LOGS) */}
+                                                <div style={{ 
+                                                  background: 'var(--paper)', 
+                                                  padding: 18, 
+                                                  borderRadius: 14, 
+                                                  boxShadow: 'var(--shadow-sm)', 
+                                                  display: 'flex', 
+                                                  flexDirection: 'column', 
+                                                  gap: 12 
+                                                }}>
+                                                  <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700, borderBottom: '1px solid var(--line)', paddingBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                                                    <span>📝</span> Bitácora Operativa
+                                                  </h4>
+
+                                                  {/* Historial cronológico de comentarios */}
+                                                  <div style={{ 
+                                                    display: 'flex', 
+                                                    flexDirection: 'column', 
+                                                    gap: 8, 
+                                                    maxHeight: 140, 
+                                                    overflowY: 'auto', 
+                                                    paddingRight: 4, 
+                                                    flex: 1 
+                                                  }}>
+                                                    {activeLogs.map((l: any) => (
+                                                      <div key={l.id} style={{ fontSize: 11, paddingBottom: 6, borderBottom: '1px dashed var(--line-soft)' }}>
+                                                        <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--muted)', fontSize: 9, marginBottom: 2 }}>
+                                                          <strong style={{ color: l.author === 'Sistema' ? 'var(--coral)' : 'var(--ink)' }}>{l.author}</strong>
+                                                          <span>{new Date(l.createdAt).toLocaleDateString('es-ES', {hour: '2-digit', minute:'2-digit'})}</span>
+                                                        </div>
+                                                        <div style={{ color: 'var(--ink-soft)', lineHeight: 1.35 }}>{l.comment}</div>
+                                                      </div>
+                                                    ))}
+                                                    {activeLogs.length === 0 && (
+                                                      <div style={{ textAlign: 'center', fontSize: 11, padding: '20px 0', color: 'var(--muted)', fontStyle: 'italic', margin: 'auto' }}>
+                                                        No hay comentarios ni registros en la bitácora.
+                                                      </div>
+                                                    )}
+                                                  </div>
+
+                                                  {/* Caja de registro de comentarios rápidos */}
+                                                  <div style={{ borderTop: '1px dashed var(--line)', paddingTop: 8, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                                    <label style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                                      <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Agregar Comentario</span>
+                                                      <textarea 
+                                                        rows={1}
+                                                        placeholder="Escribe comentarios, novedades o bitácora..."
+                                                        value={newLogComment}
+                                                        onChange={e => setNewLogComment(e.target.value)}
+                                                        style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, resize: 'vertical', background: 'var(--cream-soft)', fontFamily: 'inherit' }}
+                                                      />
+                                                    </label>
+                                                    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                                                      <label style={{ flex: 1, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                                                        <span style={{ fontSize: 9, color: 'var(--muted)', whiteSpace: 'nowrap' }}>Por:</span>
+                                                        <select 
+                                                          value={newLogAuthor}
+                                                          onChange={e => setNewLogAuthor(e.target.value)}
+                                                          style={{ padding: '4px 6px', borderRadius: 4, border: '1px solid var(--line)', fontSize: 11, width: '100%', background: 'var(--cream-soft)', fontFamily: 'inherit', cursor: 'pointer' }}
+                                                        >
+                                                          <option value="Admin">Admin</option>
+                                                          <option value="Agustina">Agustina</option>
+                                                          <option value="Claudia">Claudia</option>
+                                                        </select>
+                                                      </label>
+                                                      <button 
+                                                        type="button" 
+                                                        onClick={() => handleAddComment(booking.id)}
+                                                        className="btn btn-ghost btn-sm"
+                                                        style={{ padding: '5px 10px', fontSize: 10, fontWeight: 700, borderRadius: 6, background: 'var(--cream-soft)', border: 'none', cursor: 'pointer' }}
+                                                      >
+                                                        Registrar
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                                                </div>
+
+                                              </div>
+                                            </td>
+                                          </tr>
+                                        )}
+                                      </React.Fragment>
+                                    );
+                                  })
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+
+                          {/* VISTA DE DISPOSITIVOS MÓVILES (TARJETAS COMPACTAS TÁCTILES < 768px) */}
+                          <div className="mobile-only booking-cards-mobile" style={{ display: 'none', flexDirection: 'column', gap: 16 }}>
+                            {filteredBookings.length === 0 ? (
+                              <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--muted)', fontSize: 14, border: '1px dashed var(--line)', borderRadius: 12 }}>
+                                No se encontraron reservas con los filtros aplicados.
+                              </div>
+                            ) : (
+                              filteredBookings.map((booking, idx) => {
+                                const paidBrl = allPayments
+                                  .filter(p => p.bookingId === booking.id)
+                                  .reduce((sum, p) => sum + p.amountBrl, 0);
+                                const balanceRemaining = Math.max(0, booking.total - paidBrl);
+
+                                return (
+                                  <div key={booking.id || idx} className="booking-card-mobile" style={{
+                                    borderLeft: `5px solid ${getTourVariantStyles(booking.tourId).text}`
+                                  }}>
+                                    {/* Cabecera Móvil */}
+                                    <div className="booking-card-mobile-header">
+                                      <div>
+                                        <div className="booking-card-mobile-title">
+                                          👤 {booking.name} {booking.lastname}
+                                        </div>
+                                        <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
+                                          📍 Paí­s: {booking.country}
+                                        </div>
+                                      </div>
+                                      <Badge tone={booking.paymentStatus === 'PAID' ? 'moss' : booking.paymentStatus === 'CANCELLED' ? 'ink' : 'sun'}>
+                                        {booking.paymentStatus === 'PAID' ? 'Pagado' : booking.paymentStatus === 'CANCELLED' ? 'Cancelado' : 'Pendiente'}
+                                      </Badge>
+                                    </div>
+
+                                    {/* Detalles de la Reserva */}
+                                    <div className="booking-card-mobile-meta">
+                                      <div>
+                                        <strong style={{ fontSize: 14, color: 'var(--ink)' }}>{booking.tourTitle}</strong>
+                                      </div>
+                                      <div style={{ color: 'var(--coral)', fontWeight: 600, fontSize: 13, display: 'flex', alignItems: 'center', gap: 4 }}>
+                                        📅 {booking.date} · ⏱️ {booking.slot}
+                                      </div>
+                                      <div style={{ color: 'var(--ink-soft)' }}>
+                                        👥 Pax: {booking.adults} Adulto{booking.adults > 1 ? 's' : ''}
+                                        {booking.kids > 0 ? ` · ${booking.kids} Niño${booking.kids > 1 ? 's' : ''}` : ''}
+                                      </div>
+                                      
+                                      {booking.hotelAddress && (
+                                        <div style={{ fontSize: 12, color: 'var(--ink-soft)', marginTop: 4, background: 'rgba(0,0,0,0.02)', padding: '6px 10px', borderRadius: 8, border: '1px solid var(--line-soft)' }}>
+                                          🏨 <strong>Alojamiento:</strong> {booking.hotelAddress} {booking.hotelRoom ? `(Hab. ${booking.hotelRoom})` : ''}
+                                          {booking.pickupTime && <div style={{ color: 'var(--coral)', fontWeight: 700, marginTop: 2 }}>⏱️ Pickup: {booking.pickupTime}</div>}
+                                        </div>
                                       )}
-                                    </React.Fragment>
-                                  );
-                                })
-                              )}
-                            </tbody>
-                          </table>
-                        </div>
+
+                                      {booking.operatorNotes && (
+                                        <div style={{ fontSize: 11, color: 'var(--muted)', fontStyle: 'italic', marginTop: 2 }}>
+                                          💬 {booking.operatorNotes}
+                                        </div>
+                                      )}
+                                    </div>
+
+                                    {/* Fila Financiera Compacta */}
+                                    <div className="booking-card-mobile-financials">
+                                      <div>
+                                        <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase' }}>Cotizado</span>
+                                        <strong style={{ fontSize: 12, fontFamily: 'var(--font-mono)' }}>R$ {booking.total}</strong>
+                                      </div>
+                                      <div>
+                                        <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase' }}>Abonado</span>
+                                        <strong style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--moss)' }}>R$ {paidBrl}</strong>
+                                      </div>
+                                      <div>
+                                        <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase' }}>Saldo</span>
+                                        <strong style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: balanceRemaining === 0 ? 'var(--moss)' : 'var(--coral)' }}>R$ {balanceRemaining}</strong>
+                                      </div>
+                                    </div>
+
+                                    {/* Operativos de Guía / Voucher */}
+                                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                                      {booking.voucherSent ? (
+                                        <Badge tone="moss">Voucher Enviado ✉️</Badge>
+                                      ) : (
+                                        <Badge tone="sun">Voucher Pendiente</Badge>
+                                      )}
+                                      {booking.assignedGuide && (
+                                        <Badge tone="ink">Guí­a: {booking.assignedGuide}</Badge>
+                                      )}
+                                      {booking.assignedGuide && (
+                                        <Badge tone={booking.providerPaymentStatus === 'PAID' ? 'moss' : 'sun'}>
+                                          Guí­a: {booking.providerPaymentStatus === 'PAID' ? 'Pagado' : 'Pendiente'}
+                                        </Badge>
+                                      )}
+                                    </div>
+
+                                    {/* Botones de Operación Táctiles */}
+                                    <div className="booking-card-mobile-actions">
+                                      <button
+                                        type="button"
+                                        onClick={() => handleExpandBooking(booking)}
+                                        className="btn btn-ghost"
+                                        style={{
+                                          flex: 1,
+                                          background: expandedBookingId === booking.id ? 'var(--cream)' : 'var(--cream-soft)',
+                                          color: 'var(--ink)'
+                                        }}
+                                      >
+                                        ⚙️ {expandedBookingId === booking.id ? 'Cerrar' : 'Operar'}
+                                      </button>
+
+                                      <button
+                                        type="button"
+                                        onClick={() => handleWhatsAppAction(booking)}
+                                        className="btn btn-moss"
+                                        style={{
+                                          flex: 1.3,
+                                          background: '#25D366',
+                                          color: '#fff',
+                                          fontWeight: 700
+                                        }}
+                                      >
+                                        📲 WhatsApp
+                                      </button>
+
+                                      <button
+                                        type="button"
+                                        onClick={() => handleOpenEditBooking(booking)}
+                                        className="btn btn-ghost"
+                                        style={{
+                                          flex: 1,
+                                          background: 'var(--cream-soft)',
+                                          color: 'var(--ink)'
+                                        }}
+                                      >
+                                        ✏️ Editar
+                                      </button>
+                                    </div>
+
+                                    {/* Operación en Lí­nea Colapsable para Móvil (Apilado Verticalmente) */}
+                                    {expandedBookingId === booking.id && (
+                                      <div style={{
+                                        background: 'var(--cream-soft)',
+                                        padding: 14,
+                                        borderRadius: 12,
+                                        border: '1px solid var(--line-soft)',
+                                        marginTop: 8,
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: 16,
+                                        animation: 'fadeIn 0.2s ease',
+                                        textAlign: 'left'
+                                      }}>
+                                        {/* BLOQUE LOGÍSTICA */}
+                                        <div style={{ background: '#fff', padding: 14, borderRadius: 10, boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                                          <h4 style={{ margin: 0, fontSize: 13, fontWeight: 700, borderBottom: '1px solid var(--line)', paddingBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
+                                            <span>⚙️</span> Logí­stica Operativa
+                                          </h4>
+                                          
+                                          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                            <span style={{ fontSize: 10, fontWeight: 700 }}>Guí­a Asignado</span>
+                                            <input 
+                                              type="text" 
+                                              value={opAssignedGuide} 
+                                              onChange={e => setOpAssignedGuide(e.target.value)}
+                                              placeholder="Ej: Tiago Silva"
+                                              style={{ padding: 8, borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)' }}
+                                            />
+                                          </label>
+
+                                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                                            <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                              <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--coral)' }}>Costo Guí­a (R$)</span>
+                                              <input 
+                                                type="number" 
+                                                value={opGuideNetCost} 
+                                                onChange={e => setOpGuideNetCost(Number(e.target.value))}
+                                                placeholder="Ej: 150"
+                                                style={{ padding: 8, borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)' }}
+                                              />
+                                            </label>
+                                            <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                              <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--coral)' }}>Pago Guí­a</span>
+                                              <select 
+                                                value={opProviderPaymentStatus} 
+                                                onChange={e => setOpProviderPaymentStatus(e.target.value)}
+                                                style={{ padding: 8, borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)' }}
+                                              >
+                                                <option value="PENDING">Pendiente</option>
+                                                <option value="PAID">Pagado</option>
+                                              </select>
+                                            </label>
+                                          </div>
+
+                                          {opProviderPaymentStatus === 'PAID' && (
+                                            <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                              <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--coral)' }}>Fecha Depósito</span>
+                                              <input 
+                                                type="text" 
+                                                value={opProviderPaymentDate} 
+                                                onChange={e => setOpProviderPaymentDate(e.target.value)}
+                                                placeholder="Ej: 28 Mayo"
+                                                style={{ padding: 8, borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)' }}
+                                              />
+                                            </label>
+                                          )}
+
+                                          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 10 }}>
+                                            <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                              <span style={{ fontSize: 10, fontWeight: 700 }}>Pickup (Hora)</span>
+                                              <input 
+                                                type="text" 
+                                                value={opPickupTime} 
+                                                onChange={e => setOpPickupTime(e.target.value)}
+                                                placeholder="Ej: 08:45"
+                                                style={{ padding: 8, borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)' }}
+                                              />
+                                            </label>
+                                            <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                              <span style={{ fontSize: 10, fontWeight: 700 }}>Voucher</span>
+                                              <select 
+                                                value={opVoucherSent ? 'sent' : 'pending'} 
+                                                onChange={e => setOpVoucherSent(e.target.value === 'sent')}
+                                                style={{ padding: 8, borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)' }}
+                                              >
+                                                <option value="pending">Pendiente</option>
+                                                <option value="sent">Enviado ✉️</option>
+                                              </select>
+                                            </label>
+                                          </div>
+
+                                          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                            <span style={{ fontSize: 10, fontWeight: 700 }}>Notas de Operación</span>
+                                            <textarea 
+                                              rows={2}
+                                              value={opOperatorNotes} 
+                                              onChange={e => setOpOperatorNotes(e.target.value)}
+                                              placeholder="Notas de pickup o detalles especiales..."
+                                              style={{ padding: 8, borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)', resize: 'vertical' }}
+                                            />
+                                          </label>
+
+                                          <button 
+                                            type="button" 
+                                            onClick={() => handleSaveLogisticDetails(booking.id)}
+                                            disabled={actionLoading === `save-op-${booking.id}`}
+                                            className="btn btn-coral" 
+                                            style={{ width: '100%', padding: 10, fontSize: 11, fontWeight: 700, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'var(--coral)', color: '#fff', marginTop: 4 }}
+                                          >
+                                            {actionLoading === `save-op-${booking.id}` ? 'Guardando...' : '💾 Guardar Logí­stica'}
+                                          </button>
+                                        </div>
+
+                                        {/* BLOQUE ABONOS MULTIMONEDA */}
+                                        <div style={{ background: '#fff', padding: 14, borderRadius: 10, boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                                          <h4 style={{ margin: 0, fontSize: 13, fontWeight: 700, borderBottom: '1px solid var(--line)', paddingBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
+                                            <span>💰</span> Abonos & Caja
+                                          </h4>
+                                          
+                                          <div style={{ maxHeight: 110, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 6, border: '1px solid var(--line-soft)', padding: 8, borderRadius: 8, background: 'var(--cream-soft)' }}>
+                                            <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase' }}>Abonos del Cliente</span>
+                                            {activePayments.map((p) => (
+                                              <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11, background: '#fff', padding: '6px 8px', borderRadius: 6, border: '1px solid var(--line-soft)' }}>
+                                                <span>
+                                                  💵 <strong>{p.currency} {p.amount}</strong>
+                                                  {p.currency !== 'BRL' && <span style={{ color: 'var(--muted)', fontSize: 9 }}> (Equiv: R$ {p.amountBrl})</span>}
+                                                </span>
+                                                <button 
+                                                  type="button" 
+                                                  onClick={() => handleDeletePayment(p.id, booking.id)} 
+                                                  style={{ background: 'none', border: 'none', color: 'var(--coral)', cursor: 'pointer', padding: 2 }}
+                                                >
+                                                  ❌
+                                                </button>
+                                              </div>
+                                            ))}
+                                            {activePayments.length === 0 && (
+                                              <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--muted)', fontStyle: 'italic', padding: '10px 0' }}>
+                                                No hay abonos registrados.
+                                              </div>
+                                            )}
+                                          </div>
+
+                                          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, borderTop: '1px dashed var(--line)', paddingTop: 8 }}>
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 8 }}>
+                                              <label style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                                <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Monto</span>
+                                                <input 
+                                                  type="number" 
+                                                  value={newPayAmount} 
+                                                  onChange={e => setNewPayAmount(Number(e.target.value))}
+                                                  style={{ padding: 8, borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)' }}
+                                                />
+                                              </label>
+                                              <label style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                                <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Moneda</span>
+                                                <select 
+                                                  value={newPayCurrency} 
+                                                  onChange={e => {
+                                                    const cur = e.target.value;
+                                                    setNewPayCurrency(cur);
+                                                    if (cur === 'BRL') setNewPayRate(1.0);
+                                                    else if (cur === 'USD') setNewPayRate(5.1);
+                                                    else if (cur === 'ARS') setNewPayRate(0.005);
+                                                    else if (cur === 'EUR') setNewPayRate(5.5);
+                                                  }}
+                                                  style={{ padding: 8, borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)', cursor: 'pointer' }}
+                                                >
+                                                  <option value="BRL">BRL (R$)</option>
+                                                  <option value="USD">USD ($)</option>
+                                                  <option value="ARS">ARS ($)</option>
+                                                  <option value="EUR">EUR (€)</option>
+                                                </select>
+                                              </label>
+                                            </div>
+
+                                            {newPayCurrency !== 'BRL' && (
+                                              <label style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                                <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Tasa (1 = x BRL)</span>
+                                                <input 
+                                                  type="number" 
+                                                  step="0.0001"
+                                                  value={newPayRate} 
+                                                  onChange={e => setNewPayRate(Number(e.target.value))}
+                                                  style={{ padding: 8, borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)' }}
+                                                />
+                                              </label>
+                                            )}
+
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                                              <label style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                                <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Método</span>
+                                                <select 
+                                                  value={newPayMethod} 
+                                                  onChange={e => setNewPayMethod(e.target.value)}
+                                                  style={{ padding: 8, borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)', cursor: 'pointer' }}
+                                                >
+                                                  <option value="pix">PIX</option>
+                                                  <option value="cash">Efectivo</option>
+                                                  <option value="card">Tarjeta</option>
+                                                  <option value="transfer">Transferencia</option>
+                                                </select>
+                                              </label>
+                                              <label style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                                <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Notas</span>
+                                                <input 
+                                                  type="text" 
+                                                  placeholder="Comprobante..."
+                                                  value={newPayNotes} 
+                                                  onChange={e => setNewPayNotes(e.target.value)}
+                                                  style={{ padding: 8, borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)' }}
+                                                />
+                                              </label>
+                                            </div>
+
+                                            <button 
+                                              type="button" 
+                                              onClick={() => handleAddPayment(booking.id)}
+                                              disabled={actionLoading === `add-pay-${booking.id}`}
+                                              className="btn btn-moss" 
+                                              style={{ padding: 10, fontSize: 11, fontWeight: 700, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'var(--moss)', color: '#fff', marginTop: 4 }}
+                                            >
+                                              {actionLoading === `add-pay-${booking.id}` ? 'Registrando...' : '💵 Registrar Abono'}
+                                            </button>
+                                          </div>
+                                        </div>
+
+                                        {/* BLOQUE COMENTARIOS */}
+                                        <div style={{ background: '#fff', padding: 14, borderRadius: 10, boxShadow: 'var(--shadow-sm)', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                                          <h4 style={{ margin: 0, fontSize: 13, fontWeight: 700, borderBottom: '1px solid var(--line)', paddingBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
+                                            <span>📝</span> Bitácora Operativa
+                                          </h4>
+                                          
+                                          <div style={{ maxHeight: 110, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8, border: '1px solid var(--line-soft)', padding: 8, borderRadius: 8, background: 'var(--cream-soft)' }}>
+                                            {activeLogs.map((log) => (
+                                              <div key={log.id} style={{ fontSize: 11, background: '#fff', padding: 8, borderRadius: 8, border: '1px solid var(--line-soft)' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--muted)', fontSize: 10, marginBottom: 4 }}>
+                                                  <span style={{ fontWeight: 700, color: 'var(--coral)' }}>✍️ {log.author}</span>
+                                                  <span>{new Date(log.createdAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
+                                                </div>
+                                                <div style={{ color: 'var(--ink)' }}>{log.comment}</div>
+                                              </div>
+                                            ))}
+                                            {activeLogs.length === 0 && (
+                                              <div style={{ textAlign: 'center', fontSize: 11, padding: '15px 0', color: 'var(--muted)', fontStyle: 'italic' }}>
+                                                No hay comentarios ni registros.
+                                              </div>
+                                            )}
+                                          </div>
+
+                                          <div style={{ borderTop: '1px dashed var(--line)', paddingTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                            <label style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                              <span style={{ fontSize: 9, color: 'var(--muted)', fontWeight: 600 }}>Agregar Comentario</span>
+                                              <textarea 
+                                                rows={1}
+                                                placeholder="Comentario de bitácora..."
+                                                value={newLogComment}
+                                                onChange={e => setNewLogComment(e.target.value)}
+                                                style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid var(--line)', fontSize: 12, background: 'var(--cream-soft)', resize: 'vertical' }}
+                                              />
+                                            </label>
+                                            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                                              <label style={{ flex: 1, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                                                <span style={{ fontSize: 9, color: 'var(--muted)' }}>Por:</span>
+                                                <select 
+                                                  value={newLogAuthor}
+                                                  onChange={e => setNewLogAuthor(e.target.value)}
+                                                  style={{ padding: '4px 6px', borderRadius: 4, border: '1px solid var(--line)', fontSize: 11, background: 'var(--cream-soft)', width: '100%', cursor: 'pointer' }}
+                                                >
+                                                  <option value="Admin">Admin</option>
+                                                  <option value="Agustina">Agustina</option>
+                                                  <option value="Claudia">Claudia</option>
+                                                </select>
+                                              </label>
+                                              <button 
+                                                type="button" 
+                                                onClick={() => handleAddComment(booking.id)}
+                                                className="btn btn-ghost btn-sm"
+                                                style={{ padding: '5px 10px', fontSize: 10, fontWeight: 700, borderRadius: 6, background: 'var(--cream-soft)', border: 'none', cursor: 'pointer' }}
+                                              >
+                                                Registrar
+                                              </button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })
+                            )}
+                          </div>
+                        </>
                       ) : (
                         /* VISTA CALENDARIO MENSUAL (MAYO 2026) */
                         <div style={{ animation: 'fadeIn 0.2s ease', textAlign: 'left' }}>
@@ -3357,7 +3792,7 @@ export default function AdminDashboard() {
 
             <form onSubmit={handleCreateBookingSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div className="grid-2-col">
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>Nombre *</span>
                   <input type="text" required value={formName} onChange={e => setFormName(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} placeholder="Juan" />
@@ -3368,7 +3803,7 @@ export default function AdminDashboard() {
                 </label>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 12 }}>
+              <div className="grid-2-col">
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>WhatsApp *</span>
                   <input type="text" required value={formWhatsapp} onChange={e => setFormWhatsapp(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} placeholder="Ej: +54 9 11 9999-8888" />
@@ -3386,7 +3821,7 @@ export default function AdminDashboard() {
 
               <div style={{ borderTop: '1px dashed var(--line-soft)', paddingTop: 12 }} />
 
-              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 10 }}>
+              <div className="grid-3-col">
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>Hotel / Alojamiento</span>
                   <input type="text" value={formHotelAddress} onChange={e => setFormHotelAddress(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} placeholder="Hotel Vila do Farol" />
@@ -3412,7 +3847,7 @@ export default function AdminDashboard() {
                 </select>
               </label>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div className="grid-2-col">
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>Fecha *</span>
                   <input type="text" required value={formDate} onChange={e => setFormDate(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} placeholder="Ej: 28 Mayo" />
@@ -3423,7 +3858,7 @@ export default function AdminDashboard() {
                 </label>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+              <div className="grid-3-col-equal">
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>Adultos *</span>
                   <input type="number" required min={1} value={formAdults} onChange={e => setFormAdults(Number(e.target.value))} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} />
@@ -3535,7 +3970,7 @@ export default function AdminDashboard() {
 
             <form onSubmit={handleEditBookingSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div className="grid-2-col">
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>Nombre *</span>
                   <input type="text" required value={formName} onChange={e => setFormName(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} />
@@ -3546,7 +3981,7 @@ export default function AdminDashboard() {
                 </label>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 12 }}>
+              <div className="grid-2-col">
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>WhatsApp *</span>
                   <input type="text" required value={formWhatsapp} onChange={e => setFormWhatsapp(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} />
@@ -3564,7 +3999,7 @@ export default function AdminDashboard() {
 
               <div style={{ borderTop: '1px dashed var(--line-soft)', paddingTop: 12 }} />
 
-              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 10 }}>
+              <div className="grid-3-col">
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>Hotel / Alojamiento</span>
                   <input type="text" value={formHotelAddress} onChange={e => setFormHotelAddress(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} />
@@ -3590,7 +4025,7 @@ export default function AdminDashboard() {
                 </select>
               </label>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div className="grid-2-col">
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>Fecha *</span>
                   <input type="text" required value={formDate} onChange={e => setFormDate(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} />
@@ -3601,7 +4036,7 @@ export default function AdminDashboard() {
                 </label>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+              <div className="grid-3-col-equal">
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>Adultos *</span>
                   <input type="number" required min={1} value={formAdults} onChange={e => setFormAdults(Number(e.target.value))} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} />
@@ -3616,7 +4051,7 @@ export default function AdminDashboard() {
                 </label>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div className="grid-2-col">
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>Método de Pago</span>
                   <select value={formPaymentMethod} onChange={e => setFormPaymentMethod(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit', cursor: 'pointer' }}>
@@ -3638,7 +4073,7 @@ export default function AdminDashboard() {
 
               <div style={{ borderTop: '1px dashed var(--line-soft)', paddingTop: 12 }} />
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 12 }}>
+              <div className="grid-2-col">
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--coral)' }}>Costo Neto Guía (R$)</span>
                   <input type="number" min={0} value={formGuideNetCost} onChange={e => setFormGuideNetCost(Number(e.target.value))} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'var(--font-mono)' }} placeholder="Ej: 150" />

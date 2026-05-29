@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  experimental: {
+    optimizePackageImports: ['@/components', '@/lib'],
+  },
   webpack: (config) => {
     if (config.resolve) {
       config.resolve.symlinks = false;
