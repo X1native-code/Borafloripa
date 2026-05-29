@@ -1,0 +1,3216 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Bora Floripa — Experiencias en Florianópolis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+:root {
+  /* tokens — overridden by paleta tweak */
+  --cream: #F7F1E3;
+  --cream-soft: #FBF7EC;
+  --ink: #0E1B2C;
+  --ink-soft: #2A3A50;
+  --muted: #6E7686;
+  --line: #E6DDC6;
+  --line-soft: #EFE7D3;
+  --paper: #FFFFFF;
+
+  --turq: #00B5B0;
+  --turq-deep: #008A87;
+  --coral: #FF6A4D;
+  --coral-deep: #E94F30;
+  --sun: #FFC42F;
+  --moss: #2D6B3A;
+  --sky: #4FB7E8;
+
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+
+  --shadow-sm: 0 1px 2px rgba(14,27,44,.05), 0 0 0 1px rgba(14,27,44,.04);
+  --shadow-md: 0 8px 24px -8px rgba(14,27,44,.15), 0 0 0 1px rgba(14,27,44,.04);
+  --shadow-lg: 0 24px 48px -16px rgba(14,27,44,.18), 0 0 0 1px rgba(14,27,44,.05);
+
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-ui: "Geist", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --density: 1; /* tweakable */
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-ui);
+  color: var(--ink);
+  background: var(--cream);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+img { max-width: 100%; display: block; }
+
+/* utility */
+.wrap { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+.wrap-wide { width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 720px) { .wrap, .wrap-wide { padding: 0 16px; } }
+
+.display { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; line-height: 0.98; text-wrap: balance; }
+.eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+/* photo placeholder */
+.ph {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--line-soft);
+  color: var(--ink);
+  isolation: isolate;
+}
+.ph::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--ph-stripe-a, rgba(0,0,0,0.05)) 0px,
+    var(--ph-stripe-a, rgba(0,0,0,0.05)) 8px,
+    var(--ph-stripe-b, rgba(0,0,0,0.02)) 8px,
+    var(--ph-stripe-b, rgba(0,0,0,0.02)) 16px
+  );
+  z-index: 0;
+}
+.ph-label {
+  position: absolute;
+  bottom: 10px; left: 10px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  background: rgba(14,27,44,0.86);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  z-index: 2;
+  letter-spacing: 0.02em;
+  max-width: calc(100% - 20px);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.ph-label::before {
+  content: "";
+  display: inline-block;
+  width: 6px; height: 6px;
+  background: var(--sun);
+  border-radius: 50%;
+}
+.ph-glyph {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  opacity: 0.5;
+}
+
+/* color variants for placeholders */
+.ph-turq { background: #B7E8E6; --ph-stripe-a: rgba(0,138,135,0.18); --ph-stripe-b: rgba(0,138,135,0.06); }
+.ph-coral { background: #FFD3C6; --ph-stripe-a: rgba(233,79,48,0.18); --ph-stripe-b: rgba(233,79,48,0.06); }
+.ph-sun { background: #FFE9A8; --ph-stripe-a: rgba(180,130,0,0.18); --ph-stripe-b: rgba(180,130,0,0.06); }
+.ph-moss { background: #C2DCC4; --ph-stripe-a: rgba(45,107,58,0.18); --ph-stripe-b: rgba(45,107,58,0.06); }
+.ph-sky { background: #C7E6F6; --ph-stripe-a: rgba(36,120,170,0.18); --ph-stripe-b: rgba(36,120,170,0.06); }
+.ph-ink { background: #243245; --ph-stripe-a: rgba(255,255,255,0.10); --ph-stripe-b: rgba(255,255,255,0.03); color: #fff; }
+
+/* buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--font-ui); font-weight: 600;
+  padding: 12px 18px;
+  border-radius: 999px;
+  transition: transform .08s ease, box-shadow .15s ease, background .15s;
+  white-space: nowrap;
+  font-size: 15px;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--ink); color: var(--cream); }
+.btn-primary:hover { background: #1a2a40; }
+.btn-coral { background: var(--coral); color: #fff; }
+.btn-coral:hover { background: var(--coral-deep); }
+.btn-turq { background: var(--turq); color: #fff; }
+.btn-turq:hover { background: var(--turq-deep); }
+.btn-ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+.btn-ghost:hover { background: rgba(14,27,44,0.04); }
+.btn-lg { padding: 16px 24px; font-size: 16px; }
+.btn-xl { padding: 18px 28px; font-size: 17px; }
+.btn-sm { padding: 8px 12px; font-size: 13px; }
+
+/* chip */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 999px;
+  font-size: 13px; font-weight: 500;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  white-space: nowrap;
+}
+
+/* badge */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.badge-coral { background: var(--coral); color: #fff; }
+.badge-sun { background: var(--sun); color: var(--ink); }
+.badge-turq { background: var(--turq); color: #fff; }
+.badge-ink { background: var(--ink); color: var(--cream); }
+.badge-soft { background: var(--cream-soft); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+
+/* card */
+.card {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: transform .15s ease, box-shadow .15s ease;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+/* star */
+.stars { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; }
+.stars svg { color: var(--sun); }
+
+/* layout */
+section { position: relative; }
+
+/* hash-route page wrapper */
+.page { animation: fadeIn .25s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* nav-active link underline */
+.nav-link { position: relative; padding: 6px 2px; font-weight: 500; }
+.nav-link.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px; background: var(--coral); border-radius: 2px; }
+
+/* hide scrollbars on chip rows */
+.hscroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.hscroll::-webkit-scrollbar { display: none; }
+
+/* sticky search bar in hero */
+.hero-search {
+  background: var(--paper);
+  border-radius: 999px;
+  display: flex;
+  align-items: stretch;
+  padding: 6px;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 720px;
+}
+@media (max-width: 720px) {
+  .hero-search {
+    border-radius: 20px;
+    flex-direction: column;
+    padding: 6px;
+    gap: 2px;
+  }
+}
+.hero-search .field {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 999px;
+  transition: background .15s;
+}
+@media (max-width: 720px) {
+  .hero-search .field {
+    border-radius: 14px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line-soft);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .hero-search .field:last-of-type { border-bottom: none; }
+}
+.hero-search .field:hover { background: var(--cream-soft); }
+.hero-search .field-label { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.hero-search .field-value { font-size: 15px; font-weight: 500; color: var(--ink); }
+.hero-search .field-value.placeholder { color: var(--muted); font-weight: 400; }
+@media (max-width: 720px) {
+  .hero-search .field-label { font-size: 10px; }
+  .hero-search .field-value { font-size: 14px; }
+}
+.hero-search .divider { width: 1px; background: var(--line-soft); margin: 8px 0; }
+@media (max-width: 720px) { .hero-search .divider { display: none; } }
+@media (max-width: 720px) {
+  .hero-search .btn {
+    border-radius: 14px !important;
+    margin: 4px 0 0 !important;
+    padding: 14px !important;
+    font-size: 16px !important;
+    align-self: stretch !important;
+  }
+}
+
+/* whatsapp fab */
+.fab-wpp {
+  position: fixed; bottom: 24px; right: 24px; z-index: 50;
+  background: #25D366;
+  color: #fff;
+  border-radius: 999px;
+  padding: 14px 18px;
+  display: inline-flex; align-items: center; gap: 10px;
+  font-weight: 600;
+  box-shadow: 0 12px 32px -8px rgba(37,211,102,0.5), 0 0 0 1px rgba(0,0,0,0.04);
+  transition: transform .15s;
+}
+.fab-wpp:hover { transform: translateY(-2px); }
+@media (max-width: 720px) { .fab-wpp { bottom: 16px; right: 16px; padding: 12px 14px; } .fab-wpp .fab-label { display: none; } }
+
+/* share buttons */
+.share-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.share-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-radius: 999px;
+  font-size: 14px; font-weight: 600;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: transform .08s, background .15s;
+}
+.share-btn:hover { background: var(--cream-soft); }
+.share-btn:active { transform: translateY(1px); }
+.share-btn.wpp { background: #25D366; color: #fff; box-shadow: none; }
+.share-btn.ig { background: linear-gradient(135deg, #F58529 0%, #DD2A7B 50%, #8134AF 100%); color: #fff; box-shadow: none; }
+.share-btn.tt { background: var(--ink); color: #fff; box-shadow: none; }
+.share-btn.copy { }
+
+/* filters sidebar */
+.filter-section { border-bottom: 1px solid var(--line); padding: 18px 0; }
+.filter-section:last-child { border-bottom: none; }
+.filter-title { font-weight: 700; font-size: 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+
+/* checkbox */
+.checkbox-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; cursor: pointer; font-size: 14px; }
+.checkbox-row input { accent-color: var(--ink); width: 16px; height: 16px; }
+.checkbox-row .count { margin-left: auto; color: var(--muted); font-size: 12px; }
+
+/* keyframes ribbon */
+@keyframes scrollRibbon {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.ribbon-track {
+  display: inline-flex;
+  gap: 32px;
+  animation: scrollRibbon 60s linear infinite;
+  white-space: nowrap;
+}
+
+/* skeleton text underline highlight */
+.highlight-coral { background: linear-gradient(transparent 60%, rgba(255,106,77,0.35) 60%); padding: 0 4px; }
+.highlight-sun { background: linear-gradient(transparent 60%, rgba(255,196,47,0.5) 60%); padding: 0 4px; }
+.highlight-turq { background: linear-gradient(transparent 60%, rgba(0,181,176,0.3) 60%); padding: 0 4px; }
+
+/* dotted divider */
+.dotted-div { border-top: 1px dashed var(--line); margin: 24px 0; }
+
+/* sticky right column on tour detail */
+@media (min-width: 960px) { .tour-sticky { position: sticky; top: 88px; } }
+
+/* hide-scrollbar */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ── Mobile responsive overrides ── */
+
+/* Gallery mosaic: single-row 2-col on mobile */
+@media (max-width: 640px) {
+  .gallery-grid {
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: 160px 120px !important;
+  }
+  .gallery-grid > *:first-child {
+    grid-row: 1 / 2 !important;
+    grid-column: 1 / 3 !important;
+  }
+}
+@media (min-width: 641px) and (max-width: 959px) {
+  .gallery-grid {
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: 200px 140px !important;
+  }
+  .gallery-grid > *:first-child {
+    grid-row: 1 / 2 !important;
+    grid-column: 1 / 3 !important;
+  }
+}
+
+/* Categories strip: 2 cols on small, 3 on medium */
+@media (max-width: 480px) {
+  .cats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+/* Tour/Search/Checkout multi-col grids → 1 col */
+@media (max-width: 880px) {
+  .search-grid { grid-template-columns: 1fr !important; }
+  .filters-aside { display: none !important; }
+  .mobile-filter-btn { display: inline-flex !important; }
+  .checkout-grid { grid-template-columns: 1fr !important; }
+  .checkout-grid .tour-sticky { position: static !important; }
+}
+@media (max-width: 960px) {
+  .tour-grid { grid-template-columns: 1fr !important; }
+  .include-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+  .reviews-grid { grid-template-columns: 1fr !important; }
+  .why-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+  .about-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+  .mobile-book-bar { display: flex !important; }
+  body { padding-bottom: 80px; }
+  .fab-wpp { bottom: 88px !important; }
+}
+
+/* SectionTitle: stack title + action on small screens */
+@media (max-width: 600px) {
+  .section-title-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+}
+
+/* Footer grid: 2-col on tablet, 1-col on mobile */
+@media (max-width: 600px) {
+  .footer-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
+}
+@media (min-width: 601px) and (max-width: 880px) {
+  .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 28px !important; }
+}
+
+/* Trust strip: 2-col on mobile */
+@media (max-width: 600px) {
+  .trust-strip { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+}
+
+/* Pillar cards in WhyBora: 1-col on very small */
+@media (max-width: 420px) {
+  .pillar-grid { grid-template-columns: 1fr !important; }
+}
+
+/* hero-search mobile handled above */
+
+/* Share row: wrap tightly */
+@media (max-width: 400px) {
+  .share-row { gap: 6px !important; }
+  .share-btn { padding: 8px 10px !important; font-size: 13px !important; }
+}
+
+/* Tour card share buttons: hide text on very small */
+@media (max-width: 360px) {
+  .card-share-text { display: none !important; }
+}
+
+/* Closing CTA rotated tag: simplify on mobile */
+@media (max-width: 480px) {
+  .cta-tag { transform: none !important; }
+}
+
+/* Form grids → single col */
+@media (max-width: 600px) {
+  .form-grid { grid-template-columns: 1fr !important; }
+  .pay-grid { grid-template-columns: 1fr !important; }
+}
+
+/* Tour booking card pax row on mobile */
+@media (max-width: 480px) {
+  .booking-card { padding: 18px !important; }
+}
+
+/* Prevent text overflow on very narrow screens */
+@media (max-width: 360px) {
+  .btn { padding: 10px 14px !important; font-size: 14px !important; }
+  .btn-xl { padding: 14px 18px !important; }
+  .chip { padding: 6px 10px !important; font-size: 12px !important; }
+}
+
+/* Order summary on mobile: comes after form */
+@media (max-width: 880px) {
+  .order-summary { order: -1; }
+}
+
+/* Prevent horizontal scroll */
+body, #root { overflow-x: hidden; }
+
+/* Ensure buttons and chips don't force horizontal scroll */
+@media (max-width: 480px) {
+  .btn-xl { padding: 14px 20px !important; font-size: 15px !important; }
+  .btn-lg { padding: 13px 18px !important; font-size: 14px !important; }
+}
+
+/* Hero buttons wrap on mobile */
+@media (max-width: 540px) {
+  .hero-btns { flex-direction: column !important; }
+  .hero-btns .btn { width: 100% !important; justify-content: center !important; }
+  .cta-btns { flex-direction: column !important; }
+  .cta-btns .btn { width: 100% !important; justify-content: center !important; }
+}
+
+/* Section padding on mobile */
+@media (max-width: 640px) {
+  section[style*="paddingTop: 80"] { padding-top: 48px !important; }
+  section[style*="padding: \"80px"] { padding: 48px 0 !important; }
+}
+
+/* Booking card full width on mobile */
+@media (max-width: 960px) {
+  .booking-card { width: 100% !important; max-width: 480px; margin: 0 auto; }
+}
+
+/* Tour detail: hide sticky aside on mobile (mobile bar takes over) */
+@media (max-width: 959px) {
+  .tour-booking-aside { display: none !important; }
+}
+</style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="application/json" id="tweaks-defaults">
+    /*EDITMODE-BEGIN*/{"palette":"tropical","displayFont":"Bricolage Grotesque","density":"cozy","shareEmphasis":"loud"}/*EDITMODE-END*/
+  </script>
+
+  <!-- React + Babel -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+  <script type="text/babel">
+// ========== data.js ==========
+// Tours data — Florianópolis & surroundings
+const TOURS = [
+  {
+    id: "city-tour-floripa",
+    title: "City Tour Floripa: 7 paradas imperdibles",
+    subtitle: "Centro histórico, Lagoa, Mirador da Lagoa y atardecer en Joaquina",
+    cat: "Clásicos",
+    tags: ["Día completo", "Familia", "Recogida en hotel"],
+    duration: "8 h",
+    rating: 4.9,
+    reviews: 1287,
+    priceFrom: 180,
+    badge: "Más vendido",
+    photoVariant: "turq",
+    glyph: "🌊",
+    photoLabel: "vista aérea ponte hercílio luz",
+    location: "Florianópolis (isla)",
+  },
+  {
+    id: "costa-da-lagoa",
+    title: "Costa da Lagoa en barco + caminata",
+    subtitle: "Pueblito pesquero sin acceso por tierra. Almuerzo de mariscos opcional.",
+    cat: "Aventura",
+    tags: ["Medio día", "Barco", "Bora con niños"],
+    duration: "5 h",
+    rating: 4.95,
+    reviews: 842,
+    priceFrom: 145,
+    badge: "Recomendado",
+    photoVariant: "moss",
+    glyph: "🚤",
+    photoLabel: "costa da lagoa atardecer",
+    location: "Lagoa da Conceição",
+  },
+  {
+    id: "balneario-cambo-telef",
+    title: "Balneário Camboriú + Teleférico Unipraias",
+    subtitle: "Skyline tropical de Brasil, parque de la mata atlántica y tirolesa.",
+    cat: "Día completo",
+    tags: ["Día completo", "Bus", "Adrenalina"],
+    duration: "10 h",
+    rating: 4.7,
+    reviews: 614,
+    priceFrom: 220,
+    badge: "Cancelación gratis",
+    photoVariant: "sky",
+    glyph: "🚡",
+    photoLabel: "teleférico unipraias",
+    location: "Balneário Camboriú",
+  },
+  {
+    id: "guarda-do-embau",
+    title: "Surf en Guarda do Embaú",
+    subtitle: "Una de las 25 mejores olas del mundo. Clase + tabla incluidas.",
+    cat: "Aventura",
+    tags: ["Medio día", "Surf", "Principiantes"],
+    duration: "6 h",
+    rating: 4.85,
+    reviews: 397,
+    priceFrom: 260,
+    badge: "Adrenalina",
+    photoVariant: "turq",
+    glyph: "🏄",
+    photoLabel: "surf praia da guarda",
+    location: "Palhoça (40 min)",
+  },
+  {
+    id: "beto-carrero",
+    title: "Beto Carrero World con traslado ida y vuelta",
+    subtitle: "El parque temático más grande de América Latina. Día completo + bus.",
+    cat: "Familia",
+    tags: ["Día completo", "Familia", "Bora con niños"],
+    duration: "12 h",
+    rating: 4.8,
+    reviews: 1932,
+    priceFrom: 340,
+    badge: "Más vendido",
+    photoVariant: "coral",
+    glyph: "🎢",
+    photoLabel: "beto carrero parque temático",
+    location: "Penha (2h en bus)",
+  },
+  {
+    id: "lagoinha-leste",
+    title: "Trilha Lagoinha do Leste",
+    subtitle: "Caminata 7 km hasta la playa virgen más linda de la isla.",
+    cat: "Aventura",
+    tags: ["Día completo", "Trekking", "Sin sol no recomendado"],
+    duration: "7 h",
+    rating: 4.92,
+    reviews: 286,
+    priceFrom: 160,
+    badge: "Recomendado",
+    photoVariant: "moss",
+    glyph: "🥾",
+    photoLabel: "lagoinha do leste mirante",
+    location: "Pântano do Sul",
+  },
+  {
+    id: "ilha-do-campeche",
+    title: "Ilha do Campeche — el Caribe de Floripa",
+    subtitle: "Travesía en lancha, agua turquesa y petroglifos prehistóricos.",
+    cat: "Playas",
+    tags: ["Medio día", "Barco", "Familia"],
+    duration: "5 h",
+    rating: 4.88,
+    reviews: 1104,
+    priceFrom: 195,
+    badge: "Más vendido",
+    photoVariant: "turq",
+    glyph: "🏝️",
+    photoLabel: "ilha do campeche agua turquesa",
+    location: "Sur de la isla",
+  },
+  {
+    id: "pomerode-blumenau",
+    title: "Pomerode + Blumenau: la Alemania brasileña",
+    subtitle: "Arquitectura enxaimel, cervecería artesanal y almuerzo típico.",
+    cat: "Cultural",
+    tags: ["Día completo", "Bus", "Cultural"],
+    duration: "11 h",
+    rating: 4.65,
+    reviews: 412,
+    priceFrom: 270,
+    badge: "Cultural",
+    photoVariant: "sun",
+    glyph: "🍺",
+    photoLabel: "pomerode casas enxaimel",
+    location: "Vale Europeu (2h)",
+  },
+  {
+    id: "boat-trip-norte",
+    title: "Boat Trip norte de la isla: Daniela, Forte y Brava",
+    subtitle: "Catamarán privado, parada para snorkel y caipirinha a bordo.",
+    cat: "Playas",
+    tags: ["Día completo", "Barco", "Romántico"],
+    duration: "8 h",
+    rating: 4.93,
+    reviews: 521,
+    priceFrom: 310,
+    badge: "Romántico",
+    photoVariant: "sky",
+    glyph: "⛵",
+    photoLabel: "catamarán norte de floripa",
+    location: "Marina Itaguaçu",
+  },
+  {
+    id: "sunset-mole",
+    title: "Sunset en Praia Mole con DJ",
+    subtitle: "Atardecer dorado, drinks tropicales y sesión de DJ frente al mar.",
+    cat: "Atardeceres",
+    tags: ["Atardecer", "Romántico", "Bebidas"],
+    duration: "4 h",
+    rating: 4.9,
+    reviews: 312,
+    priceFrom: 130,
+    badge: "Nuevo",
+    photoVariant: "coral",
+    glyph: "🌅",
+    photoLabel: "atardecer praia mole",
+    location: "Praia Mole",
+  },
+  {
+    id: "traslado-aeropuerto",
+    title: "Traslado privado aeropuerto ↔ hotel",
+    subtitle: "Conductor bilingüe, monitor de vuelo y agua de cortesía.",
+    cat: "Traslados",
+    tags: ["24h", "Privado", "Bilingüe"],
+    duration: "30 min",
+    rating: 4.97,
+    reviews: 2841,
+    priceFrom: 95,
+    badge: "24h",
+    photoVariant: "ink",
+    glyph: "🚙",
+    photoLabel: "traslado privado SUV",
+    location: "FLN aeropuerto",
+  },
+  {
+    id: "gastronomico-ostras",
+    title: "Ruta de ostras y vino en Ribeirão",
+    subtitle: "Visita a fazenda marina, degustación de 6 ostras + 3 vinos.",
+    cat: "Cultural",
+    tags: ["Medio día", "Gastronómico", "+18"],
+    duration: "4 h",
+    rating: 4.86,
+    reviews: 198,
+    priceFrom: 240,
+    badge: "Gastronómico",
+    photoVariant: "sun",
+    glyph: "🦪",
+    photoLabel: "fazenda de ostras ribeirão",
+    location: "Ribeirão da Ilha",
+  },
+];
+
+const CATEGORIES = [
+  { id: "playas", name: "Playas", glyph: "🏖️", count: 28, variant: "turq" },
+  { id: "aventura", name: "Aventura", glyph: "🏄", count: 19, variant: "coral" },
+  { id: "familia", name: "Familia", glyph: "👨‍👩‍👧", count: 14, variant: "sun" },
+  { id: "atardeceres", name: "Atardeceres", glyph: "🌅", count: 9, variant: "coral" },
+  { id: "cultural", name: "Cultural", glyph: "🏛️", count: 11, variant: "moss" },
+  { id: "gastronomico", name: "Gastronómico", glyph: "🦪", count: 7, variant: "sun" },
+  { id: "barcos", name: "Barcos", glyph: "⛵", count: 12, variant: "sky" },
+  { id: "traslados", name: "Traslados", glyph: "🚙", count: 6, variant: "ink" },
+];
+
+const REVIEWS = [
+  { name: "Mariana C.", country: "🇦🇷 Buenos Aires", rating: 5, date: "Hace 3 días", text: "Costa da Lagoa fue mágico. El guía Tiago nos llevó a una cachoeira que no sale en ningún lado. Volvería mañana mismo.", tour: "Costa da Lagoa" },
+  { name: "Diego F.", country: "🇨🇱 Santiago", rating: 5, date: "Hace 1 semana", text: "Reservé el city tour 2 horas antes y todo perfecto. Recogida puntual, guía que hablaba español y paramos justo donde queríamos.", tour: "City Tour Floripa" },
+  { name: "Lucía M.", country: "🇪🇸 Madrid", rating: 5, date: "Hace 2 semanas", text: "Hicimos el sunset en Praia Mole y fue la mejor noche del viaje. Los drinks bien servidos, el DJ una pasada.", tour: "Sunset Praia Mole" },
+  { name: "Joaquín R.", country: "🇺🇾 Montevideo", rating: 5, date: "Hace 1 mes", text: "Llevé a mis viejos a Pomerode y les encantó. El bus impecable, el almuerzo abundante. Atención top desde Whatsapp.", tour: "Pomerode + Blumenau" },
+];
+
+const BLOG = [
+  { id: "lluvia", title: "Llueve en Floripa: 9 planes que igual valen la pena", excerpt: "Cuando el cielo se nubla, la isla muestra otra cara. Cachoeiras llenas, ostras frescas y los mejores cafés.", read: "6 min", photoVariant: "moss", photoLabel: "lluvia ribeirão da ilha" },
+  { id: "secreto", title: "Las 5 playas secretas que ningún tour te muestra", excerpt: "Lagoinha do Leste, Saquinho, Solidão... a dónde van los floripenses cuando quieren paz.", read: "8 min", photoVariant: "turq", photoLabel: "praia escondida sur de la isla" },
+  { id: "niños", title: "Bora con niños: itinerario de 4 días sin que se aburran", excerpt: "Probado con dos sobrinos de 6 y 9. Mezcla justa de playa, parque y heladerías clave.", read: "5 min", photoVariant: "sun", photoLabel: "niños jugando en jurerê" },
+  { id: "comer", title: "Dónde comer ostras frescas (y dónde NO)", excerpt: "Ribeirão da Ilha tiene 30 restaurantes. Te decimos los 4 que valen y los 3 trampa-turista.", read: "7 min", photoVariant: "coral", photoLabel: "ostras frescas ribeirão" },
+];
+
+window.TOURS = TOURS;
+window.CATEGORIES = CATEGORIES;
+window.REVIEWS = REVIEWS;
+window.BLOG = BLOG;
+
+
+// ========== icons.jsx ==========
+// Inline SVG icon set
+const Icon = ({ name, size = 18, stroke = 2, ...rest }) => {
+  const s = size;
+  const sw = stroke;
+  const common = { width: s, height: s, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: sw, strokeLinecap: "round", strokeLinejoin: "round", ...rest };
+  switch (name) {
+    case "search": return <svg {...common}><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>;
+    case "menu": return <svg {...common}><path d="M3 6h18M3 12h18M3 18h18"/></svg>;
+    case "close": return <svg {...common}><path d="M18 6 6 18M6 6l12 12"/></svg>;
+    case "calendar": return <svg {...common}><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>;
+    case "users": return <svg {...common}><path d="M16 11a4 4 0 1 0-8 0 4 4 0 0 0 8 0Z"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>;
+    case "map": return <svg {...common}><path d="M12 21s-7-7-7-12a7 7 0 1 1 14 0c0 5-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>;
+    case "clock": return <svg {...common}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>;
+    case "star": return <svg {...common} fill="currentColor" stroke="none"><path d="M12 2.5l2.9 6.5 7 .7-5.3 4.7 1.6 6.9L12 17.8l-6.2 3.5 1.6-6.9L2.1 9.7l7-.7L12 2.5Z"/></svg>;
+    case "star-line": return <svg {...common}><path d="M12 2.5l2.9 6.5 7 .7-5.3 4.7 1.6 6.9L12 17.8l-6.2 3.5 1.6-6.9L2.1 9.7l7-.7L12 2.5Z"/></svg>;
+    case "heart": return <svg {...common}><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6C19 16.5 12 21 12 21Z"/></svg>;
+    case "share": return <svg {...common}><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8 11 8-4M8 13l8 4"/></svg>;
+    case "check": return <svg {...common}><path d="m5 12 4 4 10-10"/></svg>;
+    case "x-mark": return <svg {...common}><path d="M18 6 6 18M6 6l12 12"/></svg>;
+    case "chevron-right": return <svg {...common}><path d="m9 6 6 6-6 6"/></svg>;
+    case "chevron-down": return <svg {...common}><path d="m6 9 6 6 6-6"/></svg>;
+    case "chevron-left": return <svg {...common}><path d="m15 6-6 6 6 6"/></svg>;
+    case "arrow-right": return <svg {...common}><path d="M5 12h14M13 5l7 7-7 7"/></svg>;
+    case "globe": return <svg {...common}><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a13 13 0 0 1 0 18M12 3a13 13 0 0 0 0 18"/></svg>;
+    case "wave": return <svg {...common}><path d="M3 12c1.5-2 3-2 4.5 0S10.5 14 12 12s3-2 4.5 0S19.5 14 21 12"/></svg>;
+    case "play": return <svg {...common} fill="currentColor" stroke="none"><path d="M8 5v14l11-7L8 5Z"/></svg>;
+    case "info": return <svg {...common}><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>;
+    case "shield": return <svg {...common}><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>;
+    case "credit": return <svg {...common}><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 11h18M7 16h4"/></svg>;
+    case "pin": return <svg {...common}><path d="M12 21s-7-7-7-12a7 7 0 1 1 14 0c0 5-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>;
+    case "filter": return <svg {...common}><path d="M3 5h18M6 12h12M10 19h4"/></svg>;
+    case "sort": return <svg {...common}><path d="M7 4v16M3 16l4 4 4-4M17 20V4M21 8l-4-4-4 4"/></svg>;
+    case "whatsapp": return <svg viewBox="0 0 24 24" width={s} height={s} fill="currentColor"><path d="M20.5 3.5A11 11 0 0 0 4.4 18.3L3 22l3.8-1.4A11 11 0 1 0 20.5 3.5Zm-8.4 17a9 9 0 0 1-4.6-1.3l-.3-.2-2.3.8.8-2.2-.2-.3A9 9 0 1 1 12.1 20.5Zm5-6.5c-.3-.1-1.6-.8-1.9-.9s-.4-.1-.6.1-.7.9-.8 1-.3.2-.6 0c-.3-.1-1.2-.4-2.2-1.3a8 8 0 0 1-1.5-1.9c-.2-.3 0-.4.1-.6l.4-.5.3-.5c0-.2 0-.4-.1-.5l-.7-1.8c-.2-.5-.4-.4-.5-.4h-.5c-.2 0-.5.1-.7.4s-.9.9-.9 2.2.9 2.5 1 2.7c.2.2 1.9 2.9 4.6 4 .6.3 1.1.4 1.5.5.6.2 1.2.2 1.7.1.5-.1 1.6-.7 1.8-1.3.2-.6.2-1.1.2-1.3-.1-.1-.3-.2-.6-.3Z"/></svg>;
+    case "instagram": return <svg viewBox="0 0 24 24" width={s} height={s} fill="none" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>;
+    case "tiktok": return <svg viewBox="0 0 24 24" width={s} height={s} fill="currentColor"><path d="M16.5 3h-2.8v12.3c0 1.6-1.2 2.8-2.8 2.8s-2.8-1.2-2.8-2.8 1.2-2.8 2.8-2.8c.3 0 .6 0 .9.1V9.7a6 6 0 0 0-.9-.1A5.7 5.7 0 1 0 16.5 15V8.5a7.4 7.4 0 0 0 4.5 1.5V7.2a5 5 0 0 1-4.5-4.2Z"/></svg>;
+    case "facebook": return <svg viewBox="0 0 24 24" width={s} height={s} fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9V15h-2.5v-3h2.5V9.5c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.5V12h2.7l-.4 3h-2.3v6.9A10 10 0 0 0 22 12Z"/></svg>;
+    case "leaf": return <svg {...common}><path d="M21 3c-4 0-12 2-15 11-1 3 0 6 2 7 2 1 5 1 7-1 9-3 11-11 11-15-2 0-3 0-5 1"/><path d="M3 21c2-6 6-9 12-12"/></svg>;
+    case "sparkle": return <svg {...common}><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></svg>;
+    case "lock": return <svg {...common}><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 1 1 8 0v3"/></svg>;
+    case "phone": return <svg {...common}><path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A18 18 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg>;
+    case "mail": return <svg {...common}><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 7 9-7"/></svg>;
+    case "diamond": return <svg {...common}><path d="m12 2 5 6-5 14L7 8l5-6Z"/><path d="M2 8h20"/></svg>;
+    default: return null;
+  }
+};
+
+window.Icon = Icon;
+
+
+// ========== components.jsx ==========
+// Shared components
+
+const Photo = ({ variant = "turq", label, glyph, className = "", style, children, ratio = "4/3", rounded = "md" }) => {
+  const radius = { sm: "var(--radius-sm)", md: "var(--radius-md)", lg: "var(--radius-lg)", xl: "var(--radius-xl)", none: "0" }[rounded];
+  return (
+    <div className={`ph ph-${variant} ${className}`} style={{ aspectRatio: ratio, borderRadius: radius, ...style }}>
+      {glyph && <div className="ph-glyph" style={{ fontSize: "clamp(40px, 12vw, 120px)" }}>{glyph}</div>}
+      {label && <div className="ph-label">{label}</div>}
+      {children}
+    </div>
+  );
+};
+
+const Logo = ({ size = 24, color }) => (
+  <div style={{ display: "inline-flex", alignItems: "center", gap: 8, color: color || "var(--ink)" }}>
+    <svg width={size + 4} height={size + 4} viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="15" fill="var(--coral)"/>
+      <path d="M4 20c3-3 6-3 9 0s6 3 9 0 6-3 9 0" stroke="white" strokeWidth="2.2" strokeLinecap="round" fill="none"/>
+      <circle cx="22" cy="11" r="2.6" fill="var(--sun)"/>
+    </svg>
+    <span className="display" style={{ fontSize: size, fontWeight: 700, letterSpacing: "-0.03em" }}>
+      Bora<span style={{ color: "var(--coral)" }}>Floripa</span>
+    </span>
+  </div>
+);
+
+const Stars = ({ rating, reviews, size = 14, compact }) => (
+  <span className="stars" style={{ fontSize: size }}>
+    <Icon name="star" size={size} />
+    <strong>{rating.toFixed(2)}</strong>
+    {reviews != null && <span style={{ color: "var(--muted)", fontWeight: 400 }}>{compact ? `(${reviews})` : `· ${reviews.toLocaleString("es")} reseñas`}</span>}
+  </span>
+);
+
+const Badge = ({ children, tone = "coral" }) => (
+  <span className={`badge badge-${tone}`}>{children}</span>
+);
+
+/* Header with hash routing */
+const useHash = () => {
+  const [hash, setHash] = React.useState(() => window.location.hash.slice(1) || "home");
+  React.useEffect(() => {
+    const onHash = () => {
+      setHash(window.location.hash.slice(1) || "home");
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+  return hash;
+};
+
+const navTo = (h) => { window.location.hash = h; };
+
+const Header = ({ current }) => {
+  const [open, setOpen] = React.useState(false);
+  const NAV = [
+    { id: "home", label: "Inicio" },
+    { id: "search", label: "Tours" },
+    { id: "search?cat=traslados", label: "Traslados" },
+    { id: "search?cat=cultural", label: "Blog" },
+    { id: "about", label: "Bora nosotros" },
+  ];
+  return (
+    <header style={{
+      position: "sticky", top: 0, zIndex: 40,
+      background: "rgba(247,241,227,0.85)",
+      backdropFilter: "saturate(140%) blur(10px)",
+      borderBottom: "1px solid var(--line)",
+    }}>
+      <div className="wrap-wide" style={{ display: "flex", alignItems: "center", gap: 16, height: 72 }}>
+        <a href="#home" onClick={(e)=>{e.preventDefault(); navTo("home");}}>
+          <Logo size={22} />
+        </a>
+        <nav style={{ display: "flex", gap: 24, marginLeft: 32 }} className="desktop-nav">
+          {NAV.map(n => {
+            const active = current === n.id.split("?")[0];
+            return (
+              <a key={n.id} href={`#${n.id}`} className={`nav-link ${active ? "active" : ""}`} onClick={(e)=>{e.preventDefault(); navTo(n.id);}}>
+                {n.label}
+              </a>
+            );
+          })}
+        </nav>
+        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>
+          <button className="btn btn-ghost btn-sm" style={{ display: "inline-flex" }}>
+            <Icon name="globe" size={14} /> ES
+          </button>
+          <a href="#search" onClick={(e)=>{e.preventDefault(); navTo("search");}} className="btn btn-coral btn-sm">
+            Bora reservar
+          </a>
+          <button className="mobile-only" onClick={()=>setOpen(o=>!o)} style={{ padding: 8 }}>
+            <Icon name={open ? "close" : "menu"} size={22} />
+          </button>
+        </div>
+      </div>
+      {open && (
+        <div className="mobile-only" style={{ borderTop: "1px solid var(--line)", padding: "12px 16px", display: "flex", flexDirection: "column", gap: 4, background: "var(--cream)" }}>
+          {NAV.map(n => (
+            <a key={n.id} href={`#${n.id}`} onClick={(e)=>{e.preventDefault(); navTo(n.id); setOpen(false);}}
+               style={{ padding: "12px 4px", borderBottom: "1px solid var(--line-soft)", fontSize: 16, fontWeight: 500 }}>
+              {n.label}
+            </a>
+          ))}
+        </div>
+      )}
+      <style>{`
+        .desktop-nav { display: none; }
+        .mobile-only { display: inline-flex; }
+        @media (min-width: 960px) {
+          .desktop-nav { display: flex; }
+          .mobile-only { display: none !important; }
+        }
+      `}</style>
+    </header>
+  );
+};
+
+const Footer = () => (
+  <footer style={{ marginTop: 80, background: "var(--ink)", color: "var(--cream)", padding: "64px 0 32px" }}>
+    <div className="wrap-wide">
+      <div className="footer-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 40 }}>
+        <div>
+          <Logo size={22} color="var(--cream)" />
+          <p style={{ marginTop: 16, color: "rgba(247,241,227,0.7)", fontSize: 14, lineHeight: 1.6 }}>
+            Las mejores experiencias de Florianópolis, hechas por floripenses, contadas en español.
+          </p>
+          <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
+            <a className="share-btn ig" href="#" aria-label="Instagram"><Icon name="instagram" size={16}/> Instagram</a>
+          </div>
+          <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
+            <a className="share-btn tt" href="#" aria-label="TikTok"><Icon name="tiktok" size={14}/> TikTok</a>
+          </div>
+        </div>
+        <FooterCol title="Explora" links={["Todos los tours", "Día completo", "Medio día", "Atardeceres", "Bora con niños", "Traslados privados"]} />
+        <FooterCol title="Bora nosotros" links={["Nuestra historia", "Trabajá con nosotros", "Guías locales", "Política de cancelación", "Preguntas frecuentes"]} />
+        <FooterCol title="Soporte 24/7" links={["WhatsApp +55 48 99999-1234", "ola@boraflo.com", "Centro de ayuda", "Reembolsos", "Términos y privacidad"]} />
+      </div>
+      <div style={{ marginTop: 56, paddingTop: 24, borderTop: "1px solid rgba(247,241,227,0.15)", display: "flex", flexWrap: "wrap", gap: 16, justifyContent: "space-between", color: "rgba(247,241,227,0.55)", fontSize: 13 }}>
+        <span>© 2026 Bora Floripa · CNPJ 00.000.000/0001-00 · Florianópolis, SC</span>
+        <span style={{ fontFamily: "var(--font-mono)" }}>Hecho com saudade na Ilha da Magia 🌴</span>
+      </div>
+    </div>
+  </footer>
+);
+
+const FooterCol = ({ title, links }) => (
+  <div>
+    <div className="eyebrow" style={{ color: "rgba(247,241,227,0.55)", marginBottom: 12 }}>{title}</div>
+    <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 8 }}>
+      {links.map(l => <li key={l}><a href="#" style={{ color: "rgba(247,241,227,0.85)", fontSize: 14 }}>{l}</a></li>)}
+    </ul>
+  </div>
+);
+
+const WhatsAppFab = () => (
+  <a className="fab-wpp" href="#" onClick={(e)=>e.preventDefault()} aria-label="Chatea por WhatsApp">
+    <Icon name="whatsapp" size={22} />
+    <span className="fab-label">Bora chatear?</span>
+  </a>
+);
+
+const ShareRow = ({ size = "md", emphasis = "loud", title = "Compartir con tus" }) => {
+  const isSmall = size === "sm";
+  if (emphasis === "quiet") {
+    return (
+      <div className="share-row">
+        <a className="share-btn copy" href="#" onClick={(e)=>e.preventDefault()}><Icon name="share" size={14}/> Compartir</a>
+      </div>
+    );
+  }
+  return (
+    <div>
+      {title && <div className="eyebrow" style={{ marginBottom: 8 }}>{title}</div>}
+      <div className="share-row">
+        <a className="share-btn wpp" href="#" onClick={(e)=>e.preventDefault()}><Icon name="whatsapp" size={isSmall ? 14 : 16}/> WhatsApp</a>
+        <a className="share-btn ig" href="#" onClick={(e)=>e.preventDefault()}><Icon name="instagram" size={isSmall ? 14 : 16}/> Instagram</a>
+        <a className="share-btn tt" href="#" onClick={(e)=>e.preventDefault()}><Icon name="tiktok" size={isSmall ? 12 : 14}/> TikTok</a>
+        <a className="share-btn copy" href="#" onClick={(e)=>e.preventDefault()}><Icon name="share" size={14}/> Copiar enlace</a>
+      </div>
+    </div>
+  );
+};
+
+const TourCard = ({ tour, dense, shareEmphasis = "loud" }) => {
+  const goTour = () => navTo(`tour?id=${tour.id}`);
+  return (
+    <div className="card" onClick={goTour} style={{ display: "flex", flexDirection: "column" }}>
+      <div style={{ position: "relative" }}>
+        <Photo
+          variant={tour.photoVariant}
+          glyph={tour.glyph}
+          label={tour.photoLabel}
+          ratio={dense ? "16/10" : "4/3"}
+          rounded="none"
+        />
+        <div style={{ position: "absolute", top: 12, left: 12, display: "flex", gap: 6 }}>
+          {tour.badge && <Badge tone={tour.badge === "Más vendido" ? "coral" : tour.badge === "Recomendado" ? "ink" : tour.badge === "Nuevo" ? "sun" : "soft"}>{tour.badge}</Badge>}
+        </div>
+        <button
+          onClick={(e)=>{e.stopPropagation();}}
+          aria-label="Guardar"
+          style={{ position: "absolute", top: 10, right: 10, background: "rgba(255,255,255,0.95)", padding: 8, borderRadius: 999, boxShadow: "var(--shadow-sm)" }}>
+          <Icon name="heart" size={16} />
+        </button>
+      </div>
+      <div style={{ padding: dense ? 14 : 18, display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--muted)", fontSize: 12 }}>
+          <Icon name="pin" size={12} /> {tour.location} · <Icon name="clock" size={12}/> {tour.duration}
+        </div>
+        <h3 style={{ margin: 0, fontFamily: "var(--font-display)", fontSize: dense ? 18 : 20, fontWeight: 700, letterSpacing: "-0.01em", lineHeight: 1.15 }}>
+          {tour.title}
+        </h3>
+        {!dense && <p style={{ margin: 0, color: "var(--ink-soft)", fontSize: 14, lineHeight: 1.5 }}>{tour.subtitle}</p>}
+        <div style={{ marginTop: "auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, paddingTop: 10 }}>
+          <Stars rating={tour.rating} reviews={tour.reviews} compact />
+          <div style={{ textAlign: "right" }}>
+            <div style={{ fontSize: 11, color: "var(--muted)" }}>desde</div>
+            <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 18 }}>R$ {tour.priceFrom}</div>
+          </div>
+        </div>
+        {shareEmphasis === "loud" && (
+          <div style={{ display: "flex", gap: 6, marginTop: 4, paddingTop: 12, borderTop: "1px dashed var(--line)" }}>
+            <a className="share-btn wpp" style={{ padding: "6px 10px", fontSize: 12 }} onClick={(e)=>{e.preventDefault(); e.stopPropagation();}} href="#"><Icon name="whatsapp" size={12}/> Bora?</a>
+            <a className="share-btn ig" style={{ padding: "6px 10px", fontSize: 12 }} onClick={(e)=>{e.preventDefault(); e.stopPropagation();}} href="#"><Icon name="instagram" size={12}/></a>
+            <a className="share-btn tt" style={{ padding: "6px 10px", fontSize: 12 }} onClick={(e)=>{e.preventDefault(); e.stopPropagation();}} href="#"><Icon name="tiktok" size={10}/></a>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const CategoryChip = ({ cat, active, onClick }) => (
+  <button onClick={onClick} className="chip" style={{
+    padding: "10px 16px",
+    background: active ? "var(--ink)" : "var(--paper)",
+    color: active ? "var(--cream)" : "var(--ink)",
+    boxShadow: active ? "none" : "inset 0 0 0 1px var(--line)",
+    fontWeight: 600,
+    fontSize: 14,
+    gap: 8,
+  }}>
+    <span style={{ fontSize: 16 }}>{cat.glyph}</span> {cat.name}
+    <span style={{ opacity: 0.6, fontWeight: 500, fontSize: 12 }}>{cat.count}</span>
+  </button>
+);
+
+const SectionTitle = ({ eyebrow, title, sub, action }) => (
+  <div className="section-title-row" style={{ display: "flex", alignItems: "end", justifyContent: "space-between", gap: 24, marginBottom: 24, flexWrap: "wrap" }}>
+    <div>
+      {eyebrow && <div className="eyebrow" style={{ marginBottom: 8 }}>{eyebrow}</div>}
+      <h2 className="display" style={{ margin: 0, fontSize: "clamp(28px, 4vw, 44px)" }}>{title}</h2>
+      {sub && <p style={{ margin: "10px 0 0", color: "var(--ink-soft)", maxWidth: 580 }}>{sub}</p>}
+    </div>
+    {action}
+  </div>
+);
+
+Object.assign(window, { Photo, Logo, Stars, Badge, Header, Footer, FooterCol, WhatsAppFab, ShareRow, TourCard, CategoryChip, SectionTitle, useHash, navTo });
+
+
+// ========== home.jsx ==========
+// Home page
+const Home = ({ tweaks }) => {
+  const featured = TOURS.slice(0, 6);
+  const popular = TOURS.slice(6, 12);
+  return (
+    <div className="page">
+      <Hero />
+      <CategoriesStrip />
+      <FeaturedTours tours={featured} tweaks={tweaks} />
+      <WhyBora />
+      <PopularTours tours={popular} tweaks={tweaks} />
+      <ReviewsSection />
+      <BlogSection />
+      <ClosingCTA />
+    </div>
+  );
+};
+
+const Hero = () => {
+  const [tab, setTab] = React.useState("experiencias");
+  return (
+    <section style={{ position: "relative", overflow: "hidden", paddingBottom: 40 }}>
+      {/* background photo placeholder */}
+      <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
+        <Photo
+          variant="turq"
+          label="foto aérea drone — praia da joaquina al atardecer"
+          glyph=""
+          rounded="none"
+          style={{ height: "100%", aspectRatio: "auto" }}
+        />
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(180deg, rgba(247,241,227,0.0) 0%, rgba(247,241,227,0.0) 50%, rgba(247,241,227,1) 100%)",
+        }}/>
+      </div>
+
+      <div className="wrap-wide" style={{ position: "relative", zIndex: 1, paddingTop: "clamp(40px, 8vw, 100px)", paddingBottom: "clamp(40px, 8vw, 80px)" }}>
+        <div style={{ maxWidth: 880 }}>
+          <div className="eyebrow" style={{ background: "var(--ink)", color: "var(--cream)", display: "inline-flex", padding: "6px 12px", borderRadius: 999, marginBottom: 24 }}>
+            <Icon name="wave" size={12}/> &nbsp;Floripa · Santa Catarina · Brasil
+          </div>
+          <h1 className="display" style={{
+            fontSize: "clamp(48px, 9vw, 120px)",
+            margin: 0,
+            lineHeight: 0.92,
+          }}>
+            Bora vivir<br/>
+            <span style={{ color: "var(--coral)" }}>Floripa</span> <span style={{ fontStyle: "italic", fontWeight: 500, color: "var(--ink-soft)" }}>de verdad</span>.
+          </h1>
+          <p style={{ marginTop: 24, fontSize: "clamp(16px, 1.6vw, 20px)", color: "var(--ink-soft)", maxWidth: 580, lineHeight: 1.5 }}>
+            Tours, paseos y experiencias auténticas en la Ilha da Magia. Hechos por
+            <span className="highlight-sun"> floripenses</span>, contados en español, reservables en
+            <span className="highlight-coral"> 30 segundos</span>.
+          </p>
+
+          {/* search */}
+          <div style={{ marginTop: 32 }}>
+            <div style={{ display: "flex", gap: 4, marginBottom: 10 }}>
+              {[
+                { id: "experiencias", label: "Experiencias", icon: "sparkle" },
+                { id: "traslados", label: "Traslados", icon: "phone" },
+                { id: "paquetes", label: "Paquetes", icon: "diamond" },
+              ].map(t => (
+                <button key={t.id} onClick={()=>setTab(t.id)} style={{
+                  padding: "8px 14px",
+                  borderRadius: "999px 999px 0 0",
+                  background: tab === t.id ? "var(--paper)" : "rgba(255,255,255,0.6)",
+                  fontWeight: 600,
+                  fontSize: 13,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  color: tab === t.id ? "var(--ink)" : "var(--ink-soft)",
+                }}>
+                  <Icon name={t.icon} size={14}/> {t.label}
+                </button>
+              ))}
+            </div>
+            <div className="hero-search">
+              <button className="field">
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <Icon name="search" size={16} style={{ color: "var(--coral)", flexShrink: 0 }}/>
+                  <div>
+                    <div className="field-label">Qué buscas</div>
+                    <div className="field-value placeholder">Praia, surf, atardecer…</div>
+                  </div>
+                </div>
+              </button>
+              <div className="divider"/>
+              <button className="field">
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <Icon name="calendar" size={16} style={{ color: "var(--coral)", flexShrink: 0 }}/>
+                  <div>
+                    <div className="field-label">Cuándo</div>
+                    <div className="field-value placeholder">Esta semana</div>
+                  </div>
+                </div>
+              </button>
+              <div className="divider"/>
+              <button className="field">
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <Icon name="users" size={16} style={{ color: "var(--coral)", flexShrink: 0 }}/>
+                  <div>
+                    <div className="field-label">Quiénes</div>
+                    <div className="field-value placeholder">2 adultos</div>
+                  </div>
+                </div>
+              </button>
+              <button className="btn btn-coral btn-lg" style={{ alignSelf: "stretch", margin: 0 }} onClick={()=>navTo("search")}>
+                <Icon name="search" size={18}/> Bora!
+              </button>
+            </div>
+          </div>
+
+          {/* quick chips */}
+          <div className="hscroll" style={{ marginTop: 18, gap: 8 }}>
+            {["🔥 Lagoinha do Leste", "⛵ Costa da Lagoa", "🏄 Surf Guarda", "🌅 Sunset Praia Mole", "👨‍👩‍👧 Bora con niños", "🦪 Ruta de ostras"].map(c => (
+              <button key={c} className="chip" onClick={()=>navTo("search")} style={{ fontSize: 13 }}>{c}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* trust strip */}
+        <div className="trust-strip" style={{ marginTop: 56, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, padding: 20, background: "var(--paper)", borderRadius: 20, boxShadow: "var(--shadow-sm)" }}>
+          <Trust icon="star" label="4.9 / 5" sub="9,824 reseñas verificadas"/>
+          <Trust icon="shield" label="Cancelación gratis" sub="Hasta 24 h antes"/>
+          <Trust icon="whatsapp" label="Soporte 24/7" sub="Por WhatsApp, en español"/>
+          <Trust icon="leaf" label="Guías locales" sub="100% floripenses"/>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const Trust = ({ icon, label, sub }) => (
+  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+    <div style={{ background: "var(--cream-soft)", padding: 10, borderRadius: 12, color: icon === "whatsapp" ? "#25D366" : "var(--coral)" }}>
+      <Icon name={icon} size={20}/>
+    </div>
+    <div>
+      <div style={{ fontWeight: 700, fontSize: 15 }}>{label}</div>
+      <div style={{ fontSize: 12, color: "var(--muted)" }}>{sub}</div>
+    </div>
+  </div>
+);
+
+const CategoriesStrip = () => (
+  <section className="wrap-wide" style={{ paddingTop: 40, paddingBottom: 20 }}>
+    <SectionTitle
+      eyebrow="Categorías"
+      title="Bora elegir tu estilo de viaje"
+      sub="Filtramos por vibe. Tú decides si hoy toca aventura, descanso o caipirinha."
+    />
+    <div className="cats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 14 }}>
+      {CATEGORIES.map(c => (
+        <button key={c.id} onClick={()=>navTo(`search?cat=${c.id}`)} className="card" style={{ padding: 0, textAlign: "left" }}>
+          <div className={`ph ph-${c.variant}`} style={{ aspectRatio: "5/3", borderRadius: "var(--radius-md) var(--radius-md) 0 0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 48 }}>
+            <span style={{ position: "relative", zIndex: 1 }}>{c.glyph}</span>
+          </div>
+          <div style={{ padding: "14px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div>
+              <div style={{ fontWeight: 700, fontFamily: "var(--font-display)", fontSize: 18 }}>{c.name}</div>
+              <div style={{ fontSize: 12, color: "var(--muted)" }}>{c.count} experiencias</div>
+            </div>
+            <Icon name="arrow-right" size={16}/>
+          </div>
+        </button>
+      ))}
+    </div>
+  </section>
+);
+
+const FeaturedTours = ({ tours, tweaks }) => (
+  <section className="wrap-wide" style={{ paddingTop: 64, paddingBottom: 20 }}>
+    <SectionTitle
+      eyebrow="Más vendidos esta semana"
+      title="Bora con los favoritos"
+      sub="Los tours que viajeros como tú reservaron más en los últimos 7 días."
+      action={<a href="#search" onClick={(e)=>{e.preventDefault(); navTo("search");}} className="btn btn-ghost">Ver todos los tours <Icon name="arrow-right" size={14}/></a>}
+    />
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
+      {tours.map(t => <TourCard key={t.id} tour={t} shareEmphasis={tweaks.shareEmphasis}/>)}
+    </div>
+  </section>
+);
+
+const PopularTours = ({ tours, tweaks }) => (
+  <section className="wrap-wide" style={{ paddingTop: 64, paddingBottom: 20 }}>
+    <SectionTitle
+      eyebrow="También para ti"
+      title="Bora descubrir el otro lado de Floripa"
+      sub="Trilhas, pueblitos pesqueros y la Floripa que no sale en Instagram."
+    />
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
+      {tours.map(t => <TourCard key={t.id} tour={t} shareEmphasis={tweaks.shareEmphasis}/>)}
+    </div>
+  </section>
+);
+
+const WhyBora = () => (
+  <section style={{ background: "var(--ink)", color: "var(--cream)", padding: "80px 0", marginTop: 64 }}>
+    <div className="wrap-wide">
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }} className="why-grid">
+        <div>
+          <div className="eyebrow" style={{ color: "var(--sun)", marginBottom: 16 }}>Por qué Bora Floripa</div>
+          <h2 className="display" style={{ fontSize: "clamp(36px, 5vw, 64px)", margin: 0 }}>
+            No somos una<br/>
+            <span style={{ color: "var(--coral)" }}>agencia más</span>.<br/>
+            Somos tus<br/>
+            <span style={{ fontStyle: "italic", fontWeight: 500 }}>amigos en la isla</span>.
+          </h2>
+          <p style={{ marginTop: 24, color: "rgba(247,241,227,0.75)", fontSize: 18, maxWidth: 480, lineHeight: 1.55 }}>
+            Nacimos en Florianópolis. Vivimos acá. Cada tour fue probado por nosotros — y por los amigos. Si llueve, te avisamos. Si la ola está fea, te llevamos a otra playa. Si tienes hambre a las 3am, también.
+          </p>
+          <div className="hero-btns" style={{ marginTop: 32, display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <a href="#about" onClick={(e)=>{e.preventDefault(); navTo("about");}} className="btn btn-coral btn-lg">Bora conocernos <Icon name="arrow-right" size={14}/></a>
+            <a href="#" className="btn btn-ghost btn-lg" style={{ color: "var(--cream)", boxShadow: "inset 0 0 0 1px rgba(247,241,227,0.25)" }}>
+              <Icon name="play" size={14}/> Ver video (1:24)
+            </a>
+          </div>
+        </div>
+        <div className="pillar-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+          <Pillar n="01" title="Guías locales" desc="100% nacidos y criados en la isla. Hablan portugués, español, inglés." color="coral"/>
+          <Pillar n="02" title="Reserva en 30s" desc="Sin formularios eternos. Reservas, pagas con Pix o tarjeta, listo." color="sun"/>
+          <Pillar n="03" title="WhatsApp real" desc="Te responde una persona en menos de 5 min. 24/7. Siempre." color="turq"/>
+          <Pillar n="04" title="Cancelación libre" desc="Hasta 24h antes, devolución 100%. Sin letra chica." color="moss"/>
+        </div>
+      </div>
+    </div>
+    <style>{`
+      .why-grid { grid-template-columns: 1fr 1fr; }
+      @media (max-width: 880px) { .why-grid { grid-template-columns: 1fr !important; gap: 40px !important; } }
+    `}</style>
+  </section>
+);
+
+const Pillar = ({ n, title, desc, color }) => (
+  <div style={{
+    background: "rgba(247,241,227,0.06)",
+    borderRadius: 18,
+    padding: 22,
+    border: "1px solid rgba(247,241,227,0.1)",
+  }}>
+    <div style={{ fontFamily: "var(--font-mono)", color: `var(--${color})`, fontSize: 12, fontWeight: 600 }}>{n} —</div>
+    <div className="display" style={{ fontSize: 22, marginTop: 8, marginBottom: 6, color: "var(--cream)" }}>{title}</div>
+    <div style={{ fontSize: 13, color: "rgba(247,241,227,0.65)", lineHeight: 1.5 }}>{desc}</div>
+  </div>
+);
+
+const ReviewsSection = () => (
+  <section className="wrap-wide" style={{ paddingTop: 80, paddingBottom: 20 }}>
+    <SectionTitle
+      eyebrow="Lo que dicen viajeros como tú"
+      title="9,824 reseñas reales"
+      sub="Verificadas, sin filtros, copiadas tal cual."
+      action={<Stars rating={4.9} reviews={9824} />}
+    />
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
+      {REVIEWS.map((r, i) => (
+        <div key={i} className="card" style={{ padding: 22, cursor: "default", display: "flex", flexDirection: "column", gap: 12 }}>
+          <Stars rating={r.rating} size={14}/>
+          <p style={{ margin: 0, fontSize: 15, lineHeight: 1.55, fontFamily: "var(--font-display)", fontWeight: 500 }}>"{r.text}"</p>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, paddingTop: 12, borderTop: "1px dashed var(--line)", fontSize: 13 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 999, background: "var(--cream-soft)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 }}>
+              {r.name[0]}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 600 }}>{r.name}</div>
+              <div style={{ color: "var(--muted)", fontSize: 12 }}>{r.country} · {r.date}</div>
+            </div>
+          </div>
+          <div style={{ fontSize: 11, color: "var(--muted)", fontFamily: "var(--font-mono)" }}>
+            sobre · {r.tour}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+);
+
+const BlogSection = () => (
+  <section className="wrap-wide" style={{ paddingTop: 80, paddingBottom: 20 }}>
+    <SectionTitle
+      eyebrow="Diario de la isla"
+      title="Bora inspirarse"
+      sub="Lo que solo te diría un amigo local."
+      action={<a href="#" className="btn btn-ghost">Todos los artículos <Icon name="arrow-right" size={14}/></a>}
+    />
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 20 }}>
+      {BLOG.map(b => (
+        <a key={b.id} href="#" className="card" style={{ display: "flex", flexDirection: "column" }} onClick={(e)=>e.preventDefault()}>
+          <Photo variant={b.photoVariant} label={b.photoLabel} ratio="4/3" rounded="none" glyph=""/>
+          <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+            <div style={{ fontSize: 11, color: "var(--muted)", fontFamily: "var(--font-mono)" }}>BLOG · {b.read}</div>
+            <h3 style={{ margin: 0, fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 700, letterSpacing: "-0.01em", lineHeight: 1.15 }}>
+              {b.title}
+            </h3>
+            <p style={{ margin: 0, color: "var(--ink-soft)", fontSize: 14, lineHeight: 1.5 }}>{b.excerpt}</p>
+            <span style={{ marginTop: "auto", color: "var(--coral)", fontWeight: 600, fontSize: 14, display: "inline-flex", alignItems: "center", gap: 4, paddingTop: 8 }}>
+              Leer <Icon name="arrow-right" size={12}/>
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+);
+
+const ClosingCTA = () => (
+  <section style={{ paddingTop: 80 }}>
+    <div className="wrap-wide">
+      <div style={{
+        position: "relative",
+        background: "var(--coral)",
+        borderRadius: 32,
+        overflow: "hidden",
+        padding: "clamp(40px, 6vw, 80px)",
+        color: "#fff",
+      }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 90% 10%, rgba(255,196,47,0.45), transparent 50%)", pointerEvents: "none" }}/>
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 720 }}>
+          <div className="eyebrow" style={{ color: "rgba(255,255,255,0.85)" }}>Listos? Bora!</div>
+          <h2 className="display" style={{ fontSize: "clamp(40px, 6vw, 72px)", margin: "16px 0 24px", lineHeight: 0.95 }}>
+            Tu próximo<br/>
+            <span className="cta-tag" style={{ background: "var(--ink)", color: "var(--cream)", padding: "0 14px", borderRadius: 12, display: "inline-block", transform: "rotate(-1.5deg)" }}>BORA</span> empieza acá.
+          </h2>
+          <p style={{ fontSize: 18, marginBottom: 28, maxWidth: 480, lineHeight: 1.5, color: "rgba(255,255,255,0.9)" }}>
+            Reserva ahora, paga con Pix o tarjeta. Cancelación gratis hasta 24h antes. Soporte real por WhatsApp.
+          </p>
+          <div className="cta-btns" style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <a href="#search" onClick={(e)=>{e.preventDefault(); navTo("search");}} className="btn btn-xl" style={{ background: "var(--ink)", color: "var(--cream)" }}>Bora ver todos los tours <Icon name="arrow-right" size={16}/></a>
+            <a href="#" className="btn btn-xl" style={{ background: "#fff", color: "var(--ink)" }}><Icon name="whatsapp" size={16}/> Chatear primero</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+window.Home = Home;
+
+
+// ========== search.jsx ==========
+// Search / Listing page
+
+const Search = ({ params, tweaks }) => {
+  const [priceMax, setPriceMax] = React.useState(400);
+  const [duration, setDuration] = React.useState([]);
+  const [category, setCategory] = React.useState(params.cat ? [params.cat] : []);
+  const [sort, setSort] = React.useState("Recomendados");
+  const [mobileFilters, setMobileFilters] = React.useState(false);
+
+  const filtered = TOURS.filter(t => {
+    if (t.priceFrom > priceMax) return false;
+    if (duration.length && !duration.some(d => t.tags.includes(d))) return false;
+    if (category.length && !category.some(c => t.cat.toLowerCase().includes(c) || (CATEGORIES.find(x=>x.id===c)?.name.toLowerCase() === t.cat.toLowerCase()))) return false;
+    return true;
+  });
+
+  return (
+    <div className="page">
+      {/* Top bar — breadcrumb + title */}
+      <section style={{ background: "var(--cream-soft)", borderBottom: "1px solid var(--line)" }}>
+        <div className="wrap-wide" style={{ paddingTop: 28, paddingBottom: 32 }}>
+          <div style={{ fontSize: 13, color: "var(--muted)", marginBottom: 12 }}>
+            <a href="#home" onClick={(e)=>{e.preventDefault(); navTo("home");}}>Inicio</a>
+            <span style={{ margin: "0 8px" }}>/</span>
+            <span>Todos los tours en Florianópolis</span>
+          </div>
+          <h1 className="display" style={{ fontSize: "clamp(32px, 5vw, 56px)", margin: 0, lineHeight: 1 }}>
+            Todos los tours en <span style={{ color: "var(--coral)" }}>Floripa</span>
+          </h1>
+          <p style={{ marginTop: 10, color: "var(--ink-soft)", fontSize: 16 }}>
+            <strong>{filtered.length}</strong> experiencias encontradas · ordenadas por <strong>{sort.toLowerCase()}</strong>
+          </p>
+
+          {/* Inline search */}
+          <div className="hero-search" style={{ marginTop: 20, maxWidth: 920, boxShadow: "var(--shadow-md)" }}>
+            <button className="field">
+              <div className="field-label">Qué buscas</div>
+              <div className="field-value placeholder">Todas las experiencias</div>
+            </button>
+            <div className="divider"/>
+            <button className="field">
+              <div className="field-label">Cuándo</div>
+              <div className="field-value">Cualquier fecha</div>
+            </button>
+            <div className="divider"/>
+            <button className="field">
+              <div className="field-label">Quiénes</div>
+              <div className="field-value">2 adultos</div>
+            </button>
+            <button className="btn btn-coral btn-lg">
+              <Icon name="search" size={18}/> Buscar
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Results layout */}
+      <section className="wrap-wide" style={{ paddingTop: 32, paddingBottom: 40 }}>
+        <div className="search-grid" style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: 40, alignItems: "start" }}>
+          {/* Sidebar filters */}
+          <aside className="filters-aside" style={{ position: "sticky", top: 88 }}>
+            <FiltersPanel
+              priceMax={priceMax} setPriceMax={setPriceMax}
+              duration={duration} setDuration={setDuration}
+              category={category} setCategory={setCategory}
+            />
+          </aside>
+
+          {/* Main results */}
+          <div>
+            {/* Sort row */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {["Recomendados", "Más vendidos", "Mejor valoración", "Precio: menor", "Precio: mayor"].map(s => (
+                  <button key={s} onClick={()=>setSort(s)} className="chip" style={{
+                    fontSize: 13, fontWeight: 500,
+                    background: sort === s ? "var(--ink)" : "var(--paper)",
+                    color: sort === s ? "var(--cream)" : "var(--ink)",
+                    boxShadow: sort === s ? "none" : "inset 0 0 0 1px var(--line)",
+                  }}>{s}</button>
+                ))}
+              </div>
+              <button className="btn btn-ghost btn-sm mobile-filter-btn" onClick={()=>setMobileFilters(true)} style={{ display: "none" }}>
+                <Icon name="filter" size={14}/> Filtros
+              </button>
+            </div>
+
+            {/* Quick filters horizontal */}
+            <div className="hscroll" style={{ marginBottom: 24 }}>
+              {["🔥 Más populares", "🆓 Cancelación gratis", "🧑‍🤝‍🧑 Bora con niños", "🌧️ Sin sol", "💸 Bajo R$ 200", "⏱️ Medio día", "🌅 Atardecer"].map(c => (
+                <button key={c} className="chip">{c}</button>
+              ))}
+            </div>
+
+            {/* Inline promo banner */}
+            <div style={{
+              background: "var(--ink)", color: "var(--cream)",
+              borderRadius: 20,
+              padding: "22px 26px",
+              display: "flex", alignItems: "center", gap: 20,
+              marginBottom: 28,
+              position: "relative", overflow: "hidden",
+            }}>
+              <div style={{ position: "absolute", right: -20, top: -20, fontSize: 140, opacity: 0.08 }}>🌊</div>
+              <div style={{ background: "var(--sun)", color: "var(--ink)", padding: "6px 12px", borderRadius: 8, fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700 }}>BORA10</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 700 }}>10% off en tu primer Bora</div>
+                <div style={{ fontSize: 13, color: "rgba(247,241,227,0.7)" }}>Aplica el código al pagar. Válido para reservas hasta R$ 500.</div>
+              </div>
+              <a href="#" className="btn btn-coral btn-sm" style={{ flexShrink: 0 }}>Copiar código</a>
+            </div>
+
+            {/* Grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 20 }}>
+              {filtered.map(t => <TourCard key={t.id} tour={t} shareEmphasis={tweaks.shareEmphasis}/>)}
+            </div>
+
+            {filtered.length === 0 && (
+              <div style={{ background: "var(--paper)", borderRadius: 20, padding: 48, textAlign: "center", boxShadow: "var(--shadow-sm)" }}>
+                <div style={{ fontSize: 48, marginBottom: 12 }}>🤔</div>
+                <h3 className="display" style={{ fontSize: 24, margin: 0 }}>Nada por acá</h3>
+                <p style={{ color: "var(--muted)", marginTop: 8 }}>Probá aflojar los filtros, o escribinos por WhatsApp — armamos algo a medida.</p>
+                <button className="btn btn-coral" style={{ marginTop: 20 }} onClick={()=>{setPriceMax(500); setDuration([]); setCategory([]);}}>
+                  Limpiar filtros
+                </button>
+              </div>
+            )}
+
+            {/* Pagination */}
+            <div style={{ marginTop: 40, display: "flex", justifyContent: "center", alignItems: "center", gap: 8 }}>
+              <button className="btn btn-ghost btn-sm"><Icon name="chevron-left" size={14}/></button>
+              {[1,2,3,4].map(n => (
+                <button key={n} className="chip" style={{
+                  width: 38, height: 38, justifyContent: "center", padding: 0,
+                  background: n === 1 ? "var(--ink)" : "var(--paper)",
+                  color: n === 1 ? "var(--cream)" : "var(--ink)",
+                  boxShadow: n === 1 ? "none" : "inset 0 0 0 1px var(--line)",
+                  fontWeight: 600,
+                }}>{n}</button>
+              ))}
+              <span style={{ color: "var(--muted)", padding: "0 8px" }}>…</span>
+              <button className="chip" style={{ width: 38, height: 38, justifyContent: "center", padding: 0 }}>12</button>
+              <button className="btn btn-ghost btn-sm"><Icon name="chevron-right" size={14}/></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Mobile filters drawer */}
+      {mobileFilters && (
+        <div onClick={()=>setMobileFilters(false)} style={{ position: "fixed", inset: 0, background: "rgba(14,27,44,0.5)", zIndex: 60 }}>
+          <div onClick={(e)=>e.stopPropagation()} style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "var(--cream)", borderRadius: "24px 24px 0 0", padding: 20, maxHeight: "90vh", overflow: "auto" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <h3 className="display" style={{ fontSize: 22, margin: 0 }}>Filtros</h3>
+              <button onClick={()=>setMobileFilters(false)} style={{ padding: 6 }}><Icon name="close" size={20}/></button>
+            </div>
+            <FiltersPanel
+              priceMax={priceMax} setPriceMax={setPriceMax}
+              duration={duration} setDuration={setDuration}
+              category={category} setCategory={setCategory}
+            />
+            <button className="btn btn-coral btn-lg" style={{ width: "100%", marginTop: 16 }} onClick={()=>setMobileFilters(false)}>Aplicar ({filtered.length})</button>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @media (max-width: 880px) {
+          .search-grid { grid-template-columns: 1fr !important; }
+          .filters-aside { display: none; }
+          .mobile-filter-btn { display: inline-flex !important; }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+const FiltersPanel = ({ priceMax, setPriceMax, duration, setDuration, category, setCategory }) => {
+  const toggle = (arr, setArr, v) => setArr(arr.includes(v) ? arr.filter(x=>x!==v) : [...arr, v]);
+
+  return (
+    <div style={{ background: "var(--paper)", borderRadius: 18, padding: 24, boxShadow: "var(--shadow-sm)" }}>
+      <h3 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
+        <Icon name="filter" size={16}/> Filtros
+      </h3>
+
+      <div className="filter-section">
+        <div className="filter-title">Precio máximo</div>
+        <input type="range" min="50" max="500" step="10" value={priceMax} onChange={e=>setPriceMax(+e.target.value)} style={{ width: "100%", accentColor: "var(--coral)" }}/>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--muted)", marginTop: 4 }}>
+          <span>R$ 50</span>
+          <span style={{ fontWeight: 700, color: "var(--ink)" }}>Hasta R$ {priceMax}</span>
+          <span>R$ 500+</span>
+        </div>
+      </div>
+
+      <div className="filter-section">
+        <div className="filter-title">Duración</div>
+        {["Medio día", "Día completo", "Atardecer", "Privado"].map(d => (
+          <label key={d} className="checkbox-row">
+            <input type="checkbox" checked={duration.includes(d)} onChange={()=>toggle(duration, setDuration, d)}/>
+            {d}
+            <span className="count">{TOURS.filter(t=>t.tags.includes(d)).length}</span>
+          </label>
+        ))}
+      </div>
+
+      <div className="filter-section">
+        <div className="filter-title">Categoría</div>
+        {CATEGORIES.map(c => (
+          <label key={c.id} className="checkbox-row">
+            <input type="checkbox" checked={category.includes(c.id)} onChange={()=>toggle(category, setCategory, c.id)}/>
+            <span style={{ marginRight: 4 }}>{c.glyph}</span>{c.name}
+            <span className="count">{c.count}</span>
+          </label>
+        ))}
+      </div>
+
+      <div className="filter-section">
+        <div className="filter-title">Vibe</div>
+        {[
+          { id: "familia", label: "Bora con niños", icon: "👨‍👩‍👧" },
+          { id: "romantico", label: "Romántico", icon: "💞" },
+          { id: "adrenalina", label: "Adrenalina", icon: "⚡" },
+          { id: "sinsol", label: "Sin sol", icon: "🌧️" },
+          { id: "gastro", label: "Gastronómico", icon: "🦪" },
+        ].map(v => (
+          <label key={v.id} className="checkbox-row">
+            <input type="checkbox"/>
+            <span>{v.icon}</span> {v.label}
+          </label>
+        ))}
+      </div>
+
+      <div className="filter-section">
+        <div className="filter-title">Valoración mínima</div>
+        {[4.8, 4.5, 4.0].map(r => (
+          <label key={r} className="checkbox-row">
+            <input type="radio" name="rating" style={{ accentColor: "var(--coral)" }}/>
+            <Stars rating={r} size={13}/>
+            <span style={{ marginLeft: 6, color: "var(--muted)", fontSize: 12 }}>y más</span>
+          </label>
+        ))}
+      </div>
+
+      <button style={{ marginTop: 16, fontSize: 13, color: "var(--coral)", fontWeight: 600 }}>Limpiar todos los filtros</button>
+    </div>
+  );
+};
+
+window.Search = Search;
+
+
+// ========== tour.jsx ==========
+// Tour detail page
+
+const Tour = ({ params, tweaks }) => {
+  const tour = TOURS.find(t => t.id === params.id) || TOURS[0];
+  const related = TOURS.filter(t => t.id !== tour.id && t.cat === tour.cat).slice(0, 4);
+  const fallback = TOURS.filter(t => t.id !== tour.id).slice(0, 4);
+  const moreLike = related.length >= 3 ? related : fallback;
+
+  return (
+    <div className="page">
+      {/* Breadcrumb */}
+      <div className="wrap-wide" style={{ paddingTop: 20, paddingBottom: 8, fontSize: 13, color: "var(--muted)" }}>
+        <a href="#home" onClick={(e)=>{e.preventDefault(); navTo("home");}}>Inicio</a>
+        <span style={{ margin: "0 8px" }}>/</span>
+        <a href="#search" onClick={(e)=>{e.preventDefault(); navTo("search");}}>Tours</a>
+        <span style={{ margin: "0 8px" }}>/</span>
+        <span>{tour.title}</span>
+      </div>
+
+      {/* Title block */}
+      <header className="wrap-wide" style={{ paddingTop: 12, paddingBottom: 20 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 14 }}>
+          {tour.badge && <Badge tone={tour.badge === "Más vendido" ? "coral" : "ink"}>{tour.badge}</Badge>}
+          <Badge tone="soft">{tour.cat}</Badge>
+          {tour.tags.slice(0,2).map(tg => <Badge key={tg} tone="soft">{tg}</Badge>)}
+        </div>
+        <h1 className="display" style={{ fontSize: "clamp(36px, 5.5vw, 64px)", margin: 0, lineHeight: 1 }}>{tour.title}</h1>
+        <p style={{ color: "var(--ink-soft)", fontSize: 18, marginTop: 14, marginBottom: 18, maxWidth: 760 }}>{tour.subtitle}</p>
+        <div style={{ display: "flex", gap: 18, flexWrap: "wrap", alignItems: "center", color: "var(--ink-soft)", fontSize: 14 }}>
+          <Stars rating={tour.rating} reviews={tour.reviews}/>
+          <span>·</span>
+          <span><Icon name="pin" size={14}/> {tour.location}</span>
+          <span>·</span>
+          <span><Icon name="clock" size={14}/> {tour.duration}</span>
+          <span style={{ marginLeft: "auto" }}>
+            <ShareRow size="sm" emphasis="loud" title=""/>
+          </span>
+        </div>
+      </header>
+
+      {/* Gallery mosaic */}
+      <section className="wrap-wide">
+        <div className="gallery-grid" style={{
+          display: "grid",
+          gridTemplateColumns: "2fr 1fr 1fr",
+          gridTemplateRows: "240px 240px",
+          gap: 8,
+          borderRadius: 24,
+          overflow: "hidden",
+        }}>
+          <Photo variant={tour.photoVariant} glyph={tour.glyph} label={tour.photoLabel} rounded="none" style={{ gridRow: "1 / 3", aspectRatio: "auto", height: "100%" }}/>
+          <Photo variant="coral" label="foto 2 — detalle" rounded="none" style={{ aspectRatio: "auto", height: "100%" }} glyph="📸"/>
+          <Photo variant="sun" label="foto 3 — grupo" rounded="none" style={{ aspectRatio: "auto", height: "100%", position: "relative" }} glyph="👫">
+            <button style={{ position: "absolute", top: 10, right: 10, padding: "8px 12px", borderRadius: 999, background: "rgba(14,27,44,0.85)", color: "#fff", fontSize: 12, fontWeight: 600, display: "inline-flex", alignItems: "center", gap: 6, zIndex: 3 }}>
+              <Icon name="play" size={12}/> Ver video
+            </button>
+          </Photo>
+          <Photo variant="moss" label="foto 4 — paisaje" rounded="none" style={{ aspectRatio: "auto", height: "100%" }} glyph="🏞️"/>
+          <Photo variant="sky" label="foto 5 — almuerzo" rounded="none" style={{ aspectRatio: "auto", height: "100%", position: "relative" }} glyph="🍤">
+            <button style={{ position: "absolute", bottom: 10, right: 10, padding: "8px 12px", borderRadius: 999, background: "rgba(255,255,255,0.95)", fontSize: 12, fontWeight: 600 }}>
+              + 18 fotos
+            </button>
+          </Photo>
+        </div>
+      </section>
+
+      {/* Main content + sticky booking */}
+      <section className="wrap-wide" style={{ paddingTop: 40 }}>
+        <div className="tour-grid" style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: 48, alignItems: "start" }}>
+          <div>
+            {/* Quick facts */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10, marginBottom: 32, padding: 18, background: "var(--paper)", borderRadius: 18, boxShadow: "var(--shadow-sm)" }}>
+              <Fact icon="clock" label="Duración" value={tour.duration}/>
+              <Fact icon="globe" label="Idiomas" value="ES · PT · EN"/>
+              <Fact icon="users" label="Grupo" value="Hasta 14"/>
+              <Fact icon="shield" label="Cancelación" value="Gratis 24h"/>
+            </div>
+
+            {/* About */}
+            <SectionH eyebrow="La experiencia">Bora vivirlo</SectionH>
+            <p style={{ fontSize: 17, lineHeight: 1.65, color: "var(--ink-soft)" }}>
+              Una jornada pensada para quienes quieren conocer la <strong>Florianópolis de verdad</strong>: la que ven los locales, no la del folleto. Te recogemos en tu hotel, te llevamos por los rincones que ningún tour grupal pisa, y te devolvemos con la cámara llena y unos kilos más por las pastéis.
+            </p>
+            <p style={{ fontSize: 17, lineHeight: 1.65, color: "var(--ink-soft)" }}>
+              Vas con guía bilingüe nacido en la isla, vehículo con aire, agua de cortesía y la flexibilidad de parar donde quieras. Si llueve cambiamos el plan sobre la marcha — siempre hay un plan B.
+            </p>
+
+            {/* Itinerary */}
+            <SectionH eyebrow="Itinerario">Tu día, paso a paso</SectionH>
+            <div style={{ display: "flex", flexDirection: "column", gap: 0, marginBottom: 32 }}>
+              {ITINERARY.map((step, i) => (
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "60px 1fr", gap: 16, paddingBottom: 20 }}>
+                  <div style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div style={{
+                      width: 40, height: 40, borderRadius: 999,
+                      background: i === 0 ? "var(--coral)" : "var(--paper)",
+                      color: i === 0 ? "#fff" : "var(--ink)",
+                      boxShadow: i === 0 ? "none" : "inset 0 0 0 1px var(--line)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontFamily: "var(--font-mono)", fontWeight: 600, fontSize: 13,
+                      flexShrink: 0,
+                    }}>{i+1}</div>
+                    {i < ITINERARY.length - 1 && <div style={{ width: 2, flex: 1, background: "var(--line)", marginTop: 6 }}/>}
+                  </div>
+                  <div style={{ paddingTop: 6 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--coral)", fontWeight: 600 }}>{step.time}</span>
+                      <span style={{ fontSize: 12, color: "var(--muted)" }}>· {step.duration}</span>
+                    </div>
+                    <h4 style={{ margin: 0, fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 700 }}>{step.title}</h4>
+                    <p style={{ margin: "6px 0 0", color: "var(--ink-soft)", fontSize: 15, lineHeight: 1.5 }}>{step.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Include / not include */}
+            <SectionH eyebrow="Qué incluye">Lo que va y lo que no</SectionH>
+            <div className="include-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 32 }}>
+              <div>
+                <div style={{ fontWeight: 700, marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ background: "var(--moss)", color: "#fff", width: 22, height: 22, borderRadius: 999, display: "inline-flex", alignItems: "center", justifyContent: "center" }}><Icon name="check" size={12} stroke={3}/></span>
+                  Incluye
+                </div>
+                {INCLUDES.map(x => (
+                  <div key={x} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "8px 0", borderBottom: "1px dashed var(--line)", fontSize: 14 }}>
+                    <Icon name="check" size={14} style={{ color: "var(--moss)", marginTop: 4 }} stroke={2.5}/>
+                    {x}
+                  </div>
+                ))}
+              </div>
+              <div>
+                <div style={{ fontWeight: 700, marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ background: "var(--ink)", color: "#fff", width: 22, height: 22, borderRadius: 999, display: "inline-flex", alignItems: "center", justifyContent: "center" }}><Icon name="x-mark" size={12} stroke={3}/></span>
+                  No incluye
+                </div>
+                {NOT_INCLUDES.map(x => (
+                  <div key={x} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "8px 0", borderBottom: "1px dashed var(--line)", fontSize: 14, color: "var(--ink-soft)" }}>
+                    <Icon name="x-mark" size={14} style={{ color: "var(--muted)", marginTop: 4 }} stroke={2.5}/>
+                    {x}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Important info */}
+            <SectionH eyebrow="Importante">Antes de que digas Bora</SectionH>
+            <div style={{ background: "var(--cream-soft)", border: "1px solid var(--line)", borderRadius: 16, padding: 22, marginBottom: 32 }}>
+              <ul style={{ margin: 0, paddingLeft: 20, lineHeight: 1.8, color: "var(--ink-soft)", fontSize: 15 }}>
+                <li>Recogida desde tu hotel en zona Centro / Lagoa / Norte de la isla. Otras zonas, R$ 40 extra.</li>
+                <li>Llevá traje de baño, toalla, protector solar y zapatillas cómodas.</li>
+                <li>Si llueve fuerte, cambiamos a un plan B equivalente o reembolsamos 100%.</li>
+                <li>Apto desde 6 años. Embarazadas, escribinos antes.</li>
+              </ul>
+            </div>
+
+            {/* Reviews */}
+            <SectionH eyebrow={`${tour.reviews.toLocaleString("es")} reseñas`}>Lo que dicen quienes ya fueron</SectionH>
+            <div style={{ display: "flex", gap: 32, marginBottom: 24, flexWrap: "wrap", alignItems: "center" }}>
+              <div>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: 64, lineHeight: 1, fontWeight: 700 }}>{tour.rating.toFixed(2)}</div>
+                <Stars rating={tour.rating} size={16}/>
+                <div style={{ fontSize: 13, color: "var(--muted)", marginTop: 4 }}>{tour.reviews.toLocaleString("es")} reseñas verificadas</div>
+              </div>
+              <div style={{ flex: 1, minWidth: 200, display: "flex", flexDirection: "column", gap: 4 }}>
+                {[5,4,3,2,1].map(s => {
+                  const pct = s===5?92 : s===4?6 : s===3?1 : s===2?0.5 : 0.5;
+                  return (
+                    <div key={s} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12 }}>
+                      <span style={{ width: 16 }}>{s}★</span>
+                      <div style={{ flex: 1, height: 6, background: "var(--line-soft)", borderRadius: 6, overflow: "hidden" }}>
+                        <div style={{ width: `${pct}%`, height: "100%", background: "var(--coral)" }}/>
+                      </div>
+                      <span style={{ width: 32, color: "var(--muted)", textAlign: "right" }}>{pct}%</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }} className="reviews-grid">
+              {REVIEWS.map((r, i) => (
+                <div key={i} className="card" style={{ padding: 20, cursor: "default" }}>
+                  <Stars rating={r.rating} size={13}/>
+                  <p style={{ margin: "10px 0 12px", fontSize: 14, lineHeight: 1.55 }}>"{r.text}"</p>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12, color: "var(--muted)" }}>
+                    <div style={{ width: 28, height: 28, borderRadius: 999, background: "var(--cream-soft)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, color: "var(--ink)" }}>{r.name[0]}</div>
+                    <div><strong style={{ color: "var(--ink)" }}>{r.name}</strong> · {r.country} · {r.date}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button className="btn btn-ghost btn-lg" style={{ marginTop: 16 }}>Ver las {tour.reviews.toLocaleString("es")} reseñas <Icon name="arrow-right" size={14}/></button>
+
+            {/* Share block */}
+            <div style={{ marginTop: 48, padding: 24, background: "var(--paper)", borderRadius: 20, boxShadow: "var(--shadow-sm)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
+                <div style={{ flex: 1, minWidth: 220 }}>
+                  <h3 className="display" style={{ fontSize: 24, margin: 0 }}>Bora con la banda?</h3>
+                  <p style={{ margin: "6px 0 0", color: "var(--ink-soft)", fontSize: 14 }}>Mandá el tour por WhatsApp y reservalo de a varios. Cada 4 personas, 5% off automático.</p>
+                </div>
+                <ShareRow emphasis="loud" title="" size="md"/>
+              </div>
+            </div>
+          </div>
+
+          {/* Sticky booking card */}
+          <aside className="tour-sticky tour-booking-aside">
+            <BookingCard tour={tour}/>
+          </aside>
+        </div>
+      </section>
+
+      {/* Related */}
+      <section className="wrap-wide" style={{ paddingTop: 80 }}>
+        <SectionTitle eyebrow="Bora más" title="También te puede gustar" sub="Otros tours en la misma vibe."/>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 20 }}>
+          {moreLike.map(t => <TourCard key={t.id} tour={t} shareEmphasis={tweaks.shareEmphasis}/>)}
+        </div>
+      </section>
+
+      {/* Mobile sticky booking bar */}
+      <MobileBookBar tour={tour}/>
+
+      <style>{`
+        @media (max-width: 960px) {
+          .tour-grid { grid-template-columns: 1fr !important; }
+          .gallery-grid { grid-template-columns: 1fr 1fr !important; grid-template-rows: 200px 200px !important; }
+          .include-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+          .reviews-grid { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 600px) {
+          .gallery-grid { grid-template-rows: 180px 120px !important; }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+const ITINERARY = [
+  { time: "08:30", duration: "Recogida en hotel", title: "Te buscamos donde estés", desc: "Combi con aire, agua de cortesía y guía bilingüe esperándote en la puerta del hotel. Avisamos por WhatsApp 15 min antes." },
+  { time: "09:15", duration: "1 h 30", title: "Centro histórico + Mercado Público", desc: "Caminata por el casco viejo de Florianópolis. Probamos pastel de camarón en el mercado y un café en el Box 32." },
+  { time: "11:00", duration: "2 h", title: "Lagoa da Conceição y Mirador", desc: "Subida al Morro da Lagoa. La vista que sale en las postales — pero sin la cola del bus turístico." },
+  { time: "13:30", duration: "Almuerzo opcional", title: "Pausa para comer (a tu ritmo)", desc: "Te dejamos en Costa da Lagoa o en Ribeirão da Ilha según el clima. Te sugerimos lugares, vos elegís." },
+  { time: "16:00", duration: "1 h 30", title: "Playa de Joaquina", desc: "Tabla de sandboard incluida si te animás. Si no, te recostás y mirás cómo los locales bajan las dunas." },
+  { time: "18:00", duration: "Atardecer", title: "Bonus: sunset y vuelta al hotel", desc: "Cerramos con un mirador para ver el sol bajar atrás del continente. Te dejamos de vuelta en tu hotel ~19:30." },
+];
+
+const INCLUDES = [
+  "Recogida y regreso al hotel en zonas centro / Lagoa / Norte",
+  "Guía local bilingüe (ES · PT · EN)",
+  "Vehículo con aire acondicionado",
+  "Agua y snack tropical",
+  "Sandboard en Joaquina (opcional)",
+  "Seguro de viajero incluido",
+];
+
+const NOT_INCLUDES = [
+  "Almuerzo (sugerimos R$ 60–120 por persona)",
+  "Bebidas alcohólicas",
+  "Propinas (a discreción)",
+  "Lo que te quieras llevar de souvenir",
+];
+
+const Fact = ({ icon, label, value }) => (
+  <div style={{ display: "flex", flexDirection: "column", gap: 2, padding: "8px 6px" }}>
+    <div style={{ fontSize: 11, color: "var(--muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em", display: "inline-flex", alignItems: "center", gap: 6 }}>
+      <Icon name={icon} size={12}/> {label}
+    </div>
+    <div style={{ fontWeight: 700, fontSize: 15 }}>{value}</div>
+  </div>
+);
+
+const SectionH = ({ eyebrow, children }) => (
+  <div style={{ marginBottom: 16, marginTop: 28 }}>
+    {eyebrow && <div className="eyebrow" style={{ marginBottom: 8 }}>{eyebrow}</div>}
+    <h2 className="display" style={{ fontSize: "clamp(24px, 3vw, 36px)", margin: 0 }}>{children}</h2>
+  </div>
+);
+
+const BookingCard = ({ tour }) => {
+  const [adults, setAdults] = React.useState(2);
+  const [kids, setKids] = React.useState(0);
+  const [date, setDate] = React.useState("Mié 27 mayo");
+  const [slot, setSlot] = React.useState("08:30");
+  const subtotal = tour.priceFrom * adults + Math.round(tour.priceFrom * 0.5) * kids;
+
+  return (
+    <div style={{ background: "var(--paper)", borderRadius: 24, padding: 24, boxShadow: "var(--shadow-lg)", display: "flex", flexDirection: "column", gap: 18 }}>
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+        <div>
+          <span style={{ fontSize: 12, color: "var(--muted)" }}>desde</span>
+          <div className="display" style={{ fontSize: 36, lineHeight: 1, fontWeight: 700 }}>
+            R$ {tour.priceFrom}<span style={{ fontSize: 14, color: "var(--muted)", fontWeight: 500 }}> / persona</span>
+          </div>
+        </div>
+        <Badge tone="sun">Cancelación gratis</Badge>
+      </div>
+
+      <div style={{ border: "1px solid var(--line)", borderRadius: 14, overflow: "hidden" }}>
+        <button style={{ width: "100%", padding: "12px 14px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid var(--line)" }}>
+          <span style={{ display: "flex", alignItems: "center", gap: 10 }}><Icon name="calendar" size={16} style={{ color: "var(--coral)" }}/> <span style={{ textAlign: "left" }}><span style={{ display: "block", fontSize: 11, color: "var(--muted)", fontWeight: 500 }}>FECHA</span><strong>{date}</strong></span></span>
+          <Icon name="chevron-down" size={14}/>
+        </button>
+
+        <div style={{ padding: 14, borderBottom: "1px solid var(--line)" }}>
+          <div style={{ fontSize: 11, color: "var(--muted)", fontWeight: 500, marginBottom: 8 }}>HORARIO</div>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {["07:30","08:30","13:00"].map(s => (
+              <button key={s} onClick={()=>setSlot(s)} className="chip" style={{
+                background: slot === s ? "var(--ink)" : "var(--paper)",
+                color: slot === s ? "var(--cream)" : "var(--ink)",
+                boxShadow: slot === s ? "none" : "inset 0 0 0 1px var(--line)",
+                fontWeight: 600, fontSize: 13,
+              }}>{s}</button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ padding: 14 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+            <div>
+              <div style={{ fontWeight: 600, fontSize: 14 }}>Adultos</div>
+              <div style={{ fontSize: 12, color: "var(--muted)" }}>13+ años</div>
+            </div>
+            <Counter value={adults} setValue={setAdults} min={1}/>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div>
+              <div style={{ fontWeight: 600, fontSize: 14 }}>Niños</div>
+              <div style={{ fontSize: 12, color: "var(--muted)" }}>4–12 años (50% off)</div>
+            </div>
+            <Counter value={kids} setValue={setKids} min={0}/>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "0 4px" }}>
+        <span style={{ fontSize: 13, color: "var(--muted)" }}>Subtotal</span>
+        <span className="display" style={{ fontSize: 22, fontWeight: 700 }}>R$ {subtotal.toLocaleString("es")}</span>
+      </div>
+
+      <a href="#checkout" onClick={(e)=>{e.preventDefault(); navTo(`checkout?id=${tour.id}&adults=${adults}&kids=${kids}`);}} className="btn btn-coral btn-xl" style={{ width: "100%" }}>
+        Bora reservar <Icon name="arrow-right" size={16}/>
+      </a>
+
+      <div style={{ display: "flex", gap: 6 }}>
+        <a className="share-btn wpp" href="#" onClick={(e)=>e.preventDefault()} style={{ flex: 1, justifyContent: "center" }}><Icon name="whatsapp" size={14}/> Preguntar por WhatsApp</a>
+      </div>
+
+      <div style={{ borderTop: "1px dashed var(--line)", paddingTop: 14, display: "flex", flexDirection: "column", gap: 8, fontSize: 12, color: "var(--ink-soft)" }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}><Icon name="shield" size={14} style={{ color: "var(--moss)" }}/> Cancelación 100% gratis hasta 24 h antes</span>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}><Icon name="credit" size={14} style={{ color: "var(--coral)" }}/> Pix, tarjeta de crédito o débito</span>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}><Icon name="lock" size={14} style={{ color: "var(--muted)" }}/> Pago seguro · datos cifrados</span>
+      </div>
+    </div>
+  );
+};
+
+const Counter = ({ value, setValue, min = 0 }) => (
+  <div style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+    <button onClick={()=>setValue(Math.max(min, value-1))} style={{ width: 32, height: 32, borderRadius: 999, boxShadow: "inset 0 0 0 1px var(--line)", fontSize: 18, fontWeight: 600, color: value <= min ? "var(--muted)" : "var(--ink)" }} disabled={value <= min}>−</button>
+    <span style={{ minWidth: 26, textAlign: "center", fontWeight: 700 }}>{value}</span>
+    <button onClick={()=>setValue(value+1)} style={{ width: 32, height: 32, borderRadius: 999, boxShadow: "inset 0 0 0 1px var(--line)", fontSize: 18, fontWeight: 600 }}>+</button>
+  </div>
+);
+
+const MobileBookBar = ({ tour }) => (
+  <div className="mobile-book-bar" style={{
+    position: "fixed", bottom: 0, left: 0, right: 0,
+    background: "var(--paper)",
+    borderTop: "1px solid var(--line)",
+    padding: "12px 16px",
+    display: "none",
+    alignItems: "center",
+    gap: 12,
+    zIndex: 40,
+    boxShadow: "0 -4px 20px rgba(0,0,0,0.06)",
+  }}>
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ fontSize: 11, color: "var(--muted)" }}>desde</div>
+      <div className="display" style={{ fontSize: 22, fontWeight: 700, lineHeight: 1 }}>R$ {tour.priceFrom}</div>
+    </div>
+    <a href="#checkout" onClick={(e)=>{e.preventDefault(); navTo(`checkout?id=${tour.id}`);}} className="btn btn-coral btn-lg" style={{ flexShrink: 0 }}>Bora reservar</a>
+    <style>{`
+      @media (max-width: 960px) {
+        .mobile-book-bar { display: flex !important; }
+        body { padding-bottom: 80px; }
+        .fab-wpp { bottom: 88px !important; }
+      }
+    `}</style>
+  </div>
+);
+
+window.Tour = Tour;
+
+
+// ========== checkout.jsx ==========
+// Checkout page
+const Checkout = ({ params, tweaks }) => {
+  const tour = TOURS.find(t => t.id === params.id) || TOURS[0];
+  const adults = +params.adults || 2;
+  const kids = +params.kids || 0;
+  const [step, setStep] = React.useState(1);
+  const [payment, setPayment] = React.useState("pix");
+
+  const subtotal = tour.priceFrom * adults + Math.round(tour.priceFrom * 0.5) * kids;
+  const discount = Math.round(subtotal * 0.10);
+  const fee = Math.round(subtotal * 0.03);
+  const total = subtotal - discount + fee;
+
+  if (step === 3) {
+    return <CheckoutSuccess tour={tour}/>;
+  }
+
+  return (
+    <div className="page">
+      <div className="wrap-wide" style={{ paddingTop: 28, paddingBottom: 40 }}>
+        {/* Steps indicator */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24, flexWrap: "wrap" }}>
+          <a href="#tour" onClick={(e)=>{e.preventDefault(); navTo(`tour?id=${tour.id}`);}} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 14, color: "var(--muted)" }}>
+            <Icon name="chevron-left" size={14}/> Volver al tour
+          </a>
+          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: "var(--muted)" }}>
+            <Icon name="lock" size={14}/> Pago 100% seguro · TLS encriptado
+          </div>
+        </div>
+
+        <h1 className="display" style={{ fontSize: "clamp(32px, 4vw, 48px)", margin: 0, marginBottom: 8 }}>
+          Bora confirmar tu reserva
+        </h1>
+        <p style={{ color: "var(--ink-soft)", marginBottom: 28 }}>Estás a 2 minutos de tener todo listo.</p>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 32, flexWrap: "wrap" }}>
+          <Step n={1} label="Detalles" active={step >= 1}/>
+          <Connector active={step >= 2}/>
+          <Step n={2} label="Pago" active={step >= 2}/>
+          <Connector active={step >= 3}/>
+          <Step n={3} label="Confirmación" active={step >= 3}/>
+        </div>
+
+        <div className="checkout-grid" style={{ display: "grid", gridTemplateColumns: "1fr 400px", gap: 32, alignItems: "start" }}>
+          <div>
+            {step === 1 && <DetailsForm next={()=>setStep(2)} />}
+            {step === 2 && <PaymentForm payment={payment} setPayment={setPayment} next={()=>setStep(3)} back={()=>setStep(1)} total={total}/>}
+          </div>
+
+          <aside className="tour-sticky">
+            <OrderSummary tour={tour} adults={adults} kids={kids} subtotal={subtotal} discount={discount} fee={fee} total={total}/>
+          </aside>
+        </div>
+      </div>
+
+      <style>{`
+        @media (max-width: 880px) {
+          .checkout-grid { grid-template-columns: 1fr !important; }
+          .tour-sticky { position: static !important; }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+const Step = ({ n, label, active }) => (
+  <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+    <div style={{
+      width: 28, height: 28, borderRadius: 999,
+      background: active ? "var(--coral)" : "var(--paper)",
+      color: active ? "#fff" : "var(--muted)",
+      boxShadow: active ? "none" : "inset 0 0 0 1px var(--line)",
+      display: "inline-flex", alignItems: "center", justifyContent: "center",
+      fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 13,
+    }}>{n}</div>
+    <span style={{ fontWeight: 600, color: active ? "var(--ink)" : "var(--muted)", fontSize: 14 }}>{label}</span>
+  </div>
+);
+
+const Connector = ({ active }) => (
+  <div style={{ width: 40, height: 2, background: active ? "var(--coral)" : "var(--line)", borderRadius: 2 }}/>
+);
+
+const DetailsForm = ({ next }) => (
+  <div style={{ background: "var(--paper)", borderRadius: 20, padding: 28, boxShadow: "var(--shadow-sm)" }}>
+    <h2 className="display" style={{ fontSize: 24, margin: "0 0 6px" }}>Tus datos</h2>
+    <p style={{ margin: "0 0 20px", color: "var(--muted)", fontSize: 14 }}>Solo lo esencial. Nada de spam.</p>
+
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }} className="form-grid">
+      <Field label="Nombre" value="Mariana" />
+      <Field label="Apellido" value="Castillo" />
+      <Field label="Email" value="mariana@gmail.com" type="email" wide/>
+      <Field label="WhatsApp" value="+54 11 5555-1234" type="tel"/>
+      <Field label="País" value="🇦🇷 Argentina"/>
+    </div>
+
+    <h3 style={{ margin: "24px 0 10px", fontSize: 16, fontWeight: 700 }}>Recogida en hotel</h3>
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }} className="form-grid">
+      <Field label="Hotel o dirección" value="Hotel Vila do Farol — Praia Mole" wide/>
+      <Field label="Teléfono del hotel (opcional)" value=""/>
+      <Field label="Habitación" value="312"/>
+    </div>
+
+    <h3 style={{ margin: "24px 0 10px", fontSize: 16, fontWeight: 700 }}>Algo más?</h3>
+    <textarea
+      placeholder="Restricciones alimentarias, celebración, lo que quieras avisarnos…"
+      defaultValue="Vamos por mi cumpleaños 🎂"
+      style={{ width: "100%", padding: 14, borderRadius: 12, border: "1px solid var(--line)", fontFamily: "inherit", fontSize: 14, minHeight: 80, resize: "vertical", background: "var(--cream-soft)" }}
+    />
+
+    <label style={{ display: "flex", alignItems: "flex-start", gap: 10, marginTop: 16, fontSize: 13, color: "var(--ink-soft)" }}>
+      <input type="checkbox" defaultChecked style={{ marginTop: 3, accentColor: "var(--coral)" }}/>
+      Acepto los <a href="#" style={{ color: "var(--coral)", textDecoration: "underline" }}>términos</a> y la <a href="#" style={{ color: "var(--coral)", textDecoration: "underline" }}>política de cancelación</a>.
+    </label>
+
+    <button onClick={next} className="btn btn-coral btn-xl" style={{ width: "100%", marginTop: 22 }}>
+      Bora al pago <Icon name="arrow-right" size={16}/>
+    </button>
+
+    <style>{`
+      @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr !important; } }
+    `}</style>
+  </div>
+);
+
+const Field = ({ label, value, type = "text", wide }) => (
+  <label style={{ display: "flex", flexDirection: "column", gap: 4, gridColumn: wide ? "1 / -1" : "auto" }}>
+    <span style={{ fontSize: 12, color: "var(--muted)", fontWeight: 600, letterSpacing: "0.02em" }}>{label}</span>
+    <input type={type} defaultValue={value} style={{ padding: "12px 14px", borderRadius: 12, border: "1px solid var(--line)", fontFamily: "inherit", fontSize: 15, background: "var(--cream-soft)" }}/>
+  </label>
+);
+
+const PaymentForm = ({ payment, setPayment, next, back, total }) => (
+  <div style={{ background: "var(--paper)", borderRadius: 20, padding: 28, boxShadow: "var(--shadow-sm)" }}>
+    <h2 className="display" style={{ fontSize: 24, margin: "0 0 6px" }}>Pago</h2>
+    <p style={{ margin: "0 0 20px", color: "var(--muted)", fontSize: 14 }}>Elegí cómo querés pagar. Lo más fácil es Pix.</p>
+
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 20 }} className="pay-grid">
+      <PayOption id="pix" current={payment} set={setPayment} title="Pix" sub="-5% off" icon="⚡"/>
+      <PayOption id="card" current={payment} set={setPayment} title="Tarjeta" sub="Crédito o débito" icon="💳"/>
+      <PayOption id="wpp" current={payment} set={setPayment} title="WhatsApp" sub="Pagás por chat" icon="💬"/>
+    </div>
+
+    {payment === "pix" && (
+      <div style={{ padding: 22, background: "var(--cream-soft)", borderRadius: 16, textAlign: "center" }}>
+        <div style={{ width: 160, height: 160, margin: "0 auto", background: "#fff", border: "1px solid var(--line)", borderRadius: 12, padding: 12, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <QrPattern/>
+        </div>
+        <p style={{ fontFamily: "var(--font-mono)", fontSize: 12, marginTop: 14, color: "var(--muted)" }}>
+          escaneá con tu app bancaria · o copiá el código abajo
+        </p>
+        <div style={{ display: "flex", gap: 6, marginTop: 10, padding: "10px 12px", background: "#fff", borderRadius: 10, border: "1px solid var(--line)", alignItems: "center", fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--muted)" }}>
+          <span style={{ flex: 1, textAlign: "left", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>00020126360014BR.GOV.BCB.PIX0114+5548999912345...</span>
+          <button style={{ color: "var(--coral)", fontWeight: 700 }}>Copiar</button>
+        </div>
+      </div>
+    )}
+
+    {payment === "card" && (
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }} className="form-grid">
+        <Field label="Número de tarjeta" value="4242 4242 4242 4242" wide/>
+        <Field label="Vencimiento" value="08/27"/>
+        <Field label="CVV" value="123"/>
+        <Field label="Titular" value="MARIANA CASTILLO" wide/>
+      </div>
+    )}
+
+    {payment === "wpp" && (
+      <div style={{ padding: 22, background: "#E8F8EE", borderRadius: 16, borderLeft: "4px solid #25D366" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, fontWeight: 700 }}>
+          <Icon name="whatsapp" size={20} style={{ color: "#25D366" }}/> Pago por WhatsApp
+        </div>
+        <p style={{ margin: "10px 0 0", fontSize: 14, color: "var(--ink-soft)" }}>
+          Tocá <strong>Confirmar</strong> y te escribimos por WhatsApp para coordinar el pago. Tu lugar queda reservado por 12 horas.
+        </p>
+      </div>
+    )}
+
+    <div style={{ display: "flex", gap: 10, marginTop: 24 }}>
+      <button onClick={back} className="btn btn-ghost btn-lg" style={{ flex: 1 }}><Icon name="chevron-left" size={14}/> Volver</button>
+      <button onClick={next} className="btn btn-coral btn-xl" style={{ flex: 2 }}>
+        Confirmar y pagar R$ {total.toLocaleString("es")} <Icon name="arrow-right" size={16}/>
+      </button>
+    </div>
+
+    <style>{`
+      @media (max-width: 600px) { .pay-grid { grid-template-columns: 1fr !important; } }
+    `}</style>
+  </div>
+);
+
+const PayOption = ({ id, current, set, title, sub, icon }) => (
+  <button onClick={()=>set(id)} style={{
+    padding: 14, borderRadius: 14,
+    background: "var(--cream-soft)",
+    boxShadow: current === id ? "inset 0 0 0 2px var(--coral)" : "inset 0 0 0 1px var(--line)",
+    textAlign: "left",
+    display: "flex", flexDirection: "column", gap: 4,
+  }}>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <span style={{ fontSize: 24 }}>{icon}</span>
+      <div style={{ width: 18, height: 18, borderRadius: 999, boxShadow: current === id ? "inset 0 0 0 6px var(--coral)" : "inset 0 0 0 1px var(--line)", background: current === id ? "var(--cream-soft)" : "transparent" }}/>
+    </div>
+    <span style={{ fontWeight: 700, fontSize: 15 }}>{title}</span>
+    <span style={{ fontSize: 12, color: "var(--muted)" }}>{sub}</span>
+  </button>
+);
+
+const QrPattern = () => {
+  // simple decorative QR-like grid
+  const rows = 12;
+  const cols = 12;
+  return (
+    <svg viewBox={`0 0 ${cols} ${rows}`} width="100%" height="100%" style={{ display: "block" }}>
+      {Array.from({ length: rows*cols }, (_, i) => {
+        const r = Math.floor(i / cols);
+        const c = i % cols;
+        // deterministic pseudo-random
+        const v = ((r*7 + c*3 + r*c) * 2654435761 >>> 0) % 100;
+        if (v < 45) return <rect key={i} x={c} y={r} width="1" height="1" fill="var(--ink)"/>;
+        return null;
+      })}
+      {/* corner markers */}
+      {[[0,0],[0,9],[9,0]].map(([x,y],i)=>(
+        <g key={i}>
+          <rect x={x} y={y} width="3" height="3" fill="var(--ink)"/>
+          <rect x={x+0.5} y={y+0.5} width="2" height="2" fill="#fff"/>
+          <rect x={x+1} y={y+1} width="1" height="1" fill="var(--ink)"/>
+        </g>
+      ))}
+    </svg>
+  );
+};
+
+const OrderSummary = ({ tour, adults, kids, subtotal, discount, fee, total }) => (
+  <div style={{ background: "var(--paper)", borderRadius: 20, padding: 24, boxShadow: "var(--shadow-md)" }}>
+    <div className="eyebrow" style={{ marginBottom: 12 }}>Tu reserva</div>
+    <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+      <Photo variant={tour.photoVariant} glyph={tour.glyph} ratio="1/1" rounded="sm" style={{ width: 84, height: 84, flexShrink: 0 }}/>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 16, lineHeight: 1.2 }}>{tour.title}</div>
+        <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>
+          <Icon name="calendar" size={11}/> Mié 27 mayo · 08:30
+        </div>
+        <div style={{ fontSize: 12, color: "var(--muted)" }}>
+          {adults} adulto{adults>1?"s":""}{kids ? ` · ${kids} niño${kids>1?"s":""}` : ""}
+        </div>
+      </div>
+    </div>
+
+    <div className="dotted-div" style={{ margin: "12px 0" }}/>
+
+    <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 14 }}>
+      <Row label={`Adultos × ${adults}`} value={`R$ ${(tour.priceFrom*adults).toLocaleString("es")}`}/>
+      {kids > 0 && <Row label={`Niños × ${kids} (50% off)`} value={`R$ ${(Math.round(tour.priceFrom*0.5)*kids).toLocaleString("es")}`}/>}
+      <Row label="Subtotal" value={`R$ ${subtotal.toLocaleString("es")}`} bold/>
+      <Row label={<span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>Cupón BORA10 <Badge tone="sun">-10%</Badge></span>} value={`− R$ ${discount.toLocaleString("es")}`} color="var(--moss)"/>
+      <Row label="Cargo plataforma" value={`R$ ${fee.toLocaleString("es")}`} color="var(--muted)"/>
+    </div>
+
+    <div className="dotted-div" style={{ margin: "12px 0" }}/>
+
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
+      <span style={{ fontWeight: 700 }}>Total</span>
+      <span className="display" style={{ fontSize: 26, fontWeight: 700 }}>R$ {total.toLocaleString("es")}</span>
+    </div>
+
+    <div style={{ background: "var(--cream-soft)", padding: 12, borderRadius: 12, fontSize: 12, color: "var(--ink-soft)", display: "flex", gap: 10 }}>
+      <Icon name="shield" size={16} style={{ color: "var(--moss)", flexShrink: 0, marginTop: 2 }}/>
+      Cancelá gratis hasta el <strong>26 mayo 08:30</strong> y te devolvemos el 100%. Después de eso, 50%.
+    </div>
+
+    {/* code input */}
+    <div style={{ marginTop: 14, display: "flex", gap: 8 }}>
+      <input placeholder="Código de cupón" style={{ flex: 1, padding: "10px 12px", borderRadius: 10, border: "1px solid var(--line)", fontSize: 13, fontFamily: "inherit", background: "var(--cream-soft)" }}/>
+      <button className="btn btn-ghost btn-sm">Aplicar</button>
+    </div>
+  </div>
+);
+
+const Row = ({ label, value, bold, color }) => (
+  <div style={{ display: "flex", justifyContent: "space-between", color: color || "var(--ink)", fontWeight: bold ? 700 : 400 }}>
+    <span>{label}</span>
+    <span>{value}</span>
+  </div>
+);
+
+const CheckoutSuccess = ({ tour }) => (
+  <div className="page">
+    <div className="wrap-wide" style={{ paddingTop: 60, paddingBottom: 60, maxWidth: 720 }}>
+      <div style={{ background: "var(--paper)", borderRadius: 28, padding: "clamp(28px, 5vw, 56px)", boxShadow: "var(--shadow-md)", textAlign: "center" }}>
+        <div style={{ width: 80, height: 80, borderRadius: 999, background: "var(--moss)", color: "#fff", margin: "0 auto 20px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Icon name="check" size={42} stroke={3}/>
+        </div>
+        <div className="eyebrow" style={{ marginBottom: 8 }}>Reserva confirmada</div>
+        <h1 className="display" style={{ fontSize: "clamp(36px, 5vw, 56px)", margin: 0, lineHeight: 1 }}>
+          Bora!<br/>
+          <span style={{ color: "var(--coral)", fontStyle: "italic", fontWeight: 500 }}>Te esperamos en Floripa.</span>
+        </h1>
+        <p style={{ marginTop: 16, color: "var(--ink-soft)", fontSize: 17 }}>
+          Te enviamos los detalles a <strong>mariana@gmail.com</strong> y por WhatsApp. Código <span style={{ fontFamily: "var(--font-mono)", background: "var(--cream-soft)", padding: "2px 8px", borderRadius: 6 }}>#BF-A38F2K</span>
+        </p>
+
+        <div style={{ marginTop: 28, padding: 20, background: "var(--cream-soft)", borderRadius: 16, textAlign: "left", display: "flex", gap: 14, alignItems: "center" }}>
+          <Photo variant={tour.photoVariant} glyph={tour.glyph} ratio="1/1" rounded="sm" style={{ width: 72, height: 72, flexShrink: 0 }}/>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 18, lineHeight: 1.2 }}>{tour.title}</div>
+            <div style={{ fontSize: 13, color: "var(--ink-soft)", marginTop: 4 }}>Mié 27 mayo · 08:30 · 2 adultos</div>
+            <div style={{ fontSize: 13, color: "var(--muted)" }}>Recogida en Hotel Vila do Farol · Praia Mole</div>
+          </div>
+        </div>
+
+        <div style={{ marginTop: 32 }}>
+          <div className="eyebrow" style={{ marginBottom: 10 }}>Bora avisarle a la banda</div>
+          <ShareRow emphasis="loud" title="" size="md"/>
+        </div>
+
+        <div style={{ display: "flex", gap: 10, justifyContent: "center", marginTop: 32, flexWrap: "wrap" }}>
+          <a href="#" className="btn btn-ghost btn-lg"><Icon name="calendar" size={14}/> Agregar al calendario</a>
+          <a href="#home" onClick={(e)=>{e.preventDefault(); navTo("home");}} className="btn btn-coral btn-lg">Bora explorar más tours <Icon name="arrow-right" size={14}/></a>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+window.Checkout = Checkout;
+
+
+// ========== about.jsx ==========
+// About / Sobre nosotros
+const About = () => (
+  <div className="page">
+    <section className="wrap-wide" style={{ paddingTop: 60, paddingBottom: 40 }}>
+      <div className="eyebrow" style={{ marginBottom: 14 }}>Bora nosotros</div>
+      <h1 className="display" style={{ fontSize: "clamp(48px, 7vw, 96px)", margin: 0, lineHeight: 0.95, maxWidth: 900 }}>
+        Nacimos en la isla.<br/>
+        <span style={{ color: "var(--coral)" }}>Vivimos en la isla.</span><br/>
+        <span style={{ fontStyle: "italic", fontWeight: 500, color: "var(--ink-soft)" }}>Te la mostramos como amigos.</span>
+      </h1>
+      <p style={{ marginTop: 24, fontSize: 19, lineHeight: 1.55, color: "var(--ink-soft)", maxWidth: 720 }}>
+        Bora Floripa empezó en 2023, cuando Tiago — guía con 12 años en la isla — se cansó de ver a turistas hispanohablantes confundidos en agencias que no hablan su idioma ni les explican bien qué tour es para ellos.
+      </p>
+    </section>
+
+    <section className="wrap-wide" style={{ paddingBottom: 40 }}>
+      <Photo variant="turq" label="foto del equipo en praia da galheta — 8 personas riendo" glyph="" ratio="21/9" rounded="lg"/>
+    </section>
+
+    <section className="wrap-wide" style={{ paddingBottom: 60 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "start" }} className="about-grid">
+        <div>
+          <h2 className="display" style={{ fontSize: 36, margin: 0 }}>Lo que nos hace distintos</h2>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          {[
+            { n: "01", title: "Todos somos locales", desc: "Nacidos y criados acá. Conocemos las playas que cambian con la marea, los restaurantes que cierran los lunes, y al señor que vende las mejores tapioca." },
+            { n: "02", title: "Solo Floripa, en serio", desc: "Ninguna otra ciudad. Especialistas, no de todo. Si querés Iguazú, te recomendamos a alguien — no fingimos que sabemos." },
+            { n: "03", title: "Tu idioma, sin choque", desc: "El equipo es 100% español-bilingüe. Sabemos las diferencias entre 'remera' y 'polera', y por qué eso importa." },
+            { n: "04", title: "Tecnología bien hecha", desc: "Reservás en 30 segundos, pagás con Pix, recibís todo por WhatsApp. Sin formularios eternos, sin emails que se pierden." },
+          ].map(x => (
+            <div key={x.n} style={{ display: "grid", gridTemplateColumns: "60px 1fr", gap: 16 }}>
+              <div style={{ fontFamily: "var(--font-mono)", color: "var(--coral)", fontSize: 14, fontWeight: 600, paddingTop: 6 }}>{x.n}</div>
+              <div>
+                <h3 className="display" style={{ fontSize: 22, margin: 0 }}>{x.title}</h3>
+                <p style={{ margin: "6px 0 0", color: "var(--ink-soft)", fontSize: 15, lineHeight: 1.55 }}>{x.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section style={{ background: "var(--cream-soft)", padding: "60px 0", borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)" }}>
+      <div className="wrap-wide">
+        <SectionTitle eyebrow="El equipo" title="La banda" sub="Las caras que vas a ver llegando a tu hotel."/>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 20 }}>
+          {[
+            { name: "Tiago Heinzen", role: "Fundador · Guía-jefe", bio: "12 años guiando. Conoce cada trilha.", v: "coral" },
+            { name: "Carolina Silva", role: "Operaciones", bio: "La que hace que todo funcione. Habla 4 idiomas.", v: "sun" },
+            { name: "Lucas Mendes", role: "Guía · Surf", bio: "Ex pro de surf. Las olas, las sabe.", v: "turq" },
+            { name: "Marina Costa", role: "Atención WhatsApp", bio: "Te responde en 5 min. Siempre. 24/7.", v: "moss" },
+          ].map((p,i) => (
+            <div key={i} className="card" style={{ cursor: "default" }}>
+              <Photo variant={p.v} label={`${p.name.toLowerCase()} retrato`} glyph="" ratio="4/5" rounded="none"/>
+              <div style={{ padding: 18 }}>
+                <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 18 }}>{p.name}</div>
+                <div style={{ fontSize: 12, color: "var(--coral)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em", marginTop: 2 }}>{p.role}</div>
+                <p style={{ margin: "8px 0 0", fontSize: 14, color: "var(--ink-soft)", lineHeight: 1.5 }}>{p.bio}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section className="wrap-wide" style={{ paddingTop: 60, paddingBottom: 40 }}>
+      <SectionTitle eyebrow="Números reales" title="Bora con datos"/>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16 }}>
+        {[
+          { n: "9,824", l: "Viajeros felices" },
+          { n: "4.92", l: "Rating promedio" },
+          { n: "30s", l: "Promedio respuesta WhatsApp" },
+          { n: "0", l: "Tours cancelados sin reembolso" },
+        ].map((s,i) => (
+          <div key={i} style={{ background: "var(--paper)", borderRadius: 18, padding: 24, boxShadow: "var(--shadow-sm)" }}>
+            <div className="display" style={{ fontSize: 48, lineHeight: 1, fontWeight: 700 }}>{s.n}</div>
+            <div style={{ color: "var(--muted)", marginTop: 6, fontSize: 13 }}>{s.l}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <style>{`
+      @media (max-width: 880px) { .about-grid { grid-template-columns: 1fr !important; gap: 24px !important; } }
+    `}</style>
+  </div>
+);
+
+window.About = About;
+
+
+// ========== tweaks-panel.jsx ==========
+
+// tweaks-panel.jsx
+// Reusable Tweaks shell + form-control helpers.
+//
+// Owns the host protocol (listens for __activate_edit_mode / __deactivate_edit_mode,
+// posts __edit_mode_available / __edit_mode_set_keys / __edit_mode_dismissed) so
+// individual prototypes don't re-roll it. Ships a consistent set of controls so you
+// don't hand-draw <input type="range">, segmented radios, steppers, etc.
+//
+// Usage (in an HTML file that loads React + Babel):
+//
+//   const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+//     "primaryColor": "#D97757",
+//     "palette": ["#D97757", "#29261b", "#f6f4ef"],
+//     "fontSize": 16,
+//     "density": "regular",
+//     "dark": false
+//   }/*EDITMODE-END*/;
+//
+//   function App() {
+//     const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+//     return (
+//       <div style={{ fontSize: t.fontSize, color: t.primaryColor }}>
+//         Hello
+//         <TweaksPanel>
+//           <TweakSection label="Typography" />
+//           <TweakSlider label="Font size" value={t.fontSize} min={10} max={32} unit="px"
+//                        onChange={(v) => setTweak('fontSize', v)} />
+//           <TweakRadio  label="Density" value={t.density}
+//                        options={['compact', 'regular', 'comfy']}
+//                        onChange={(v) => setTweak('density', v)} />
+//           <TweakSection label="Theme" />
+//           <TweakColor  label="Primary" value={t.primaryColor}
+//                        options={['#D97757', '#2A6FDB', '#1F8A5B', '#7A5AE0']}
+//                        onChange={(v) => setTweak('primaryColor', v)} />
+//           <TweakColor  label="Palette" value={t.palette}
+//                        options={[['#D97757', '#29261b', '#f6f4ef'],
+//                                  ['#475569', '#0f172a', '#f1f5f9']]}
+//                        onChange={(v) => setTweak('palette', v)} />
+//           <TweakToggle label="Dark mode" value={t.dark}
+//                        onChange={(v) => setTweak('dark', v)} />
+//         </TweaksPanel>
+//       </div>
+//     );
+//   }
+//
+// ─────────────────────────────────────────────────────────────────────────────
+
+const __TWEAKS_STYLE = `
+  .twk-panel{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:280px;
+    max-height:calc(100vh - 32px);display:flex;flex-direction:column;
+    transform:scale(var(--dc-inv-zoom,1));transform-origin:bottom right;
+    background:rgba(250,249,247,.78);color:#29261b;
+    -webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);
+    border:.5px solid rgba(255,255,255,.6);border-radius:14px;
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 12px 40px rgba(0,0,0,.18);
+    font:11.5px/1.4 ui-sans-serif,system-ui,-apple-system,sans-serif;overflow:hidden}
+  .twk-hd{display:flex;align-items:center;justify-content:space-between;
+    padding:10px 8px 10px 14px;cursor:move;user-select:none}
+  .twk-hd b{font-size:12px;font-weight:600;letter-spacing:.01em}
+  .twk-x{appearance:none;border:0;background:transparent;color:rgba(41,38,27,.55);
+    width:22px;height:22px;border-radius:6px;cursor:default;font-size:13px;line-height:1}
+  .twk-x:hover{background:rgba(0,0,0,.06);color:#29261b}
+  .twk-body{padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px;
+    overflow-y:auto;overflow-x:hidden;min-height:0;
+    scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.15) transparent}
+  .twk-body::-webkit-scrollbar{width:8px}
+  .twk-body::-webkit-scrollbar-track{background:transparent;margin:2px}
+  .twk-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:4px;
+    border:2px solid transparent;background-clip:content-box}
+  .twk-body::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,.25);
+    border:2px solid transparent;background-clip:content-box}
+  .twk-row{display:flex;flex-direction:column;gap:5px}
+  .twk-row-h{flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+  .twk-lbl{display:flex;justify-content:space-between;align-items:baseline;
+    color:rgba(41,38,27,.72)}
+  .twk-lbl>span:first-child{font-weight:500}
+  .twk-val{color:rgba(41,38,27,.5);font-variant-numeric:tabular-nums}
+
+  .twk-sect{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:rgba(41,38,27,.45);padding:10px 0 0}
+  .twk-sect:first-child{padding-top:0}
+
+  .twk-field{appearance:none;box-sizing:border-box;width:100%;min-width:0;height:26px;padding:0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;
+    background:rgba(255,255,255,.6);color:inherit;font:inherit;outline:none}
+  .twk-field:focus{border-color:rgba(0,0,0,.25);background:rgba(255,255,255,.85)}
+  select.twk-field{padding-right:22px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='rgba(0,0,0,.5)' d='M0 0h10L5 6z'/></svg>");
+    background-repeat:no-repeat;background-position:right 8px center}
+
+  .twk-slider{appearance:none;-webkit-appearance:none;width:100%;height:4px;margin:6px 0;
+    border-radius:999px;background:rgba(0,0,0,.12);outline:none}
+  .twk-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+    width:14px;height:14px;border-radius:50%;background:#fff;
+    border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:default}
+  .twk-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
+    background:#fff;border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:default}
+
+  .twk-seg{position:relative;display:flex;padding:2px;border-radius:8px;
+    background:rgba(0,0,0,.06);user-select:none}
+  .twk-seg-thumb{position:absolute;top:2px;bottom:2px;border-radius:6px;
+    background:rgba(255,255,255,.9);box-shadow:0 1px 2px rgba(0,0,0,.12);
+    transition:left .15s cubic-bezier(.3,.7,.4,1),width .15s}
+  .twk-seg.dragging .twk-seg-thumb{transition:none}
+  .twk-seg button{appearance:none;position:relative;z-index:1;flex:1;border:0;
+    background:transparent;color:inherit;font:inherit;font-weight:500;min-height:22px;
+    border-radius:6px;cursor:default;padding:4px 6px;line-height:1.2;
+    overflow-wrap:anywhere}
+
+  .twk-toggle{position:relative;width:32px;height:18px;border:0;border-radius:999px;
+    background:rgba(0,0,0,.15);transition:background .15s;cursor:default;padding:0}
+  .twk-toggle[data-on="1"]{background:#34c759}
+  .twk-toggle i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+    background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+  .twk-toggle[data-on="1"] i{transform:translateX(14px)}
+
+  .twk-num{display:flex;align-items:center;box-sizing:border-box;min-width:0;height:26px;padding:0 0 0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;background:rgba(255,255,255,.6)}
+  .twk-num-lbl{font-weight:500;color:rgba(41,38,27,.6);cursor:ew-resize;
+    user-select:none;padding-right:8px}
+  .twk-num input{flex:1;min-width:0;height:100%;border:0;background:transparent;
+    font:inherit;font-variant-numeric:tabular-nums;text-align:right;padding:0 8px 0 0;
+    outline:none;color:inherit;-moz-appearance:textfield}
+  .twk-num input::-webkit-inner-spin-button,.twk-num input::-webkit-outer-spin-button{
+    -webkit-appearance:none;margin:0}
+  .twk-num-unit{padding-right:8px;color:rgba(41,38,27,.45)}
+
+  .twk-btn{appearance:none;height:26px;padding:0 12px;border:0;border-radius:7px;
+    background:rgba(0,0,0,.78);color:#fff;font:inherit;font-weight:500;cursor:default}
+  .twk-btn:hover{background:rgba(0,0,0,.88)}
+  .twk-btn.secondary{background:rgba(0,0,0,.06);color:inherit}
+  .twk-btn.secondary:hover{background:rgba(0,0,0,.1)}
+
+  .twk-swatch{appearance:none;-webkit-appearance:none;width:56px;height:22px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:6px;padding:0;cursor:default;
+    background:transparent;flex-shrink:0}
+  .twk-swatch::-webkit-color-swatch-wrapper{padding:0}
+  .twk-swatch::-webkit-color-swatch{border:0;border-radius:5.5px}
+  .twk-swatch::-moz-color-swatch{border:0;border-radius:5.5px}
+
+  .twk-chips{display:flex;gap:6px}
+  .twk-chip{position:relative;appearance:none;flex:1;min-width:0;height:46px;
+    padding:0;border:0;border-radius:6px;overflow:hidden;cursor:default;
+    box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.06);
+    transition:transform .12s cubic-bezier(.3,.7,.4,1),box-shadow .12s}
+  .twk-chip:hover{transform:translateY(-1px);
+    box-shadow:0 0 0 .5px rgba(0,0,0,.18),0 4px 10px rgba(0,0,0,.12)}
+  .twk-chip[data-on="1"]{box-shadow:0 0 0 1.5px rgba(0,0,0,.85),
+    0 2px 6px rgba(0,0,0,.15)}
+  .twk-chip>span{position:absolute;top:0;bottom:0;right:0;width:34%;
+    display:flex;flex-direction:column;box-shadow:-1px 0 0 rgba(0,0,0,.1)}
+  .twk-chip>span>i{flex:1;box-shadow:0 -1px 0 rgba(0,0,0,.1)}
+  .twk-chip>span>i:first-child{box-shadow:none}
+  .twk-chip svg{position:absolute;top:6px;left:6px;width:13px;height:13px;
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
+`;
+
+// ── useTweaks ───────────────────────────────────────────────────────────────
+// Single source of truth for tweak values. setTweak persists via the host
+// (__edit_mode_set_keys → host rewrites the EDITMODE block on disk).
+function useTweaks(defaults) {
+  const [values, setValues] = React.useState(defaults);
+  // Accepts either setTweak('key', value) or setTweak({ key: value, ... }) so a
+  // useState-style call doesn't write a "[object Object]" key into the persisted
+  // JSON block.
+  const setTweak = React.useCallback((keyOrEdits, val) => {
+    const edits = typeof keyOrEdits === 'object' && keyOrEdits !== null
+      ? keyOrEdits : { [keyOrEdits]: val };
+    setValues((prev) => ({ ...prev, ...edits }));
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*');
+    // Same-window signal so in-page listeners (deck-stage rail thumbnails)
+    // can react — the parent message only reaches the host, not peers.
+    window.dispatchEvent(new CustomEvent('tweakchange', { detail: edits }));
+  }, []);
+  return [values, setTweak];
+}
+
+// ── TweaksPanel ─────────────────────────────────────────────────────────────
+// Floating shell. Registers the protocol listener BEFORE announcing
+// availability — if the announce ran first, the host's activate could land
+// before our handler exists and the toolbar toggle would silently no-op.
+// The close button posts __edit_mode_dismissed so the host's toolbar toggle
+// flips off in lockstep; the host echoes __deactivate_edit_mode back which
+// is what actually hides the panel.
+function TweaksPanel({ title = 'Tweaks', noDeckControls = false, children }) {
+  const [open, setOpen] = React.useState(false);
+  const dragRef = React.useRef(null);
+  // Auto-inject a rail toggle when a <deck-stage> is on the page. The
+  // toggle drives the deck's per-viewer _railVisible via window message;
+  // state is mirrored from the same localStorage key the deck reads so
+  // the control reflects reality across reloads. The mechanism is the
+  // message — authors who want custom placement can post it directly
+  // and pass noDeckControls to suppress this one.
+  const hasDeckStage = React.useMemo(
+    () => typeof document !== 'undefined' && !!document.querySelector('deck-stage'),
+    [],
+  );
+  // deck-stage enables its rail in connectedCallback, but this panel can
+  // mount before that element has upgraded. The initial read catches the
+  // common case; the listener covers mounting first. (Older deck-stage.js
+  // copies still wait for the host's __omelette_rail_enabled postMessage —
+  // same listener handles those.)
+  const [railEnabled, setRailEnabled] = React.useState(
+    () => hasDeckStage && !!document.querySelector('deck-stage')?._railEnabled,
+  );
+  React.useEffect(() => {
+    if (!hasDeckStage || railEnabled) return undefined;
+    const onMsg = (e) => {
+      if (e.data && e.data.type === '__omelette_rail_enabled') setRailEnabled(true);
+    };
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, [hasDeckStage, railEnabled]);
+  const [railVisible, setRailVisible] = React.useState(() => {
+    try { return localStorage.getItem('deck-stage.railVisible') !== '0'; } catch (e) { return true; }
+  });
+  const toggleRail = (on) => {
+    setRailVisible(on);
+    window.postMessage({ type: '__deck_rail_visible', on }, '*');
+  };
+  const offsetRef = React.useRef({ x: 16, y: 16 });
+  const PAD = 16;
+
+  const clampToViewport = React.useCallback(() => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const w = panel.offsetWidth, h = panel.offsetHeight;
+    const maxRight = Math.max(PAD, window.innerWidth - w - PAD);
+    const maxBottom = Math.max(PAD, window.innerHeight - h - PAD);
+    offsetRef.current = {
+      x: Math.min(maxRight, Math.max(PAD, offsetRef.current.x)),
+      y: Math.min(maxBottom, Math.max(PAD, offsetRef.current.y)),
+    };
+    panel.style.right = offsetRef.current.x + 'px';
+    panel.style.bottom = offsetRef.current.y + 'px';
+  }, []);
+
+  React.useEffect(() => {
+    if (!open) return;
+    clampToViewport();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', clampToViewport);
+      return () => window.removeEventListener('resize', clampToViewport);
+    }
+    const ro = new ResizeObserver(clampToViewport);
+    ro.observe(document.documentElement);
+    return () => ro.disconnect();
+  }, [open, clampToViewport]);
+
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      const t = e?.data?.type;
+      if (t === '__activate_edit_mode') setOpen(true);
+      else if (t === '__deactivate_edit_mode') setOpen(false);
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  const dismiss = () => {
+    setOpen(false);
+    window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*');
+  };
+
+  const onDragStart = (e) => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const r = panel.getBoundingClientRect();
+    const sx = e.clientX, sy = e.clientY;
+    const startRight = window.innerWidth - r.right;
+    const startBottom = window.innerHeight - r.bottom;
+    const move = (ev) => {
+      offsetRef.current = {
+        x: startRight - (ev.clientX - sx),
+        y: startBottom - (ev.clientY - sy),
+      };
+      clampToViewport();
+    };
+    const up = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', up);
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+  };
+
+  if (!open) return null;
+  return (
+    <>
+      <style>{__TWEAKS_STYLE}</style>
+      <div ref={dragRef} className="twk-panel" data-noncommentable=""
+           style={{ right: offsetRef.current.x, bottom: offsetRef.current.y }}>
+        <div className="twk-hd" onMouseDown={onDragStart}>
+          <b>{title}</b>
+          <button className="twk-x" aria-label="Close tweaks"
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={dismiss}>✕</button>
+        </div>
+        <div className="twk-body">
+          {children}
+          {hasDeckStage && railEnabled && !noDeckControls && (
+            <TweakSection label="Deck">
+              <TweakToggle label="Thumbnail rail" value={railVisible} onChange={toggleRail} />
+            </TweakSection>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ── Layout helpers ──────────────────────────────────────────────────────────
+
+function TweakSection({ label, children }) {
+  return (
+    <>
+      <div className="twk-sect">{label}</div>
+      {children}
+    </>
+  );
+}
+
+function TweakRow({ label, value, children, inline = false }) {
+  return (
+    <div className={inline ? 'twk-row twk-row-h' : 'twk-row'}>
+      <div className="twk-lbl">
+        <span>{label}</span>
+        {value != null && <span className="twk-val">{value}</span>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+// ── Controls ────────────────────────────────────────────────────────────────
+
+function TweakSlider({ label, value, min = 0, max = 100, step = 1, unit = '', onChange }) {
+  return (
+    <TweakRow label={label} value={`${value}${unit}`}>
+      <input type="range" className="twk-slider" min={min} max={max} step={step}
+             value={value} onChange={(e) => onChange(Number(e.target.value))} />
+    </TweakRow>
+  );
+}
+
+function TweakToggle({ label, value, onChange }) {
+  return (
+    <div className="twk-row twk-row-h">
+      <div className="twk-lbl"><span>{label}</span></div>
+      <button type="button" className="twk-toggle" data-on={value ? '1' : '0'}
+              role="switch" aria-checked={!!value}
+              onClick={() => onChange(!value)}><i /></button>
+    </div>
+  );
+}
+
+function TweakRadio({ label, value, options, onChange }) {
+  const trackRef = React.useRef(null);
+  const [dragging, setDragging] = React.useState(false);
+  // The active value is read by pointer-move handlers attached for the lifetime
+  // of a drag — ref it so a stale closure doesn't fire onChange for every move.
+  const valueRef = React.useRef(value);
+  valueRef.current = value;
+
+  // Segments wrap mid-word once per-segment width runs out. The track is
+  // ~248px (280 panel − 28 body pad − 4 seg pad), each button loses 12px
+  // to its own padding, and 11.5px system-ui averages ~6.3px/char — so 2
+  // options fit ~16 chars each, 3 fit ~10. Past that (or >3 options), fall
+  // back to a dropdown rather than wrap.
+  const labelLen = (o) => String(typeof o === 'object' ? o.label : o).length;
+  const maxLen = options.reduce((m, o) => Math.max(m, labelLen(o)), 0);
+  const fitsAsSegments = maxLen <= ({ 2: 16, 3: 10 }[options.length] ?? 0);
+  if (!fitsAsSegments) {
+    // <select> emits strings — map back to the original option value so the
+    // fallback stays type-preserving (numbers, booleans) like the segment path.
+    const resolve = (s) => {
+      const m = options.find((o) => String(typeof o === 'object' ? o.value : o) === s);
+      return m === undefined ? s : typeof m === 'object' ? m.value : m;
+    };
+    return <TweakSelect label={label} value={value} options={options}
+                        onChange={(s) => onChange(resolve(s))} />;
+  }
+  const opts = options.map((o) => (typeof o === 'object' ? o : { value: o, label: o }));
+  const idx = Math.max(0, opts.findIndex((o) => o.value === value));
+  const n = opts.length;
+
+  const segAt = (clientX) => {
+    const r = trackRef.current.getBoundingClientRect();
+    const inner = r.width - 4;
+    const i = Math.floor(((clientX - r.left - 2) / inner) * n);
+    return opts[Math.max(0, Math.min(n - 1, i))].value;
+  };
+
+  const onPointerDown = (e) => {
+    setDragging(true);
+    const v0 = segAt(e.clientX);
+    if (v0 !== valueRef.current) onChange(v0);
+    const move = (ev) => {
+      if (!trackRef.current) return;
+      const v = segAt(ev.clientX);
+      if (v !== valueRef.current) onChange(v);
+    };
+    const up = () => {
+      setDragging(false);
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+
+  return (
+    <TweakRow label={label}>
+      <div ref={trackRef} role="radiogroup" onPointerDown={onPointerDown}
+           className={dragging ? 'twk-seg dragging' : 'twk-seg'}>
+        <div className="twk-seg-thumb"
+             style={{ left: `calc(2px + ${idx} * (100% - 4px) / ${n})`,
+                      width: `calc((100% - 4px) / ${n})` }} />
+        {opts.map((o) => (
+          <button key={o.value} type="button" role="radio" aria-checked={o.value === value}>
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </TweakRow>
+  );
+}
+
+function TweakSelect({ label, value, options, onChange }) {
+  return (
+    <TweakRow label={label}>
+      <select className="twk-field" value={value} onChange={(e) => onChange(e.target.value)}>
+        {options.map((o) => {
+          const v = typeof o === 'object' ? o.value : o;
+          const l = typeof o === 'object' ? o.label : o;
+          return <option key={v} value={v}>{l}</option>;
+        })}
+      </select>
+    </TweakRow>
+  );
+}
+
+function TweakText({ label, value, placeholder, onChange }) {
+  return (
+    <TweakRow label={label}>
+      <input className="twk-field" type="text" value={value} placeholder={placeholder}
+             onChange={(e) => onChange(e.target.value)} />
+    </TweakRow>
+  );
+}
+
+function TweakNumber({ label, value, min, max, step = 1, unit = '', onChange }) {
+  const clamp = (n) => {
+    if (min != null && n < min) return min;
+    if (max != null && n > max) return max;
+    return n;
+  };
+  const startRef = React.useRef({ x: 0, val: 0 });
+  const onScrubStart = (e) => {
+    e.preventDefault();
+    startRef.current = { x: e.clientX, val: value };
+    const decimals = (String(step).split('.')[1] || '').length;
+    const move = (ev) => {
+      const dx = ev.clientX - startRef.current.x;
+      const raw = startRef.current.val + dx * step;
+      const snapped = Math.round(raw / step) * step;
+      onChange(clamp(Number(snapped.toFixed(decimals))));
+    };
+    const up = () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+  return (
+    <div className="twk-num">
+      <span className="twk-num-lbl" onPointerDown={onScrubStart}>{label}</span>
+      <input type="number" value={value} min={min} max={max} step={step}
+             onChange={(e) => onChange(clamp(Number(e.target.value)))} />
+      {unit && <span className="twk-num-unit">{unit}</span>}
+    </div>
+  );
+}
+
+// Relative-luminance contrast pick — checkmarks drawn over a swatch need to
+// read on both #111 and #fafafa without per-option configuration. Hex input
+// only (#rgb / #rrggbb); named or rgb()/hsl() colors fall through to "light".
+function __twkIsLight(hex) {
+  const h = String(hex).replace('#', '');
+  const x = h.length === 3 ? h.replace(/./g, (c) => c + c) : h.padEnd(6, '0');
+  const n = parseInt(x.slice(0, 6), 16);
+  if (Number.isNaN(n)) return true;
+  const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  return r * 299 + g * 587 + b * 114 > 148000;
+}
+
+const __TwkCheck = ({ light }) => (
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <path d="M3 7.2 5.8 10 11 4.2" fill="none" strokeWidth="2.2"
+          strokeLinecap="round" strokeLinejoin="round"
+          stroke={light ? 'rgba(0,0,0,.78)' : '#fff'} />
+  </svg>
+);
+
+// TweakColor — curated color/palette picker. Each option is either a single
+// hex string or an array of 1-5 hex strings; the card adapts — a lone color
+// renders solid, a palette renders colors[0] as the hero (left ~2/3) with the
+// rest stacked in a sharp column on the right. onChange emits the
+// option in the shape it was passed (string stays string, array stays array).
+// Without options it falls back to the native color input for back-compat.
+function TweakColor({ label, value, options, onChange }) {
+  if (!options || !options.length) {
+    return (
+      <div className="twk-row twk-row-h">
+        <div className="twk-lbl"><span>{label}</span></div>
+        <input type="color" className="twk-swatch" value={value}
+               onChange={(e) => onChange(e.target.value)} />
+      </div>
+    );
+  }
+  // Native <input type=color> emits lowercase hex per the HTML spec, so
+  // compare case-insensitively. String() guards JSON.stringify(undefined),
+  // which returns the primitive undefined (no .toLowerCase).
+  const key = (o) => String(JSON.stringify(o)).toLowerCase();
+  const cur = key(value);
+  return (
+    <TweakRow label={label}>
+      <div className="twk-chips" role="radiogroup">
+        {options.map((o, i) => {
+          const colors = Array.isArray(o) ? o : [o];
+          const [hero, ...rest] = colors;
+          const sup = rest.slice(0, 4);
+          const on = key(o) === cur;
+          return (
+            <button key={i} type="button" className="twk-chip" role="radio"
+                    aria-checked={on} data-on={on ? '1' : '0'}
+                    aria-label={colors.join(', ')} title={colors.join(' · ')}
+                    style={{ background: hero }}
+                    onClick={() => onChange(o)}>
+              {sup.length > 0 && (
+                <span>
+                  {sup.map((c, j) => <i key={j} style={{ background: c }} />)}
+                </span>
+              )}
+              {on && <__TwkCheck light={__twkIsLight(hero)} />}
+            </button>
+          );
+        })}
+      </div>
+    </TweakRow>
+  );
+}
+
+function TweakButton({ label, onClick, secondary = false }) {
+  return (
+    <button type="button" className={secondary ? 'twk-btn secondary' : 'twk-btn'}
+            onClick={onClick}>{label}</button>
+  );
+}
+
+Object.assign(window, {
+  useTweaks, TweaksPanel, TweakSection, TweakRow,
+  TweakSlider, TweakToggle, TweakRadio, TweakSelect,
+  TweakText, TweakNumber, TweakColor, TweakButton,
+});
+
+
+// ========== app.jsx ==========
+// Main app — hash router + tweaks
+
+const PALETTES = {
+  tropical: {
+    cream: "#F7F1E3", "cream-soft": "#FBF7EC", ink: "#0E1B2C", "ink-soft": "#2A3A50",
+    muted: "#6E7686", line: "#E6DDC6", "line-soft": "#EFE7D3", paper: "#FFFFFF",
+    turq: "#00B5B0", "turq-deep": "#008A87", coral: "#FF6A4D", "coral-deep": "#E94F30",
+    sun: "#FFC42F", moss: "#2D6B3A", sky: "#4FB7E8",
+  },
+  sunset: {
+    cream: "#FFF3EB", "cream-soft": "#FFF9F2", ink: "#2C0E1B", "ink-soft": "#502A3A",
+    muted: "#866E75", line: "#F0DDD2", "line-soft": "#F8EAE0", paper: "#FFFFFF",
+    turq: "#E94F71", "turq-deep": "#C03555", coral: "#FF8A3D", "coral-deep": "#E97020",
+    sun: "#FFC42F", moss: "#A03050", sky: "#FF6B9D",
+  },
+  ocean: {
+    cream: "#EDF4F7", "cream-soft": "#F5F9FB", ink: "#0A1828", "ink-soft": "#22384F",
+    muted: "#6B7B8C", line: "#D2DEE6", "line-soft": "#E3EBF1", paper: "#FFFFFF",
+    turq: "#0090C8", "turq-deep": "#006B96", coral: "#FF6A4D", "coral-deep": "#E94F30",
+    sun: "#FFD03F", moss: "#0E6B6E", sky: "#3FB0E0",
+  },
+  jungle: {
+    cream: "#F2F4E8", "cream-soft": "#F8FAEE", ink: "#0E2C1B", "ink-soft": "#2A503A",
+    muted: "#6E866E", line: "#D7DEC8", "line-soft": "#E5EBD8", paper: "#FFFFFF",
+    turq: "#2F8F70", "turq-deep": "#1F6B52", coral: "#E0593F", "coral-deep": "#B83A24",
+    sun: "#E8B72F", moss: "#1F6B3A", sky: "#5BB298",
+  },
+};
+
+const FONTS = {
+  "Bricolage Grotesque": `"Bricolage Grotesque", system-ui, sans-serif`,
+  "Instrument Serif": `"Instrument Serif", Georgia, serif`,
+  "Space Grotesk": `"Space Grotesk", system-ui, sans-serif`,
+  "DM Serif Display": `"DM Serif Display", Georgia, serif`,
+};
+
+// Make sure all display fonts are loaded
+(() => {
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&family=DM+Serif+Display&display=swap";
+  document.head.appendChild(link);
+})();
+
+const parseHash = (hash) => {
+  const [page, qs] = hash.split("?");
+  const params = {};
+  if (qs) {
+    qs.split("&").forEach(p => {
+      const [k, v] = p.split("=");
+      params[k] = decodeURIComponent(v || "");
+    });
+  }
+  return { page: page || "home", params };
+};
+
+const App = () => {
+  const TWEAK_DEFAULTS = JSON.parse(document.getElementById("tweaks-defaults").textContent.match(/\/\*EDITMODE-BEGIN\*\/([\s\S]+)\/\*EDITMODE-END\*\//)[1]);
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const hash = useHash();
+  const { page, params } = parseHash(hash);
+
+  // Apply palette tokens
+  React.useEffect(() => {
+    const p = PALETTES[tweaks.palette] || PALETTES.tropical;
+    Object.entries(p).forEach(([k, v]) => {
+      document.documentElement.style.setProperty(`--${k}`, v);
+    });
+    document.documentElement.style.setProperty("--font-display", FONTS[tweaks.displayFont] || FONTS["Bricolage Grotesque"]);
+  }, [tweaks.palette, tweaks.displayFont]);
+
+  // Density
+  React.useEffect(() => {
+    document.documentElement.style.setProperty("--density", tweaks.density === "compact" ? "0.85" : "1");
+  }, [tweaks.density]);
+
+  let view;
+  switch (page) {
+    case "search": view = <Search params={params} tweaks={tweaks}/>; break;
+    case "tour": view = <Tour params={params} tweaks={tweaks}/>; break;
+    case "checkout": view = <Checkout params={params} tweaks={tweaks}/>; break;
+    case "about": view = <About/>; break;
+    default: view = <Home tweaks={tweaks}/>;
+  }
+
+  return (
+    <>
+      <Header current={page}/>
+      {view}
+      {page !== "checkout" && <Footer/>}
+      {page !== "tour" && <WhatsAppFab/>}
+
+      <TweaksPanel title="Tweaks · Bora">
+        <TweakSection label="Paleta" />
+        <TweakColor
+          label="Tema"
+          value={PALETTES[tweaks.palette]?.coral}
+          options={Object.keys(PALETTES).map(k => [PALETTES[k].coral, PALETTES[k].ink, PALETTES[k].sun, PALETTES[k].cream])}
+          onChange={(_, i) => setTweak('palette', Object.keys(PALETTES)[i])}
+        />
+        <PaletteRadio current={tweaks.palette} onChange={(v) => setTweak('palette', v)}/>
+
+        <TweakSection label="Tipografía" />
+        <TweakRadio
+          label="Display"
+          value={tweaks.displayFont}
+          options={["Bricolage Grotesque", "Instrument Serif", "Space Grotesk", "DM Serif Display"]}
+          onChange={(v) => setTweak('displayFont', v)}
+        />
+
+        <TweakSection label="Layout" />
+        <TweakRadio
+          label="Densidad"
+          value={tweaks.density}
+          options={["cozy", "compact"]}
+          onChange={(v) => setTweak('density', v)}
+        />
+
+        <TweakSection label="Social" />
+        <TweakRadio
+          label="Compartir"
+          value={tweaks.shareEmphasis}
+          options={["loud", "quiet"]}
+          onChange={(v) => setTweak('shareEmphasis', v)}
+        />
+
+        <TweakSection label="Navegar" />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginTop: 4 }}>
+          {[
+            { id: "home", label: "Home" },
+            { id: "search", label: "Tours" },
+            { id: `tour?id=${TOURS[1].id}`, label: "Detalle" },
+            { id: `checkout?id=${TOURS[1].id}`, label: "Checkout" },
+            { id: "about", label: "Nosotros" },
+          ].map(n => (
+            <button key={n.id} onClick={() => navTo(n.id)} style={{
+              padding: "8px 10px", borderRadius: 8, fontSize: 11.5, fontWeight: 600,
+              background: "rgba(0,0,0,0.06)", color: "#29261b", textAlign: "left",
+            }}>
+              → {n.label}
+            </button>
+          ))}
+        </div>
+      </TweaksPanel>
+    </>
+  );
+};
+
+const PaletteRadio = ({ current, onChange }) => {
+  const labels = {
+    tropical: "Tropical",
+    sunset: "Atardecer",
+    ocean: "Atlántico",
+    jungle: "Mata atlántica",
+  };
+  return (
+    <div className="twk-row">
+      <div className="twk-lbl"><span>Nombre</span></div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4 }}>
+        {Object.keys(PALETTES).map(k => (
+          <button key={k} onClick={() => onChange(k)} style={{
+            padding: "8px", borderRadius: 8, fontSize: 11, fontWeight: 600,
+            background: current === k ? PALETTES[k].ink : "rgba(0,0,0,0.05)",
+            color: current === k ? PALETTES[k].cream : "#29261b",
+            textAlign: "left", border: 0,
+            cursor: "default",
+            display: "flex", alignItems: "center", gap: 6,
+          }}>
+            <span style={{ width: 10, height: 10, borderRadius: 999, background: PALETTES[k].coral, boxShadow: `0 0 0 2px ${PALETTES[k].sun}` }}/>
+            {labels[k]}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+  </script>
+</body>
+</html>
