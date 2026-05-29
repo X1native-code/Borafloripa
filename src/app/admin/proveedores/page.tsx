@@ -18,6 +18,7 @@ export default function ProveedoresDashboard() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [providers, setProviders] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
+  const [selectedTour, setSelectedTour] = useState<string>('ALL');
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
@@ -140,25 +141,39 @@ export default function ProveedoresDashboard() {
     }
   };
 
+  // --- EXTRACCIÓN DE TOURS/EXPERIENCIAS ÚNICAS ---
+  const uniqueTours = React.useMemo(() => {
+    const titles = bookings
+      .filter(b => b.paymentStatus !== 'CANCELLED' && b.tourTitle)
+      .map(b => b.tourTitle);
+    return Array.from(new Set(titles)).sort();
+  }, [bookings]);
+
   // --- MATEMÁTICA Y AGRUPACIÓN DE PROVEEDORES ---
   const providersSummary = React.useMemo(() => {
     return providers.map(p => {
-      // Filtrar salidas/bookings asociadas a este proveedor por coincidencia de nombre
+      // Filtrar salidas/bookings asociadas a este proveedor por coincidencia de nombre y por tour
       const associatedBookings = bookings.filter(b => 
         b.paymentStatus !== 'CANCELLED' && 
         b.assignedGuide && 
-        b.assignedGuide.toLowerCase().trim() === p.name.toLowerCase().trim()
+        b.assignedGuide.toLowerCase().trim() === p.name.toLowerCase().trim() &&
+        (selectedTour === 'ALL' || b.tourTitle === selectedTour)
       );
 
       // Total Devengado: tarifa neta guideNetCost de los tours asignados
       const totalDevengado = associatedBookings.reduce((sum, b) => sum + Number(b.guideNetCost || 0), 0);
 
       // Total Pagado: suma de los abonos registrados en provider_payments
+      // Si se filtra por tour, los abonos son globales, así que mostramos 0 para el tour específico o el total si es ALL
       const associatedPayments = payments.filter(pay => pay.provider_id === p.id);
-      const totalPagado = associatedPayments.reduce((sum, pay) => sum + Number(pay.amount_paid || 0), 0);
+      const totalPagado = selectedTour === 'ALL'
+        ? associatedPayments.reduce((sum, pay) => sum + Number(pay.amount_paid || 0), 0)
+        : 0;
 
       // Saldo Pendiente: Total Devengado - Total Pagado
-      const saldoPendiente = totalDevengado - totalPagado;
+      const saldoPendiente = selectedTour === 'ALL'
+        ? (totalDevengado - totalPagado)
+        : totalDevengado;
 
       // Ganancia Generada para la Agencia: Suma de la diferencia de [Precio Venta Cliente - Costo Neto Guía]
       const gananciaGenerada = associatedBookings.reduce((sum, b) => {
@@ -177,7 +192,7 @@ export default function ProveedoresDashboard() {
         paymentsList: associatedPayments
       };
     }).sort((a, b) => b.saldoPendiente - a.saldoPendiente);
-  }, [providers, bookings, payments]);
+  }, [providers, bookings, payments, selectedTour]);
 
   // Totales Globales
   const globalDevengado = providersSummary.reduce((sum, p) => sum + p.totalDevengado, 0);
@@ -248,6 +263,54 @@ export default function ProveedoresDashboard() {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+            
+            {/* BARRA DE FILTRO POR EXPERIENCIA */}
+            <div style={{
+              background: 'var(--paper)',
+              padding: '16px 20px',
+              borderRadius: 20,
+              boxShadow: 'var(--shadow-sm)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 16,
+              flexWrap: 'wrap'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 18 }}>🔍</span>
+                <strong style={{ fontSize: 13, color: 'var(--ink)' }}>Filtrar Finanzas por Experiencia:</strong>
+              </div>
+              <select
+                value={selectedTour}
+                onChange={e => setSelectedTour(e.target.value)}
+                style={{
+                  padding: '10px 14px',
+                  borderRadius: 10,
+                  border: '1px solid var(--line-soft)',
+                  background: 'var(--cream)',
+                  color: 'var(--ink)',
+                  fontSize: 13,
+                  fontFamily: 'inherit',
+                  cursor: 'pointer',
+                  flex: 1,
+                  minWidth: 240,
+                  fontWeight: 600
+                }}
+              >
+                <option value="ALL">✨ Mostrar todos los tours (General)</option>
+                {uniqueTours.map(title => (
+                  <option key={title} value={title}>⛵ {title}</option>
+                ))}
+              </select>
+              {selectedTour !== 'ALL' && (
+                <button
+                  onClick={() => setSelectedTour('ALL')}
+                  className="btn btn-ghost"
+                  style={{ padding: '8px 14px', fontSize: 11, background: 'var(--cream-soft)', height: 'auto' }}
+                >
+                  Limpiar filtro
+                </button>
+              )}
+            </div>
             
             {/* GRID DE KPIs FINANCIEROS */}
             <div style={{
@@ -360,9 +423,23 @@ export default function ProveedoresDashboard() {
                             </div>
                           </div>
 
-                          <div style={{ fontSize: 11, color: 'var(--muted)', borderTop: '1px dashed var(--line-soft)', paddingTop: 8, display: 'flex', justifyContent: 'space-between' }}>
-                            <span>📱 {g.whatsapp || 'Sin WhatsApp'}</span>
-                            <span>🔑 Pix: {g.pix_key ? `${g.pix_key.substring(0, 15)}...` : 'Sin Pix'}</span>
+                          <div style={{ fontSize: 11, color: 'var(--muted)', borderTop: '1px dashed var(--line-soft)', paddingTop: 8, display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+                            <span>
+                              📱 {g.whatsapp ? (
+                                <a
+                                  href={`https://wa.me/${g.whatsapp.replace(/\D/g, '')}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ color: 'var(--moss)', textDecoration: 'none', fontWeight: 600, borderBottom: '1px dashed var(--moss)' }}
+                                  onClick={e => e.stopPropagation()}
+                                >
+                                  {g.whatsapp}
+                                </a>
+                              ) : (
+                                'Sin WhatsApp'
+                              )}
+                            </span>
+                            <span>🔑 Pix: {g.pix_key || 'Sin Pix'}</span>
                           </div>
                         </div>
                       ))
@@ -398,8 +475,25 @@ export default function ProveedoresDashboard() {
                               transition: 'background 0.2s ease',
                               fontSize: 13
                             }}>
-                              <td style={{ padding: '12px 8px', fontWeight: 700 }}>
-                                👤 {g.name}
+                              <td style={{ padding: '12px 8px' }}>
+                                <div style={{ fontWeight: 700 }}>👤 {g.name}</div>
+                                <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 4, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                                  {g.whatsapp ? (
+                                    <a
+                                      href={`https://wa.me/${g.whatsapp.replace(/\D/g, '')}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      style={{ color: 'var(--moss)', textDecoration: 'none', fontWeight: 600, borderBottom: '1px dashed var(--moss)' }}
+                                      onClick={e => e.stopPropagation()}
+                                    >
+                                      📱 {g.whatsapp}
+                                    </a>
+                                  ) : (
+                                    <span>📱 Sin WhatsApp</span>
+                                  )}
+                                  <span>|</span>
+                                  <span>🔑 Pix: <strong style={{ color: 'var(--ink)' }}>{g.pix_key || 'Sin Pix'}</strong></span>
+                                </div>
                               </td>
                               <td style={{ padding: '12px 8px', textAlign: 'center' }}>
                                 <Badge tone="soft">{g.bookingsList.length}</Badge>
