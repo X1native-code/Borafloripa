@@ -1228,3 +1228,77 @@ export async function addProviderPayment(payment: { provider_id: string; amount_
     return { data: null, error: err };
   }
 }
+
+export async function getProviderNotes() {
+  if (isMockEnabled || !supabase) {
+    if (typeof window !== 'undefined') {
+      try {
+        let list = JSON.parse(localStorage.getItem('mock_provider_notes') || '[]');
+        if (list.length === 0) {
+          list = [
+            { id: 'note-1', provider_id: 'prov-agustina', comment: 'Guía muy puntual, excelente feedback de los pasajeros en el paseo de velero.', author: 'Admin', created_at: new Date(Date.now() - 3600000 * 24 * 3).toISOString() },
+            { id: 'note-2', provider_id: 'prov-claudia', comment: 'Confirmó disponibilidad para coordinar salidas de senderismo el próximo mes.', author: 'Admin', created_at: new Date(Date.now() - 3600000 * 24 * 2).toISOString() }
+          ];
+          localStorage.setItem('mock_provider_notes', JSON.stringify(list));
+        }
+        return list;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return [];
+  }
+  try {
+    const { data, error } = await supabase.from('provider_notes').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    return data.map(item => ({
+      id: item.id,
+      provider_id: item.provider_id,
+      comment: item.comment,
+      author: item.author,
+      created_at: item.created_at
+    }));
+  } catch (err) {
+    console.error('Error al fetchear bitácora de proveedores de Supabase:', err);
+    return [];
+  }
+}
+
+export async function createProviderNote(note: { provider_id: string; comment: string; author: string }) {
+  const newNote = {
+    id: `note-${Date.now()}`,
+    ...note,
+    created_at: new Date().toISOString()
+  };
+
+  if (isMockEnabled || !supabase) {
+    if (typeof window !== 'undefined') {
+      try {
+        const list = JSON.parse(localStorage.getItem('mock_provider_notes') || '[]');
+        list.push(newNote);
+        localStorage.setItem('mock_provider_notes', JSON.stringify(list));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return { data: newNote, error: null };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('provider_notes')
+      .insert({
+        id: newNote.id,
+        provider_id: newNote.provider_id,
+        comment: newNote.comment,
+        author: newNote.author,
+        created_at: newNote.created_at
+      })
+      .select()
+      .single();
+    return { data, error };
+  } catch (err: any) {
+    console.error('Error al crear nota de bitácora en Supabase:', err);
+    return { data: null, error: err };
+  }
+}

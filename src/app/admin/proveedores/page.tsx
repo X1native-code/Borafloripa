@@ -7,7 +7,9 @@ import {
   getProviders, 
   createProvider, 
   getProviderPayments, 
-  addProviderPayment
+  addProviderPayment,
+  getProviderNotes,
+  createProviderNote
 } from '@/lib/supabase';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
@@ -38,6 +40,11 @@ export default function ProveedoresDashboard() {
   const [newProvCompanyName, setNewProvCompanyName] = useState('');
   const [newProvObs, setNewProvObs] = useState('');
 
+  // Bitácora / Notas Internas
+  const [notes, setNotes] = useState<any[]>([]);
+  const [newNoteComment, setNewNoteComment] = useState('');
+  const [newNoteAuthor, setNewNoteAuthor] = useState('Admin');
+
   // Formulario de Abono Parcial
   const [payAmount, setPayAmount] = useState('');
   const [payDate, setPayDate] = useState('');
@@ -46,14 +53,16 @@ export default function ProveedoresDashboard() {
   async function loadData() {
     setLoading(true);
     try {
-      const [bookingsData, providersData, paymentsData] = await Promise.all([
+      const [bookingsData, providersData, paymentsData, notesData] = await Promise.all([
         getBookings(),
         getProviders(),
-        getProviderPayments()
+        getProviderPayments(),
+        getProviderNotes()
       ]);
       setBookings(bookingsData);
       setProviders(providersData);
       setPayments(paymentsData);
+      setNotes(notesData);
 
       // Auto-seleccionar primer proveedor si existe
       if (providersData.length > 0 && !selectedProviderId) {
@@ -147,6 +156,32 @@ export default function ProveedoresDashboard() {
     }
   };
 
+  // --- ACCIÓN: REGISTRAR NOTA A BITÁCORA ---
+  const handleAddNote = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedProviderId || !newNoteComment.trim()) return;
+
+    setActionLoading('add-note');
+    try {
+      const { data, error } = await createProviderNote({
+        provider_id: selectedProviderId,
+        comment: newNoteComment.trim(),
+        author: newNoteAuthor || 'Admin'
+      });
+
+      if (error) {
+        alert("Error al registrar el comentario en la bitácora.");
+      } else if (data) {
+        setNotes(prev => [data, ...prev]);
+        setNewNoteComment('');
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   // --- EXTRACCIÓN DE TOURS/EXPERIENCIAS ÚNICAS ---
   const uniqueTours = React.useMemo(() => {
     const titles = bookings
@@ -188,6 +223,9 @@ export default function ProveedoresDashboard() {
         return sum + Math.max(0, venta - guideCost);
       }, 0);
 
+      // Filtrar notas/bitácora asociadas a este proveedor
+      const associatedNotes = notes.filter(n => n.provider_id === p.id);
+
       return {
         ...p,
         totalDevengado,
@@ -195,10 +233,11 @@ export default function ProveedoresDashboard() {
         saldoPendiente,
         gananciaGenerada,
         bookingsList: associatedBookings,
-        paymentsList: associatedPayments
+        paymentsList: associatedPayments,
+        notesList: associatedNotes
       };
     }).sort((a, b) => b.saldoPendiente - a.saldoPendiente);
-  }, [providers, bookings, payments, selectedTour]);
+  }, [providers, bookings, payments, selectedTour, notes]);
 
   // Totales Globales
   const globalDevengado = providersSummary.reduce((sum, p) => sum + p.totalDevengado, 0);
@@ -675,6 +714,94 @@ export default function ProveedoresDashboard() {
                           ))
                         )}
                       </div>
+                    </div>
+
+                    {/* BITÁCORA INTERNA / COMENTARIOS */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, borderTop: '1px solid var(--line-soft)', paddingTop: 20, marginTop: 20 }}>
+                      <h4 style={{ fontSize: 13, fontWeight: 700, margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: 6, color: 'var(--ink)' }}>
+                        📝 Bitácora Interna / Notas de Gestión
+                      </h4>
+                      <p style={{ margin: '0 0 10px', fontSize: 11, color: 'var(--ink-soft)' }}>
+                        Espacio confidencial para registrar incidencias logísticas, desempeño o notas operativas.
+                      </p>
+
+                      {/* LISTA DE NOTAS */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 220, overflowY: 'auto', marginBottom: 16 }}>
+                        {(activeProvider.notesList || []).length === 0 ? (
+                          <div style={{ padding: '16px 0', textAlign: 'center', color: 'var(--muted)', fontSize: 12, fontStyle: 'italic', background: 'var(--cream-soft)', borderRadius: 10 }}>
+                            No hay notas en la bitácora de este proveedor. Escribe la primera abajo.
+                          </div>
+                        ) : (
+                          (activeProvider.notesList || []).map(note => (
+                            <div key={note.id} style={{ padding: 12, borderRadius: 10, border: '1px solid var(--line-soft)', background: 'var(--paper)', fontSize: 13, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11 }}>
+                                <Badge tone={note.author === 'Admin' ? 'coral' : 'soft'}>✍️ {note.author}</Badge>
+                                <span style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>
+                                  {new Date(note.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              </div>
+                              <p style={{ margin: '4px 0 0', color: 'var(--ink)', lineHeight: 1.4 }}>
+                                {note.comment}
+                              </p>
+                            </div>
+                          ))
+                        )}
+                      </div>
+
+                      {/* FORMULARIO AGREGAR NOTA */}
+                      <form onSubmit={handleAddNote} style={{ display: 'flex', flexDirection: 'column', gap: 10, background: 'var(--cream-soft)', padding: 14, borderRadius: 14 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
+                          <span style={{ fontSize: 11, fontWeight: 700 }}>Escribir Nota</span>
+                          
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <span style={{ fontSize: 10, color: 'var(--muted)' }}>Autor:</span>
+                            <select
+                              value={newNoteAuthor}
+                              onChange={e => setNewNoteAuthor(e.target.value)}
+                              style={{
+                                padding: '4px 8px',
+                                borderRadius: 6,
+                                border: '1px solid var(--line-soft)',
+                                fontSize: 11,
+                                background: 'var(--paper)',
+                                cursor: 'pointer',
+                                fontWeight: 600
+                              }}
+                            >
+                              <option value="Admin">🛡️ Admin</option>
+                              <option value="Agustina">👤 Agustina</option>
+                              <option value="Claudia">👤 Claudia</option>
+                              <option value="Coordinación">⛵ Coordinación</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <textarea
+                          rows={2}
+                          required
+                          placeholder="ej. El guía reportó demora por tráfico en la autopista, pero recuperó el tiempo y completó el itinerario."
+                          value={newNoteComment}
+                          onChange={e => setNewNoteComment(e.target.value)}
+                          style={{
+                            padding: '10px 12px',
+                            borderRadius: 8,
+                            border: '1px solid var(--line)',
+                            fontSize: 12,
+                            background: 'var(--paper)',
+                            resize: 'vertical',
+                            fontFamily: 'inherit'
+                          }}
+                        />
+
+                        <button
+                          type="submit"
+                          disabled={actionLoading === 'add-note'}
+                          className="btn btn-coral"
+                          style={{ padding: '8px 12px', fontSize: 11, height: 'auto', alignSelf: 'flex-end', border: 'none' }}
+                        >
+                          {actionLoading === 'add-note' ? 'Guardando...' : 'Guardar Comentario ✍️'}
+                        </button>
+                      </form>
                     </div>
 
                   </div>

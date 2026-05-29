@@ -162,27 +162,33 @@ const Hero: React.FC<{ router: any }> = ({ router }) => {
               ))}
             </div>
             <div className="hero-search">
-              <div className="field" style={{ cursor: "text" }}>
+              <div className="field" style={{ cursor: "pointer" }}>
                 <div className="field-label">Qué buscas</div>
-                <input
-                  type="text"
-                  placeholder="Praia, surf, atardecer…"
+                <select
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') handleSearchSubmit(); }}
                   style={{
                     border: "none",
                     background: "transparent",
                     outline: "none",
                     width: "100%",
-                    padding: 0,
+                    padding: "4px 0 0",
                     margin: 0,
                     fontFamily: "var(--font-ui)",
-                    fontSize: 15,
-                    fontWeight: 500,
+                    fontSize: 14,
+                    fontWeight: 600,
                     color: "var(--ink)",
+                    cursor: "pointer",
+                    appearance: "none",
                   }}
-                />
+                >
+                  <option value="">¿Cuál es tu mood hoy?</option>
+                  <option value="Playas escondidas (secreto local)">🏖️ Playas escondidas (secreto local)</option>
+                  <option value="Aventura y adrenalina">⚡ Aventura y adrenalina</option>
+                  <option value="Ruta gastronómica local">🍹 Ruta gastronómica local</option>
+                  <option value="Los lugares más instagrameables">📸 Los lugares más instagrameables</option>
+                  <option value="Relajación absoluta">✨ Relajación absoluta</option>
+                </select>
               </div>
               <div className="divider"/>
               <div className="field" style={{ cursor: "pointer" }}>

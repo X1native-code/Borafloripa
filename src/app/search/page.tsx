@@ -150,9 +150,28 @@ function SearchPageContent() {
           <h1 className="display" style={{ fontSize: "clamp(32px, 5vw, 56px)", margin: 0, lineHeight: 1 }}>
             Todos los tours en <span style={{ color: "var(--coral)" }}>Floripa</span>
           </h1>
-          <p style={{ marginTop: 10, color: "var(--ink-soft)", fontSize: 16 }}>
+          <p style={{ marginTop: 10, color: "var(--ink-soft)", fontSize: 16, marginBottom: 12 }}>
             <strong>{filtered.length}</strong> experiencias encontradas · ordenadas por <strong>{sort.toLowerCase()}</strong>
           </p>
+
+          {/* Bloque de Autoridad Local */}
+          <div style={{
+            marginTop: 16,
+            marginBottom: 20,
+            padding: "12px 18px",
+            background: "var(--paper)",
+            borderLeft: "3px solid var(--coral)",
+            borderRadius: "0 12px 12px 0",
+            maxWidth: 720,
+            boxShadow: "var(--shadow-sm)"
+          }}>
+            <div style={{ fontSize: 10, fontWeight: 800, color: "var(--coral)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>
+              🛡️ Curaduría y Autoridad Local
+            </div>
+            <p style={{ margin: 0, fontSize: 13, lineHeight: 1.5, color: "var(--ink-soft)", fontStyle: "italic" }}>
+              "No vendemos paseos masivos ni genéricos. En <strong>Bora Floripa</strong> curamos personalmente cada experiencia junto a guías locales nativos. Cada ruta está diseñada bajo el estándar de secreto local, asegurando un turismo ético, seguro y verdaderamente inolvidable en la Isla de la Magia."
+            </p>
+          </div>
 
           {/* Inline search bar */}
           <div className="hero-search" style={{ marginTop: 20, maxWidth: 920, boxShadow: "var(--shadow-md)" }}>

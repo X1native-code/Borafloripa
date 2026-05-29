@@ -103,6 +103,43 @@ export default function TourDetailPage() {
 
       {/* Title block */}
       <header className="wrap-wide" style={{ paddingTop: 12, paddingBottom: 20 }}>
+        {/* Badge Emocional */}
+        {(() => {
+          const getEmotionalBadge = (tour: any) => {
+            const title = (tour.title || '').toLowerCase();
+            const cat = (tour.cat || '').toLowerCase();
+            if (title.includes('campeche') || cat.includes('aventura')) {
+              return { text: "⚡ EXPLORACIÓN ACTIVA & ADRENALINA", bg: "rgba(255, 106, 77, 0.08)", color: "var(--coral)" };
+            } else if (title.includes('barco') || title.includes('velero') || title.includes('playa')) {
+              return { text: "🏖️ PACK PLAYAS ESCONDIDAS & SECRETO LOCAL", bg: "rgba(35, 166, 126, 0.08)", color: "var(--moss)" };
+            } else if (cat.includes('familia') || title.includes('histórico') || title.includes('ciudad')) {
+              return { text: "✨ RELAJACIÓN ABSOLUTA & CONEXIÓN", bg: "rgba(242, 193, 46, 0.1)", color: "#b58400" };
+            } else {
+              return { text: "📸 LOS DESTINOS MÁS INSTAGRAMEABLES", bg: "rgba(14, 27, 44, 0.06)", color: "var(--ink)" };
+            }
+          };
+          const emb = getEmotionalBadge(activeTour);
+          return (
+            <div style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              background: emb.bg,
+              color: emb.color,
+              padding: "6px 14px",
+              borderRadius: 30,
+              fontSize: 10,
+              fontWeight: 800,
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              marginBottom: 16,
+              border: `1px solid ${emb.color}22`
+            }}>
+              <span>{emb.text}</span>
+            </div>
+          );
+        })()}
+
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 14 }}>
           {activeTour.badge && <Badge tone={activeTour.badge === "Más vendido" ? "coral" : "ink"}>{activeTour.badge}</Badge>}
           <Badge tone="soft">{activeTour.cat}</Badge>
