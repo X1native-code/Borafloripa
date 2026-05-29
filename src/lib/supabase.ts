@@ -1068,8 +1068,8 @@ export async function getProviders() {
         let list = JSON.parse(localStorage.getItem('mock_providers') || '[]');
         if (list.length === 0) {
           list = [
-            { id: 'prov-agustina', name: 'Agustina', whatsapp: '+55 48 99999-1111', pix_key: 'agustina@pix.br', email: 'agustina@boraflo.com', observations: 'Guía preferencial para paseos en barco', created_at: new Date().toISOString() },
-            { id: 'prov-claudia', name: 'Claudia', whatsapp: '+55 48 99999-2222', pix_key: 'claudia@pix.br', email: 'claudia@boraflo.com', observations: 'Especialista en traslados y senderos históricos', created_at: new Date().toISOString() }
+            { id: 'prov-agustina', name: 'Agustina', whatsapp: '+55 48 99999-1111', pix_key: 'agustina@pix.br', email: 'agustina@boraflo.com', observations: 'Guía preferencial para paseos en barco', cpfCnpj: '123.456.789-00', companyName: '', created_at: new Date().toISOString() },
+            { id: 'prov-claudia', name: 'Claudia', whatsapp: '+55 48 99999-2222', pix_key: 'claudia@pix.br', email: 'claudia@boraflo.com', observations: 'Especialista en traslados y senderos históricos', cpfCnpj: '98.765.432/0001-99', companyName: 'Claudia Ecoturismo Ltda', created_at: new Date().toISOString() }
           ];
           localStorage.setItem('mock_providers', JSON.stringify(list));
         }
@@ -1090,18 +1090,20 @@ export async function getProviders() {
       pix_key: item.pix_key,
       email: item.email,
       observations: item.observations,
+      cpfCnpj: item.cpf_cnpj || '',
+      companyName: item.company_name || '',
       created_at: item.created_at
     }));
   } catch (err) {
     console.error('Error al fetchear proveedores de Supabase:', err);
     return [
-      { id: 'prov-agustina', name: 'Agustina', whatsapp: '+55 48 99999-1111', pix_key: 'agustina@pix.br', email: 'agustina@boraflo.com', observations: 'Guía preferencial para paseos en barco', created_at: new Date().toISOString() },
-      { id: 'prov-claudia', name: 'Claudia', whatsapp: '+55 48 99999-2222', pix_key: 'claudia@pix.br', email: 'claudia@boraflo.com', observations: 'Especialista en traslados y senderos históricos', created_at: new Date().toISOString() }
+      { id: 'prov-agustina', name: 'Agustina', whatsapp: '+55 48 99999-1111', pix_key: 'agustina@pix.br', email: 'agustina@boraflo.com', observations: 'Guía preferencial para paseos en barco', cpfCnpj: '123.456.789-00', companyName: '', created_at: new Date().toISOString() },
+      { id: 'prov-claudia', name: 'Claudia', whatsapp: '+55 48 99999-2222', pix_key: 'claudia@pix.br', email: 'claudia@boraflo.com', observations: 'Especialista en traslados y senderos históricos', cpfCnpj: '98.765.432/0001-99', companyName: 'Claudia Ecoturismo Ltda', created_at: new Date().toISOString() }
     ];
   }
 }
 
-export async function createProvider(provider: { name: string; whatsapp: string; pix_key: string; email: string; observations: string }) {
+export async function createProvider(provider: { name: string; whatsapp: string; pix_key: string; email: string; observations: string; cpfCnpj?: string; companyName?: string }) {
   const newProvider = {
     id: `prov-${Date.now()}`,
     ...provider,
@@ -1131,10 +1133,29 @@ export async function createProvider(provider: { name: string; whatsapp: string;
         pix_key: newProvider.pix_key,
         email: newProvider.email,
         observations: newProvider.observations,
+        cpf_cnpj: newProvider.cpfCnpj || '',
+        company_name: newProvider.companyName || '',
         created_at: newProvider.created_at
       })
       .select()
       .single();
+
+    if (data) {
+      return {
+        data: {
+          id: data.id,
+          name: data.name,
+          whatsapp: data.whatsapp,
+          pix_key: data.pix_key,
+          email: data.email,
+          observations: data.observations,
+          cpfCnpj: data.cpf_cnpj || '',
+          companyName: data.company_name || '',
+          created_at: data.created_at
+        },
+        error
+      };
+    }
     return { data, error };
   } catch (err: any) {
     console.error('Error al crear proveedor en Supabase:', err);

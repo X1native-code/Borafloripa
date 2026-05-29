@@ -34,6 +34,8 @@ export default function ProveedoresDashboard() {
   const [newProvWhatsapp, setNewProvWhatsapp] = useState('');
   const [newProvPixKey, setNewProvPixKey] = useState('');
   const [newProvEmail, setNewProvEmail] = useState('');
+  const [newProvCpfCnpj, setNewProvCpfCnpj] = useState('');
+  const [newProvCompanyName, setNewProvCompanyName] = useState('');
   const [newProvObs, setNewProvObs] = useState('');
 
   // Formulario de Abono Parcial
@@ -88,6 +90,8 @@ export default function ProveedoresDashboard() {
         whatsapp: newProvWhatsapp.trim(),
         pix_key: newProvPixKey.trim(),
         email: newProvEmail.trim(),
+        cpfCnpj: newProvCpfCnpj.trim(),
+        companyName: newProvCompanyName.trim(),
         observations: newProvObs.trim()
       });
 
@@ -102,6 +106,8 @@ export default function ProveedoresDashboard() {
         setNewProvWhatsapp('');
         setNewProvPixKey('');
         setNewProvEmail('');
+        setNewProvCpfCnpj('');
+        setNewProvCompanyName('');
         setNewProvObs('');
       }
     } catch (e) {
@@ -550,6 +556,10 @@ export default function ProveedoresDashboard() {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, background: 'var(--cream-soft)', padding: 14, borderRadius: 14, marginBottom: 24, fontSize: 13 }}>
                       <div>📱 <strong>WhatsApp:</strong> <span style={{ color: 'var(--ink-soft)' }}>{activeProvider.whatsapp || 'Sin WhatsApp'}</span></div>
                       <div>🔑 <strong>Llave Pix:</strong> <span style={{ color: 'var(--ink-soft)' }}>{activeProvider.pix_key || 'Sin Pix'}</span></div>
+                      <div>🆔 <strong>CPF / CNPJ:</strong> <span style={{ color: 'var(--ink-soft)' }}>{activeProvider.cpfCnpj || 'No registrado'}</span></div>
+                      {activeProvider.companyName && (
+                        <div style={{ gridColumn: '1 / -1' }}>🏢 <strong>Razón Social:</strong> <span style={{ color: 'var(--ink-soft)' }}>{activeProvider.companyName}</span></div>
+                      )}
                       <div style={{ gridColumn: '1 / -1' }}>📧 <strong>Email:</strong> <span style={{ color: 'var(--ink-soft)' }}>{activeProvider.email || 'Sin Email'}</span></div>
                       {activeProvider.observations && (
                         <div style={{ gridColumn: '1 / -1', borderTop: '1px dashed var(--line)', paddingTop: 8, marginTop: 4 }}>
@@ -765,6 +775,30 @@ export default function ProveedoresDashboard() {
                   style={{ padding: '12px 14px', borderRadius: 10, border: '1px solid var(--line)', fontSize: 14, background: 'var(--cream-soft)' }}
                 />
               </label>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>CPF o CNPJ</span>
+                  <input
+                    type="text"
+                    placeholder="ej: 123.456.789-00"
+                    value={newProvCpfCnpj}
+                    onChange={e => setNewProvCpfCnpj(e.target.value)}
+                    style={{ padding: '12px 14px', borderRadius: 10, border: '1px solid var(--line)', fontSize: 14, background: 'var(--cream-soft)' }}
+                  />
+                </label>
+                
+                <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>Razón Social (Empresa)</span>
+                  <input
+                    type="text"
+                    placeholder="ej: Claudia Ecoturismo Ltda"
+                    value={newProvCompanyName}
+                    onChange={e => setNewProvCompanyName(e.target.value)}
+                    style={{ padding: '12px 14px', borderRadius: 10, border: '1px solid var(--line)', fontSize: 14, background: 'var(--cream-soft)' }}
+                  />
+                </label>
+              </div>
 
               <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>Observaciones / Notas internas</span>
