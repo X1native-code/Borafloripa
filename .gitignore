@@ -43,3 +43,5 @@ next-env.d.ts
 # Bora Floripa ignored custom dirs
 .npm-cache/
 node_modules_old/
+
+.vercel
