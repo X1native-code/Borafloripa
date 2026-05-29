@@ -7,6 +7,7 @@ import {
   getBookings, 
   updateTourActiveStatus, 
   updateTourDetails,
+  createTour,
   getBookingPayments,
   addBookingPayment,
   deleteBookingPayment,
@@ -135,8 +136,9 @@ export default function AdminDashboard() {
   const [formProviderPaymentStatus, setFormProviderPaymentStatus] = useState('PENDING');
   const [formProviderPaymentDate, setFormProviderPaymentDate] = useState('');
 
-  // Edit tour state
+  // Edit/Create tour state
   const [editingTour, setEditingTour] = useState<any | null>(null);
+  const [isCreatingTour, setIsCreatingTour] = useState(false);
   const [editTab, setEditTab] = useState<'general' | 'experience' | 'itinerary' | 'inclusions' | 'important'>('general');
   const [editFormData, setEditFormData] = useState({
     title: '',
@@ -147,7 +149,13 @@ export default function AdminDashboard() {
     itinerary: [] as any[],
     includes: [] as string[],
     excludes: [] as string[],
-    importantInfo: [] as string[]
+    importantInfo: [] as string[],
+    cat: 'Aventura',
+    location: 'Florianópolis',
+    duration: '6 h',
+    tags: 'Nuevo, Medio día',
+    photoVariant: 'turq',
+    glyph: '✨'
   });
 
   // Sync state
@@ -372,8 +380,32 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleOpenCreateTour = () => {
+    setIsCreatingTour(true);
+    setEditingTour(null);
+    setEditTab('general'); // Reset tab to general
+    setEditFormData({
+      title: '',
+      subtitle: '',
+      priceFrom: 150,
+      photoLabel: '',
+      description: '',
+      itinerary: [],
+      includes: [],
+      excludes: [],
+      importantInfo: [],
+      cat: 'Aventura',
+      location: 'Florianópolis',
+      duration: '6 h',
+      tags: 'Nuevo, Medio día',
+      photoVariant: 'turq',
+      glyph: '✨'
+    });
+  };
+
   const handleOpenEdit = (tour: any) => {
     setEditingTour(tour);
+    setIsCreatingTour(false);
     setEditTab('general'); // Reset tab to general
     setEditFormData({
       title: tour.title,
@@ -384,23 +416,68 @@ export default function AdminDashboard() {
       itinerary: tour.itinerary ? JSON.parse(JSON.stringify(tour.itinerary)) : [],
       includes: tour.includes ? [...tour.includes] : [],
       excludes: tour.excludes ? [...tour.excludes] : [],
-      importantInfo: tour.importantInfo ? [...tour.importantInfo] : []
+      importantInfo: tour.importantInfo ? [...tour.importantInfo] : [],
+      cat: tour.cat || 'Aventura',
+      location: tour.location || 'Florianópolis',
+      duration: tour.duration || '6 h',
+      tags: tour.tags ? tour.tags.join(', ') : '',
+      photoVariant: tour.photoVariant || 'turq',
+      glyph: tour.glyph || '✨'
     });
   };
 
   const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingTour) return;
+    if (!editingTour && !isCreatingTour) return;
 
-    setActionLoading(editingTour.id);
+    const tourId = isCreatingTour ? `tour-${Date.now()}` : editingTour.id;
+    setActionLoading(tourId);
     try {
-      const { error } = await updateTourDetails(editingTour.id, editFormData);
-      if (error) {
-        alert('Error al actualizar el tour en Supabase.');
+      if (isCreatingTour) {
+        const parsedTags = editFormData.tags ? editFormData.tags.split(',').map((s: string) => s.trim()).filter(Boolean) : [];
+        const newTour = {
+          id: tourId,
+          title: editFormData.title,
+          subtitle: editFormData.subtitle,
+          priceFrom: Number(editFormData.priceFrom),
+          photoLabel: editFormData.photoLabel,
+          description: editFormData.description,
+          itinerary: editFormData.itinerary,
+          includes: editFormData.includes,
+          excludes: editFormData.excludes,
+          importantInfo: editFormData.importantInfo,
+          cat: editFormData.cat || 'Aventura',
+          location: editFormData.location || 'Florianópolis',
+          duration: editFormData.duration || '6 h',
+          tags: parsedTags,
+          photoVariant: editFormData.photoVariant || 'turq',
+          glyph: editFormData.glyph || '✨',
+          isActive: true
+        };
+
+        const { error } = await createTour(newTour);
+        if (error) {
+          alert('Error al crear el nuevo tour en Supabase/Mock.');
+        } else {
+          setTours(prev => [newTour, ...prev]);
+          setIsCreatingTour(false);
+        }
       } else {
-        // Update local state
-        setTours(prev => prev.map(t => t.id === editingTour.id ? { ...t, ...editFormData } : t));
-        setEditingTour(null);
+        const { error } = await updateTourDetails(editingTour.id, editFormData);
+        if (error) {
+          alert('Error al actualizar el tour en Supabase/Mock.');
+        } else {
+          const parsedTags = typeof editFormData.tags === 'string'
+            ? editFormData.tags.split(',').map((s: string) => s.trim()).filter(Boolean)
+            : editFormData.tags;
+            
+          setTours(prev => prev.map(t => t.id === editingTour.id ? { 
+            ...t, 
+            ...editFormData,
+            tags: parsedTags || []
+          } : t));
+          setEditingTour(null);
+        }
       }
     } catch (err) {
       console.error(err);
@@ -793,9 +870,18 @@ export default function AdminDashboard() {
             {/* SECCIÓN A: GESTIÓN DE EXPERIENCIAS (TOURS) */}
             {activeTab === 'tours' && (
               <div>
-                <h2 style={{ fontFamily: 'var(--font-display)', margin: '0 0 16px', fontSize: 22, fontWeight: 700 }}>
-                  Catálogo de Tours
-                </h2>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
+                  <h2 style={{ fontFamily: 'var(--font-display)', margin: 0, fontSize: 22, fontWeight: 700 }}>
+                    Catálogo de Tours
+                  </h2>
+                  <button
+                    onClick={handleOpenCreateTour}
+                    className="btn btn-coral"
+                    style={{ padding: '8px 16px', display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 14 }}
+                  >
+                    <Icon name="sparkle" size={14} /> + Crear Nueva Experiencia
+                  </button>
+                </div>
                 
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: 800 }}>
@@ -3434,7 +3520,7 @@ export default function AdminDashboard() {
       </main>
 
       {/* VISTA LATERAL / MODAL DE EDICIÓN RÁPIDA (SLIDE-OVER DRAWER) */}
-      {editingTour && (
+      {(editingTour || isCreatingTour) && (
         <div style={{
           position: 'fixed',
           inset: 0,
@@ -3443,7 +3529,7 @@ export default function AdminDashboard() {
           display: 'flex',
           justifyContent: 'flex-end',
           animation: 'fadeIn 0.3s ease'
-        }} onClick={() => setEditingTour(null)}>
+        }} onClick={() => { setEditingTour(null); setIsCreatingTour(false); }}>
           
           <div style={{
             width: '100%',
@@ -3461,11 +3547,15 @@ export default function AdminDashboard() {
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <div className="eyebrow" style={{ color: 'var(--coral)' }}>Editar Experiencia</div>
-                <h3 className="display" style={{ fontSize: 24, margin: '4px 0 0' }}>{editingTour.title.split(':')[0]}</h3>
+                <div className="eyebrow" style={{ color: 'var(--coral)' }}>
+                  {isCreatingTour ? 'Nueva Experiencia' : 'Editar Experiencia'}
+                </div>
+                <h3 className="display" style={{ fontSize: 24, margin: '4px 0 0' }}>
+                  {isCreatingTour ? (editFormData.title || 'Nueva Experiencia') : editingTour?.title?.split(':')[0]}
+                </h3>
               </div>
               <button
-                onClick={() => setEditingTour(null)}
+                onClick={() => { setEditingTour(null); setIsCreatingTour(false); }}
                 style={{ background: 'var(--cream-soft)', border: 'none', padding: 8, borderRadius: 999, cursor: 'pointer', display: 'flex' }}
               >
                 <Icon name="close" size={18} />
@@ -3530,27 +3620,106 @@ export default function AdminDashboard() {
                     />
                   </label>
 
-                  <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>Precio de salida (R$)</span>
-                    <input
-                      type="number"
-                      required
-                      min={1}
-                      value={editFormData.priceFrom}
-                      onChange={e => setEditFormData(prev => ({ ...prev, priceFrom: Number(e.target.value) }))}
-                      style={{ padding: '12px 14px', borderRadius: 10, border: '1px solid var(--line)', fontFamily: 'var(--font-mono)', fontSize: 14, background: 'var(--cream-soft)' }}
-                    />
-                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>Precio de salida (R$)</span>
+                      <input
+                        type="number"
+                        required
+                        min={1}
+                        value={editFormData.priceFrom}
+                        onChange={e => setEditFormData(prev => ({ ...prev, priceFrom: Number(e.target.value) }))}
+                        style={{ padding: '12px 14px', borderRadius: 10, border: '1px solid var(--line)', fontFamily: 'var(--font-mono)', fontSize: 14, background: 'var(--cream-soft)' }}
+                      />
+                    </label>
 
-                  <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>Etiqueta de la foto (photo_label)</span>
-                    <input
-                      type="text"
-                      value={editFormData.photoLabel}
-                      onChange={e => setEditFormData(prev => ({ ...prev, photoLabel: e.target.value }))}
-                      style={{ padding: '12px 14px', borderRadius: 10, border: '1px solid var(--line)', fontFamily: 'inherit', fontSize: 14, background: 'var(--cream-soft)' }}
-                    />
-                  </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>Etiqueta de la foto</span>
+                      <input
+                        type="text"
+                        value={editFormData.photoLabel}
+                        onChange={e => setEditFormData(prev => ({ ...prev, photoLabel: e.target.value }))}
+                        style={{ padding: '12px 14px', borderRadius: 10, border: '1px solid var(--line)', fontFamily: 'inherit', fontSize: 14, background: 'var(--cream-soft)' }}
+                      />
+                    </label>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>Categoría</span>
+                      <select
+                        value={editFormData.cat}
+                        onChange={e => setEditFormData(prev => ({ ...prev, cat: e.target.value }))}
+                        style={{ padding: '12px 14px', borderRadius: 10, border: '1px solid var(--line)', fontFamily: 'inherit', fontSize: 14, background: 'var(--cream-soft)' }}
+                      >
+                        <option value="Aventura">Aventura</option>
+                        <option value="Clásicos">Clásicos</option>
+                        <option value="Familia">Familia</option>
+                        <option value="Día completo">Día completo</option>
+                      </select>
+                    </label>
+
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>Ubicación</span>
+                      <input
+                        type="text"
+                        required
+                        value={editFormData.location}
+                        onChange={e => setEditFormData(prev => ({ ...prev, location: e.target.value }))}
+                        style={{ padding: '12px 14px', borderRadius: 10, border: '1px solid var(--line)', fontFamily: 'inherit', fontSize: 14, background: 'var(--cream-soft)' }}
+                      />
+                    </label>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>Duración (ej: 6 h)</span>
+                      <input
+                        type="text"
+                        required
+                        value={editFormData.duration}
+                        onChange={e => setEditFormData(prev => ({ ...prev, duration: e.target.value }))}
+                        style={{ padding: '12px 14px', borderRadius: 10, border: '1px solid var(--line)', fontFamily: 'inherit', fontSize: 14, background: 'var(--cream-soft)' }}
+                      />
+                    </label>
+
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>Etiquetas (separadas por coma)</span>
+                      <input
+                        type="text"
+                        value={editFormData.tags}
+                        onChange={e => setEditFormData(prev => ({ ...prev, tags: e.target.value }))}
+                        style={{ padding: '12px 14px', borderRadius: 10, border: '1px solid var(--line)', fontFamily: 'inherit', fontSize: 14, background: 'var(--cream-soft)' }}
+                      />
+                    </label>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>Color de foto (photoVariant)</span>
+                      <select
+                        value={editFormData.photoVariant}
+                        onChange={e => setEditFormData(prev => ({ ...prev, photoVariant: e.target.value }))}
+                        style={{ padding: '12px 14px', borderRadius: 10, border: '1px solid var(--line)', fontFamily: 'inherit', fontSize: 14, background: 'var(--cream-soft)' }}
+                      >
+                        <option value="turq">Turquesa (turq)</option>
+                        <option value="moss">Musgo (moss)</option>
+                        <option value="coral">Coral (coral)</option>
+                        <option value="sky">Cielo (sky)</option>
+                      </select>
+                    </label>
+
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>Emoji / Glifo</span>
+                      <input
+                        type="text"
+                        required
+                        value={editFormData.glyph}
+                        onChange={e => setEditFormData(prev => ({ ...prev, glyph: e.target.value }))}
+                        style={{ padding: '12px 14px', borderRadius: 10, border: '1px solid var(--line)', fontFamily: 'inherit', fontSize: 14, background: 'var(--cream-soft)' }}
+                      />
+                    </label>
+                  </div>
                 </div>
               )}
 
@@ -3799,7 +3968,7 @@ export default function AdminDashboard() {
               <div style={{ display: 'flex', gap: 12, marginTop: 'auto', paddingTop: 20, borderTop: '1px dashed var(--line)', position: 'sticky', bottom: 0, background: 'var(--paper)', zIndex: 10 }}>
                 <button
                   type="button"
-                  onClick={() => setEditingTour(null)}
+                  onClick={() => { setEditingTour(null); setIsCreatingTour(false); }}
                   className="btn btn-ghost"
                   style={{ flex: 1, padding: '12px' }}
                 >
@@ -3807,11 +3976,11 @@ export default function AdminDashboard() {
                 </button>
                 <button
                   type="submit"
-                  disabled={actionLoading === editingTour.id}
+                  disabled={actionLoading === (isCreatingTour ? 'new-tour' : editingTour?.id)}
                   className="btn btn-coral"
                   style={{ flex: 2, padding: '12px' }}
                 >
-                  {actionLoading === editingTour.id ? 'Guardando...' : 'Guardar Experiencia'}
+                  {actionLoading === (isCreatingTour ? 'new-tour' : editingTour?.id) ? 'Guardando...' : (isCreatingTour ? 'Crear Experiencia' : 'Guardar Experiencia')}
                 </button>
               </div>
 

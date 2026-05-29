@@ -286,7 +286,7 @@ export async function getTours() {
   }
 
   if (isMockEnabled || !supabase) {
-    return MOCK_TOURS.map(t => {
+    const baseTours = MOCK_TOURS.map(t => {
       const tourOverride = overrides[t.id] || {};
       return {
         ...t,
@@ -302,12 +302,14 @@ export async function getTours() {
         importantInfo: tourOverride.importantInfo || DEFAULT_IMPORTANT_INFO
       };
     });
+    const newTours = Object.values(overrides).filter((o: any) => o && o.isCreatedNew);
+    return [...newTours, ...baseTours];
   }
 
   try {
     const { data, error } = await supabase.from('tours').select('*').order('reviews', { ascending: false });
     if (error) throw error;
-    return data.map(item => {
+    const fetched = data.map(item => {
       const tourOverride = overrides[item.id] || {};
       return {
         id: item.id,
@@ -332,9 +334,11 @@ export async function getTours() {
         importantInfo: tourOverride.importantInfo || item.important_info || DEFAULT_IMPORTANT_INFO
       };
     });
+    const newTours = Object.values(overrides).filter((o: any) => o && o.isCreatedNew && !fetched.some(f => f.id === o.id));
+    return [...newTours, ...fetched];
   } catch (err) {
     console.error('Error al fetchear tours de Supabase:', err);
-    return MOCK_TOURS.map(t => {
+    const baseTours = MOCK_TOURS.map(t => {
       const tourOverride = overrides[t.id] || {};
       return {
         ...t,
@@ -350,6 +354,8 @@ export async function getTours() {
         importantInfo: tourOverride.importantInfo || DEFAULT_IMPORTANT_INFO
       };
     });
+    const newTours = Object.values(overrides).filter((o: any) => o && o.isCreatedNew);
+    return [...newTours, ...baseTours];
   }
 }
 
@@ -491,12 +497,16 @@ export async function updateTourActiveStatus(tourId: string, isActive: boolean) 
   }
 }
 
-export async function updateTourDetails(tourId: string, details: { title: string; subtitle: string; priceFrom: number; photoLabel: string; description: string; itinerary: any[]; includes: string[]; excludes: string[]; importantInfo: string[] }) {
+export async function updateTourDetails(tourId: string, details: any) {
   if (isMockEnabled || !supabase) {
     console.log(`[MOCK] Editando tour ${tourId}:`, details);
     if (typeof window !== 'undefined') {
       try {
         const mockToursOverrides = JSON.parse(localStorage.getItem('mock_tours_overrides') || '{}');
+        const parsedTags = typeof details.tags === 'string'
+          ? details.tags.split(',').map((s: string) => s.trim()).filter(Boolean)
+          : details.tags;
+        
         mockToursOverrides[tourId] = {
           ...(mockToursOverrides[tourId] || {}),
           title: details.title,
@@ -507,7 +517,13 @@ export async function updateTourDetails(tourId: string, details: { title: string
           itinerary: details.itinerary,
           includes: details.includes,
           excludes: details.excludes,
-          importantInfo: details.importantInfo
+          importantInfo: details.importantInfo,
+          cat: details.cat,
+          location: details.location,
+          duration: details.duration,
+          tags: parsedTags || [],
+          photoVariant: details.photoVariant,
+          glyph: details.glyph
         };
         localStorage.setItem('mock_tours_overrides', JSON.stringify(mockToursOverrides));
       } catch (e) {
@@ -517,6 +533,10 @@ export async function updateTourDetails(tourId: string, details: { title: string
     return { error: null };
   }
   try {
+    const parsedTags = typeof details.tags === 'string'
+      ? details.tags.split(',').map((s: string) => s.trim()).filter(Boolean)
+      : details.tags;
+
     const { error } = await supabase
       .from('tours')
       .update({
@@ -528,12 +548,68 @@ export async function updateTourDetails(tourId: string, details: { title: string
         itinerary: details.itinerary,
         includes: details.includes,
         excludes: details.excludes,
-        important_info: details.importantInfo
+        important_info: details.importantInfo,
+        cat: details.cat,
+        location: details.location,
+        duration: details.duration,
+        tags: parsedTags || [],
+        photo_variant: details.photoVariant,
+        glyph: details.glyph
       })
       .eq('id', tourId);
     return { error };
   } catch (err: any) {
     console.error(`Error al editar tour ${tourId}:`, err);
+    return { error: err };
+  }
+}
+
+export async function createTour(tour: any) {
+  if (isMockEnabled || !supabase) {
+    console.log("[MOCK] Creando nuevo tour:", tour);
+    if (typeof window !== 'undefined') {
+      try {
+        const mockToursOverrides = JSON.parse(localStorage.getItem('mock_tours_overrides') || '{}');
+        mockToursOverrides[tour.id] = {
+          ...tour,
+          isCreatedNew: true
+        };
+        localStorage.setItem('mock_tours_overrides', JSON.stringify(mockToursOverrides));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return { error: null };
+  }
+
+  try {
+    const { error } = await supabase
+      .from('tours')
+      .insert({
+        id: tour.id,
+        title: tour.title,
+        subtitle: tour.subtitle,
+        cat: tour.cat,
+        tags: tour.tags,
+        duration: tour.duration,
+        rating: tour.rating,
+        reviews: tour.reviews,
+        price_from: Number(tour.priceFrom),
+        badge: tour.badge,
+        photo_variant: tour.photoVariant,
+        glyph: tour.glyph,
+        photo_label: tour.photoLabel,
+        location: tour.location,
+        is_active: tour.isActive !== false,
+        description: tour.description,
+        itinerary: tour.itinerary,
+        includes: tour.includes,
+        excludes: tour.excludes,
+        important_info: tour.importantInfo
+      });
+    return { error };
+  } catch (err: any) {
+    console.error("Error al insertar nuevo tour en Supabase:", err);
     return { error: err };
   }
 }
