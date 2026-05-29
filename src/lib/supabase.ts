@@ -410,6 +410,7 @@ export async function createBooking(bookingData: any) {
     console.log('🔒 [MOCK] Guardando reserva simulada:', bookingData);
     const mockPayload = {
       ...bookingData,
+      whatsappNickname: bookingData.whatsappNickname || '',
       guideNetCost: Number(bookingData.guideNetCost || 0),
       providerPaymentStatus: bookingData.providerPaymentStatus || 'PENDING',
       providerPaymentDate: bookingData.providerPaymentDate || ''
@@ -439,6 +440,7 @@ export async function createBooking(bookingData: any) {
           lastname: bookingData.lastname,
           email: bookingData.email,
           whatsapp: bookingData.whatsapp,
+          whatsapp_nickname: bookingData.whatsappNickname || '',
           country: bookingData.country,
           hotel_address: bookingData.hotelAddress,
           hotel_phone: bookingData.hotelPhone,
@@ -561,6 +563,7 @@ export async function getBookings() {
         lastname: "Castillo",
         email: "mariana@gmail.com",
         whatsapp: "+54 11 5555-1234",
+        whatsappNickname: "Marilyn",
         country: "🇦🇷 Argentina",
         hotelAddress: "Hotel Vila do Farol — Praia Mole",
         hotelPhone: "",
@@ -608,6 +611,7 @@ export async function getBookings() {
       lastname: item.lastname,
       email: item.email,
       whatsapp: item.whatsapp,
+      whatsappNickname: item.whatsapp_nickname || '',
       country: item.country,
       hotelAddress: item.hotel_address,
       hotelPhone: item.hotel_phone,
@@ -657,6 +661,7 @@ export async function updateBookingDetails(bookingId: string, updates: any) {
               lastname: "Castillo",
               email: "mariana@gmail.com",
               whatsapp: "+54 11 5555-1234",
+              whatsappNickname: "Marilyn",
               country: "🇦🇷 Argentina",
               hotelAddress: "Hotel Vila do Farol — Praia Mole",
               hotelPhone: "",
@@ -684,6 +689,7 @@ export async function updateBookingDetails(bookingId: string, updates: any) {
               lastname: updates.lastname !== undefined ? updates.lastname : b.lastname,
               email: updates.email !== undefined ? updates.email : b.email,
               whatsapp: updates.whatsapp !== undefined ? updates.whatsapp : b.whatsapp,
+              whatsappNickname: updates.whatsappNickname !== undefined ? updates.whatsappNickname : b.whatsappNickname,
               country: updates.country !== undefined ? updates.country : b.country,
               hotelAddress: updates.hotelAddress !== undefined ? updates.hotelAddress : b.hotelAddress,
               hotelRoom: updates.hotelRoom !== undefined ? updates.hotelRoom : b.hotelRoom,
@@ -722,6 +728,7 @@ export async function updateBookingDetails(bookingId: string, updates: any) {
     if (updates.lastname !== undefined) mappedUpdates.lastname = updates.lastname;
     if (updates.email !== undefined) mappedUpdates.email = updates.email;
     if (updates.whatsapp !== undefined) mappedUpdates.whatsapp = updates.whatsapp;
+    if (updates.whatsappNickname !== undefined) mappedUpdates.whatsapp_nickname = updates.whatsappNickname;
     if (updates.country !== undefined) mappedUpdates.country = updates.country;
     if (updates.hotelAddress !== undefined) mappedUpdates.hotel_address = updates.hotelAddress;
     if (updates.hotelRoom !== undefined) mappedUpdates.hotel_room = updates.hotelRoom;

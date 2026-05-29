@@ -22,7 +22,11 @@ import { Badge } from '@/components/Badge';
 
 const parseBookingDate = (dateStr: string): Date => {
   if (!dateStr) return new Date();
-  if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) return new Date(dateStr);
+  if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) {
+    // Evitar que la zona horaria reste un día
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
   const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
   const clean = dateStr.toLowerCase().replace(/[^a-z0-9áéíóúüñ\s-]/g, '').trim();
   const parts = clean.split(/\s+/);
@@ -37,6 +41,28 @@ const parseBookingDate = (dateStr: string): Date => {
     if (!isNaN(dNum) && dNum > 0 && dNum <= 31) day = dNum;
   }
   return new Date(year, monthIdx, day);
+};
+
+const formatBookingDateForDisplay = (dateStr: string): string => {
+  if (!dateStr) return '';
+  if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) {
+    const parts = dateStr.split('-');
+    const monthIdx = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+    const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    return `${day} ${months[monthIdx]}`;
+  }
+  return dateStr;
+};
+
+const formatDateToInput = (dateStr: string): string => {
+  if (!dateStr) return '';
+  if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) return dateStr;
+  const d = parseBookingDate(dateStr);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
 };
 
 export default function AdminDashboard() {
@@ -92,6 +118,7 @@ export default function AdminDashboard() {
   const [formLastname, setFormLastname] = useState('');
   const [formEmail, setFormEmail] = useState('');
   const [formWhatsapp, setFormWhatsapp] = useState('');
+  const [formWhatsappNickname, setFormWhatsappNickname] = useState('');
   const [formCountry, setFormCountry] = useState('🇦🇷 Argentina');
   const [formHotelAddress, setFormHotelAddress] = useState('');
   const [formHotelRoom, setFormHotelRoom] = useState('');
@@ -461,12 +488,15 @@ export default function AdminDashboard() {
     setFormLastname('');
     setFormEmail('');
     setFormWhatsapp('');
+    setFormWhatsappNickname('');
     setFormCountry('🇦🇷 Argentina');
     setFormHotelAddress('');
     setFormHotelRoom('');
     setFormHotelPhone('');
     setFormTourId(tours[0]?.id || 'city-tour-floripa');
-    setFormDate('28 Mayo');
+    // Inicializar con la fecha de hoy en formato YYYY-MM-DD
+    const todayStr = new Date().toISOString().split('T')[0];
+    setFormDate(todayStr);
     setFormSlot('08:30');
     setFormAdults(2);
     setFormKids(0);
@@ -485,12 +515,13 @@ export default function AdminDashboard() {
     setFormLastname(booking.lastname || '');
     setFormEmail(booking.email || '');
     setFormWhatsapp(booking.whatsapp || '');
+    setFormWhatsappNickname(booking.whatsappNickname || '');
     setFormCountry(booking.country || '🇦🇷 Argentina');
     setFormHotelAddress(booking.hotelAddress || '');
     setFormHotelRoom(booking.hotelRoom || '');
     setFormHotelPhone(booking.hotelPhone || '');
     setFormTourId(booking.tourId || 'city-tour-floripa');
-    setFormDate(booking.date || '28 Mayo');
+    setFormDate(formatDateToInput(booking.date || ''));
     setFormSlot(booking.slot || '08:30');
     setFormAdults(Number(booking.adults || 2));
     setFormKids(Number(booking.kids || 0));
@@ -499,7 +530,7 @@ export default function AdminDashboard() {
     setFormPaymentStatus(booking.paymentStatus || 'PENDING');
     setFormGuideNetCost(booking.guideNetCost || 0);
     setFormProviderPaymentStatus(booking.providerPaymentStatus || 'PENDING');
-    setFormProviderPaymentDate(booking.providerPaymentDate || '');
+    setFormProviderPaymentDate(formatDateToInput(booking.providerPaymentDate || ''));
   };
 
   const handleCreateBookingSubmit = async (e: React.FormEvent) => {
@@ -524,6 +555,7 @@ export default function AdminDashboard() {
         lastname: formLastname,
         email: formEmail,
         whatsapp: formWhatsapp,
+        whatsappNickname: formWhatsappNickname,
         country: formCountry,
         hotelAddress: formHotelAddress,
         hotelPhone: formHotelPhone,
@@ -554,7 +586,7 @@ export default function AdminDashboard() {
         
         await addBookingLog({
           bookingId: data.id,
-          comment: `Reserva manual creada por el administrador. Tour: ${tourTitle.split(':')[0]} para el ${formDate}.`,
+          comment: `Reserva manual creada por el administrador. Tour: ${tourTitle.split(':')[0]} para el ${formatBookingDateForDisplay(formDate)}.`,
           author: 'Sistema'
         });
         
@@ -581,6 +613,7 @@ export default function AdminDashboard() {
         lastname: formLastname,
         email: formEmail,
         whatsapp: formWhatsapp,
+        whatsappNickname: formWhatsappNickname,
         country: formCountry,
         hotelAddress: formHotelAddress,
         hotelRoom: formHotelRoom,
@@ -725,6 +758,28 @@ export default function AdminDashboard() {
             }}
           >
             <Icon name="credit" size={15} /> Finanzas 📊
+          </Link>
+          <Link
+            href="/admin/proveedores"
+            style={{
+              flex: 1,
+              padding: '12px 16px',
+              borderRadius: 10,
+              background: 'transparent',
+              color: 'var(--ink)',
+              fontFamily: 'var(--font-display)',
+              fontWeight: 700,
+              fontSize: 14,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              textDecoration: 'none',
+              cursor: 'pointer',
+              transition: 'background 0.2s ease, transform 0.1s ease'
+            }}
+          >
+            <Icon name="profile" size={15} /> Proveedores 🛡️
           </Link>
         </div>
 
@@ -1257,6 +1312,11 @@ export default function AdminDashboard() {
                                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                         <h3 style={{ fontSize: 20, fontWeight: 800, margin: 0, color: 'var(--ink)' }}>
                                           👤 {leadBooking.name} {leadBooking.lastname}
+                                          {leadBooking.whatsappNickname && (
+                                            <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--muted)', marginLeft: 8 }}>
+                                              ({leadBooking.whatsappNickname})
+                                            </span>
+                                          )}
                                         </h3>
                                         <Badge tone="soft">{passengerBookings.length} {passengerBookings.length > 1 ? 'Experiencias' : 'Experiencia'}</Badge>
                                       </div>
@@ -1758,6 +1818,11 @@ export default function AdminDashboard() {
                                           <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
                                             <div style={{ fontWeight: 700, color: 'var(--ink)' }}>
                                               {booking.name} {booking.lastname}
+                                              {booking.whatsappNickname && (
+                                                <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--muted)', display: 'block', marginTop: 2 }}>
+                                                  ({booking.whatsappNickname})
+                                                </span>
+                                              )}
                                             </div>
                                             <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 4 }}>
                                               <Icon name="phone" size={11} /> {booking.whatsapp}
@@ -1769,7 +1834,7 @@ export default function AdminDashboard() {
                                           <td style={{ padding: '16px 8px', verticalAlign: 'top' }}>
                                             <div style={{ fontWeight: 600 }}>{booking.tourTitle}</div>
                                             <div style={{ fontSize: 12, color: 'var(--coral)', fontWeight: 600, marginTop: 4 }}>
-                                              <Icon name="calendar" size={11} /> {booking.date} · {booking.slot}
+                                              <Icon name="calendar" size={11} /> {formatBookingDateForDisplay(booking.date)} · {booking.slot}
                                             </div>
                                             <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
                                               Pax: {booking.adults} adulto{booking.adults > 1 ? 's' : ''}
@@ -2280,9 +2345,14 @@ export default function AdminDashboard() {
                                       <div>
                                         <div className="booking-card-mobile-title">
                                           👤 {booking.name} {booking.lastname}
+                                          {booking.whatsappNickname && (
+                                            <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--muted)', display: 'block', marginTop: 2 }}>
+                                              ({booking.whatsappNickname})
+                                            </span>
+                                          )}
                                         </div>
                                         <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
-                                          📍 Paí­s: {booking.country}
+                                          📍 País: {booking.country}
                                         </div>
                                       </div>
                                       <Badge tone={booking.paymentStatus === 'PAID' ? 'moss' : booking.paymentStatus === 'CANCELLED' ? 'ink' : 'sun'}>
@@ -2296,7 +2366,7 @@ export default function AdminDashboard() {
                                         <strong style={{ fontSize: 14, color: 'var(--ink)' }}>{booking.tourTitle}</strong>
                                       </div>
                                       <div style={{ color: 'var(--coral)', fontWeight: 600, fontSize: 13, display: 'flex', alignItems: 'center', gap: 4 }}>
-                                        📅 {booking.date} · ⏱️ {booking.slot}
+                                        📅 {formatBookingDateForDisplay(booking.date)} · ⏱️ {booking.slot}
                                       </div>
                                       <div style={{ color: 'var(--ink-soft)' }}>
                                         👥 Pax: {booking.adults} Adulto{booking.adults > 1 ? 's' : ''}
@@ -3768,7 +3838,7 @@ export default function AdminDashboard() {
             background: 'var(--paper)',
             height: '100vh',
             boxShadow: 'var(--shadow-lg)',
-            padding: '32px 28px',
+            padding: '32px 28px 120px 28px', // Padding-bottom extendido para scroll en móviles
             display: 'flex',
             flexDirection: 'column',
             gap: 20,
@@ -3809,15 +3879,26 @@ export default function AdminDashboard() {
                   <input type="text" required value={formWhatsapp} onChange={e => setFormWhatsapp(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} placeholder="Ej: +54 9 11 9999-8888" />
                 </label>
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                  <span style={{ fontSize: 12, fontWeight: 700 }}>País *</span>
-                  <input type="text" required value={formCountry} onChange={e => setFormCountry(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} placeholder="Argentina" />
+                  <span style={{ fontSize: 12, fontWeight: 700 }}>WhatsApp Nickname / Alias</span>
+                  <input type="text" value={formWhatsappNickname} onChange={e => setFormWhatsappNickname(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} placeholder="Ej: Marilyn (Opcional)" />
                 </label>
               </div>
 
-              <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                <span style={{ fontSize: 12, fontWeight: 700 }}>Email *</span>
-                <input type="email" required value={formEmail} onChange={e => setFormEmail(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} placeholder="juan@gmail.com" />
-              </label>
+              <div className="grid-2-col">
+                <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700 }}>País *</span>
+                  <select value={formCountry} onChange={e => setFormCountry(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit', cursor: 'pointer' }}>
+                    <option value="🇦🇷 Argentina">🇦🇷 Argentina</option>
+                    <option value="🇧🇷 Brasil">🇧🇷 Brasil</option>
+                    <option value="🇨🇱 Chile">🇨🇱 Chile</option>
+                    <option value="🇺🇾 Uruguay">🇺🇾 Uruguay</option>
+                  </select>
+                </label>
+                <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700 }}>Email *</span>
+                  <input type="email" required value={formEmail} onChange={e => setFormEmail(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} placeholder="juan@gmail.com" />
+                </label>
+              </div>
 
               <div style={{ borderTop: '1px dashed var(--line-soft)', paddingTop: 12 }} />
 
@@ -3850,7 +3931,7 @@ export default function AdminDashboard() {
               <div className="grid-2-col">
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>Fecha *</span>
-                  <input type="text" required value={formDate} onChange={e => setFormDate(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} placeholder="Ej: 28 Mayo" />
+                  <input type="date" required value={formDate} onChange={e => setFormDate(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit', cursor: 'pointer' }} />
                 </label>
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>Horario/Slot *</span>
@@ -3895,7 +3976,7 @@ export default function AdminDashboard() {
 
               <div style={{ borderTop: '1px dashed var(--line-soft)', paddingTop: 12 }} />
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 12 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--coral)' }}>Costo Neto Guía (R$)</span>
                   <input type="number" min={0} value={formGuideNetCost} onChange={e => setFormGuideNetCost(Number(e.target.value))} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'var(--font-mono)' }} placeholder="Ej: 150" />
@@ -3911,14 +3992,26 @@ export default function AdminDashboard() {
 
               <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                 <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--coral)' }}>Fecha de Depósito al Proveedor</span>
-                <input type="text" value={formProviderPaymentDate} onChange={e => setFormProviderPaymentDate(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} placeholder="Ej: 28 Mayo" />
+                <input type="date" value={formProviderPaymentDate} onChange={e => setFormProviderPaymentDate(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit', cursor: 'pointer' }} />
               </label>
 
-              <div style={{ display: 'flex', gap: 12, marginTop: 10, paddingTop: 16, borderTop: '1px solid var(--line-soft)', position: 'sticky', bottom: 0, background: 'var(--paper)', zIndex: 10 }}>
-                <button type="button" onClick={() => setShowCreateBooking(false)} className="btn btn-ghost" style={{ flex: 1, padding: 12, border: 'none', cursor: 'pointer' }}>
+              {/* Botones pegajosos de acción inferior, con mayor área de tactilidad responsiva */}
+              <div style={{ 
+                display: 'flex', 
+                gap: 12, 
+                marginTop: 10, 
+                paddingTop: 16, 
+                paddingBottom: 24, // Mayor padding inferior en móviles para evitar colisiones con la barra del OS
+                borderTop: '1px solid var(--line-soft)', 
+                position: 'sticky', 
+                bottom: 0, 
+                background: 'var(--paper)', 
+                zIndex: 10 
+              }}>
+                <button type="button" onClick={() => setShowCreateBooking(false)} className="btn btn-ghost" style={{ flex: 1, padding: 12, border: 'none', cursor: 'pointer', minHeight: 48, fontSize: 14 }}>
                   Cancelar
                 </button>
-                <button type="submit" disabled={actionLoading === 'create-booking'} className="btn btn-coral" style={{ flex: 2, padding: 12, border: 'none', cursor: 'pointer' }}>
+                <button type="submit" disabled={actionLoading === 'create-booking'} className="btn btn-coral" style={{ flex: 2, padding: 12, border: 'none', cursor: 'pointer', minHeight: 48, fontSize: 14 }}>
                   {actionLoading === 'create-booking' ? 'Creando Lead...' : 'Guardar Lead'}
                 </button>
               </div>
@@ -3946,7 +4039,7 @@ export default function AdminDashboard() {
             background: 'var(--paper)',
             height: '100vh',
             boxShadow: 'var(--shadow-lg)',
-            padding: '32px 28px',
+            padding: '32px 28px 120px 28px', // Scroll extendido vertical en móvil
             display: 'flex',
             flexDirection: 'column',
             gap: 20,
@@ -3987,15 +4080,26 @@ export default function AdminDashboard() {
                   <input type="text" required value={formWhatsapp} onChange={e => setFormWhatsapp(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} />
                 </label>
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                  <span style={{ fontSize: 12, fontWeight: 700 }}>País *</span>
-                  <input type="text" required value={formCountry} onChange={e => setFormCountry(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} />
+                  <span style={{ fontSize: 12, fontWeight: 700 }}>WhatsApp Nickname / Alias</span>
+                  <input type="text" value={formWhatsappNickname} onChange={e => setFormWhatsappNickname(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} placeholder="Ej: Marilyn (Opcional)" />
                 </label>
               </div>
 
-              <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                <span style={{ fontSize: 12, fontWeight: 700 }}>Email *</span>
-                <input type="email" required value={formEmail} onChange={e => setFormEmail(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} />
-              </label>
+              <div className="grid-2-col">
+                <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700 }}>País *</span>
+                  <select value={formCountry} onChange={e => setFormCountry(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit', cursor: 'pointer' }}>
+                    <option value="🇦🇷 Argentina">🇦🇷 Argentina</option>
+                    <option value="🇧🇷 Brasil">🇧🇷 Brasil</option>
+                    <option value="🇨🇱 Chile">🇨🇱 Chile</option>
+                    <option value="🇺🇾 Uruguay">🇺🇾 Uruguay</option>
+                  </select>
+                </label>
+                <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700 }}>Email *</span>
+                  <input type="email" required value={formEmail} onChange={e => setFormEmail(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} />
+                </label>
+              </div>
 
               <div style={{ borderTop: '1px dashed var(--line-soft)', paddingTop: 12 }} />
 
@@ -4028,7 +4132,7 @@ export default function AdminDashboard() {
               <div className="grid-2-col">
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>Fecha *</span>
-                  <input type="text" required value={formDate} onChange={e => setFormDate(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} />
+                  <input type="date" required value={formDate} onChange={e => setFormDate(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit', cursor: 'pointer' }} />
                 </label>
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>Horario/Slot *</span>
@@ -4089,14 +4193,26 @@ export default function AdminDashboard() {
 
               <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                 <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--coral)' }}>Fecha de Depósito al Proveedor</span>
-                <input type="text" value={formProviderPaymentDate} onChange={e => setFormProviderPaymentDate(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit' }} placeholder="Ej: 28 Mayo" />
+                <input type="date" value={formProviderPaymentDate} onChange={e => setFormProviderPaymentDate(e.target.value)} style={{ padding: '10px', borderRadius: 8, border: '1px solid var(--line)', background: 'var(--cream-soft)', fontSize: 13, fontFamily: 'inherit', cursor: 'pointer' }} />
               </label>
 
-              <div style={{ display: 'flex', gap: 12, marginTop: 10, paddingTop: 16, borderTop: '1px solid var(--line-soft)', position: 'sticky', bottom: 0, background: 'var(--paper)', zIndex: 10 }}>
-                <button type="button" onClick={() => setActiveEditingBooking(null)} className="btn btn-ghost" style={{ flex: 1, padding: 12, border: 'none', cursor: 'pointer' }}>
+              {/* Botones pegajosos de acción táctil inferior */}
+              <div style={{ 
+                display: 'flex', 
+                gap: 12, 
+                marginTop: 10, 
+                paddingTop: 16, 
+                paddingBottom: 24, // Padding-bottom extendido en móviles
+                borderTop: '1px solid var(--line-soft)', 
+                position: 'sticky', 
+                bottom: 0, 
+                background: 'var(--paper)', 
+                zIndex: 10 
+              }}>
+                <button type="button" onClick={() => setActiveEditingBooking(null)} className="btn btn-ghost" style={{ flex: 1, padding: 12, border: 'none', cursor: 'pointer', minHeight: 48, fontSize: 14 }}>
                   Cancelar
                 </button>
-                <button type="submit" disabled={actionLoading === activeEditingBooking.id} className="btn btn-coral" style={{ flex: 2, padding: 12, border: 'none', cursor: 'pointer' }}>
+                <button type="submit" disabled={actionLoading === activeEditingBooking.id} className="btn btn-coral" style={{ flex: 2, padding: 12, border: 'none', cursor: 'pointer', minHeight: 48, fontSize: 14 }}>
                   {actionLoading === activeEditingBooking.id ? 'Guardando Cambios...' : 'Guardar Cambios'}
                 </button>
               </div>
