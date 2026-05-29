@@ -123,7 +123,7 @@ export const TourCard: React.FC<TourCardProps> = ({ tour, dense, shareEmphasis =
               className="share-btn ig"
               style={{ padding: "6px 10px", fontSize: 12 }}
               onClick={(e) => { e.stopPropagation(); }}
-              href="https://www.instagram.com/borafloripa"
+              href="https://www.instagram.com/bora.floripa/"
               target="_blank"
               rel="noopener noreferrer"
             >
